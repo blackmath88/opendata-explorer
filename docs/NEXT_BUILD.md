@@ -1,6 +1,6 @@
 # Next build — from Discover to validated evidence
 
-The next build should **stabilize Level 1 and create the substrate for compatibility validation**. Do not build a polished Compose graph yet.
+This document is intentionally implementation-focused. The next build should **stabilize Level 1 and create the substrate for compatibility validation**. Do not build a polished Compose graph yet.
 
 ## Goal
 
@@ -12,57 +12,66 @@ At the end of the next build, a user should be able to:
 4. add datasets to a workspace
 5. see the intended role of each dataset
 6. inspect real fields/schema/sample records for selected datasets
-7. see structured compatibility assessments between selected datasets
+7. see first structured compatibility assessments between selected datasets
 
 The system does **not** need to execute spatial joins yet.
 
-## Phase 1 — Verify the build
+---
+
+# Phase 1 — Build/runtime verification
+
+## Tasks
 
 - run `npm install`
 - run `npm run build`
-- run the app locally
-- fix TypeScript/runtime errors
-- verify D3 rendering and responsive shell
-- preserve `DESIGN.md` as the visual source of truth
+- run app locally
+- fix all TypeScript/runtime errors
+- verify D3 rendering
+- verify responsive shell
+- preserve `DESIGN.md` exactly as the visual source of truth
 
-Acceptance:
+## Acceptance
+
 - clean build
-- no first-load console errors
+- no console errors on first load
 - fallback mode still works
 
-## Phase 2 — Harden the Basel adapter
+---
 
-Inspect actual responses from:
+# Phase 2 — Harden the Basel adapter
+
+## Inspect real endpoints
+
+Base:
+`https://data.bs.ch/api/explore/v2.1`
+
+Required:
 - `/catalog/datasets`
 - `/catalog/datasets/{dataset_id}`
 - `/catalog/datasets/{dataset_id}/records`
 
-Verify:
-- response shape
-- browser CORS
-- pagination and total counts
-- optional/missing fields
-- field/schema information exposed by metadata
+## Tasks
 
-Normalize reliably:
-- id/title/description
-- publisher
-- themes/keywords
-- licence
-- modified/freshness
-- formats/features
-- record count when available
-- source URL/provenance
+- inspect real JSON response shape
+- remove assumptions that do not match source response
+- normalize title, description, publisher, theme, keyword, licence, modified time, features/formats
+- preserve source URL/id
+- verify pagination and catalogue total
+- add explicit loading / live / fallback / failed status
+- verify CORS in browser
 
-Acceptance:
-- live catalogue loads in normal browser use
+## Acceptance
+
+- live catalogue loads from Basel on normal browser run
 - source mode is visible
-- count is accurate
-- normalizer safely handles missing fields
+- catalogue count is accurate
+- normalizer handles missing optional metadata safely
 
-## Phase 3 — Structured use-case intent
+---
 
-Introduce:
+# Phase 3 — Introduce structured use-case intent
+
+Create:
 
 ```ts
 export interface UseCaseIntent {
@@ -76,26 +85,43 @@ export interface UseCaseIntent {
 }
 ```
 
-Start deterministic.
+Start deterministic. Do not require an LLM.
 
-Benchmark use cases:
+Create a parser that extracts useful hints from the current example use cases.
+
+Canonical examples:
 1. running comfort
 2. urban heat interventions
 3. cycling safety/comfort
 4. public fountain access
 5. construction/mobility impact
-6. environmental conditions around schools
+6. school environmental conditions
 
-Acceptance:
-- every benchmark produces a stable intent
-- raw statement is retained
-- parser has tests
+## Acceptance
 
-## Phase 4 — Evidence classes and roles
+- every benchmark prompt creates a stable `UseCaseIntent`
+- parser has unit tests
+- raw statement is always retained
+
+---
+
+# Phase 4 — Evidence classes and roles
+
+Add two related concepts.
+
+## Relevance class
 
 ```ts
-export type EvidenceClass = 'direct' | 'supporting' | 'contextual' | 'missing';
+export type EvidenceClass =
+  | 'direct'
+  | 'supporting'
+  | 'contextual'
+  | 'missing';
+```
 
+## Analytical role
+
+```ts
 export type EvidenceRoleType =
   | 'analysis_backbone'
   | 'primary_measure'
@@ -106,16 +132,31 @@ export type EvidenceRoleType =
   | 'validation'
   | 'external_dependency'
   | 'missing';
+
+export interface EvidenceRole {
+  id: string;
+  label: string;
+  roleType: EvidenceRoleType;
+  datasetId?: string;
+  required: boolean;
+  reason: string;
+}
 ```
 
-Show in the inspector/workspace:
+## UI
+
+In the inspector/workspace show:
 - evidence class
 - proposed analytical role
-- why it matters
-- required/optional state
-- unresolved missing roles
+- why the role is useful
+- whether the role is required
+- unresolved/missing roles
 
-Running benchmark should include at least:
+Do not make the model's proposal look authoritative. Mark inferred roles clearly.
+
+## Acceptance
+
+For the running example, expected plan includes at least:
 - route geometry → backbone / external
 - canopy → primary measure
 - air quality → primary/context exposure
@@ -125,11 +166,13 @@ Running benchmark should include at least:
 - elevation → context
 - pollen → missing/external
 
-Mark inferred roles as proposed, not source facts.
+---
 
-## Phase 5 — Dataset structure inspection
+# Phase 5 — Dataset structure inspection
 
-Extend the adapter concept:
+Create a new source-adapter method for selected datasets only.
+
+Suggested API:
 
 ```ts
 interface CatalogueAdapter {
@@ -139,7 +182,7 @@ interface CatalogueAdapter {
 }
 ```
 
-Suggested structure model:
+Suggested model:
 
 ```ts
 export interface FieldProfile {
@@ -153,24 +196,48 @@ export interface FieldProfile {
 export interface DatasetStructure {
   datasetId: string;
   fields: FieldProfile[];
-  geometry?: { type: string; crs?: string; extent?: [number, number, number, number] };
-  temporal?: { fields: string[]; start?: string; end?: string; grain?: string };
+  geometry?: {
+    type: string;
+    crs?: string;
+    extent?: [number, number, number, number];
+  };
+  temporal?: {
+    fields: string[];
+    start?: string;
+    end?: string;
+    grain?: string;
+  };
   candidateKeys: string[];
   recordCount?: number;
   observedFrom: 'catalog_metadata' | 'schema' | 'sample_records';
 }
 ```
 
-Keep distinctions visible between:
+Use source metadata first. Add a small safe record sample only when required.
+
+## Important
+
+Clearly distinguish:
 - metadata claim
 - schema observation
 - sample observation
 
-Use bounded samples only for selected datasets.
+## Acceptance
 
-## Phase 6 — First compatibility engine
+Selecting a Basel dataset can display:
+- available fields
+- geometry signal if available
+- likely temporal fields
+- sample values for a bounded number of fields/records
+- evidence level
 
-Do not use an LLM for the first version.
+---
+
+# Phase 6 — First compatibility engine
+
+Do not use an LLM for the first implementation.
+
+Create:
 
 ```ts
 export type CompatibilityRelation =
@@ -196,46 +263,84 @@ export interface CompatibilityAssessment {
 }
 ```
 
-Initial deterministic checks:
+## First checks
+
+Implement simple deterministic rules for:
 - both datasets have geometry → candidate spatial relation
 - point + polygon → candidate spatial join / within
 - point + line → nearest candidate
-- temporal overlap/no-overlap
+- both have temporal coverage → overlap/no overlap
 - same/similar candidate field names → candidate direct join
 - obvious grain mismatch → aggregate/resample warning
-- insufficient structure → `unknown`
-- known mismatch → `incompatible`
+- insufficient structure → unknown, never fake confidence
+
+## UI
+
+In Compose, show selected dataset pairs and compatibility cards/edges.
+
+Example:
+
+```text
+Tree canopy ↔ route geometry
+SPATIAL JOIN
+Confidence: high
+Evidence: schema observed
+Reason: polygon coverage can be intersected with route geometry
+
+Air quality ↔ route geometry
+INTERPOLATION REQUIRED
+Confidence: medium
+Evidence: schema observed
+Warning: sensor point density may be insufficient for precise route-level claims
+```
+
+## Acceptance
+
+Test at least six relationships:
+- 3 expected useful
+- 3 expected uncertain/incompatible
 
 The system must be able to return `unknown` and `incompatible`.
 
-Compose UI should show pairwise compatibility records, not a polished node editor.
+---
 
-## Phase 7 — Benchmarks
+# Phase 7 — Benchmarks
 
-Create fixtures/tests for the six canonical use cases.
+Create fixtures/tests for six canonical use cases.
 
 Each benchmark should specify:
 - prompt
 - expected intent hints
 - expected evidence roles
-- expected top-N datasets/titles where known
+- datasets/titles expected in top-N where known
 - expected missing roles
 
-Do not demand exact score numbers; test structural outcomes.
+Do not demand exact ranking numbers. Test semantic outcome.
 
-## What not to build in this pass
+Suggested path:
+
+`src/benchmarks/useCases.ts`
+
+---
+
+# What NOT to build in this pass
 
 - production authentication
 - persistent projects/workspaces
 - full LLM integration
-- generic node editor
-- DuckDB spatial execution
-- MCP server
-- multi-catalogue federation
+- embeddings infrastructure unless trivial
+- executable DuckDB spatial pipeline
+- generic visual node editor
 - Materialize generator
+- MCP server
+- multiple data portals
 - elaborate graph animation
 
-## Recommended commit sequence
+These are later milestones.
+
+---
+
+# Recommended commit sequence for Codex
 
 1. `chore: verify build and harden app shell`
 2. `fix: normalize live Basel catalogue metadata`
@@ -246,35 +351,36 @@ Do not demand exact score numbers; test structural outcomes.
 7. `test: add canonical use-case benchmarks`
 8. `docs: report findings and remaining unknowns`
 
-## Required engineering report
+---
 
-At the end report:
+# Required Codex report
 
-### Build
-- build/runtime status
+At the end, report:
+
+## Build
+- build status
+- runtime status
 - errors fixed
 
-### Basel API
+## Basel API
 - actual catalogue schema observations
 - CORS result
 - pagination behaviour
-- reliably normalized fields
-- expected fields that were absent
+- fields/features we can reliably normalize
+- fields we expected but could not find
 
-### Dataset inspection
-- exposed schema/field metadata
-- usefulness of sample records
-- reliability of geometry/temporal inference
+## Dataset inspection
+- what schema/field metadata the API exposes
+- how useful sample records are
+- whether geometry type / temporal coverage can be inferred reliably
 
-### Compatibility
+## Compatibility
 - relationships tested
-- what is metadata-only vs schema-observed vs sample-validated
-- what remains candidate-only/unknown
+- what can be validated deterministically now
+- what remains candidate-only
 
-### Architecture concerns
-- model changes recommended before execution work
+## Architecture concerns
+- anything in the current model that should change before execution work
 
-### Recommendation
-Explicitly answer:
-
-> Is the repository ready to begin the first executable spatial composition milestone?
+## Recommendation
+- whether the repo is ready to begin the first executable spatial composition

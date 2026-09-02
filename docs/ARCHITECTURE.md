@@ -7,9 +7,7 @@ QUESTION
   ↓
 DISCOVER candidate evidence
   ↓
-ASSIGN evidence roles
-  ↓
-INSPECT real structure / geography / time
+DESIGN evidence roles
   ↓
 VALIDATE compatibility
   ↓
@@ -23,6 +21,8 @@ MATERIALIZE output
 The important boundary is between **published source data**, **observed structure**, **model inference**, and **derived execution results**. The application may enrich, rank, connect and transform data, but must retain provenance and make those evidence levels distinguishable.
 
 The graph is not the architecture. It is a visualization of structured evidence relationships that must exist first.
+
+The key architectural update after prior-art research is that **semantic discovery is not the core moat**. The strongest platform layer is the ability to test whether heterogeneous datasets can support a shared method and then turn that validated method into an executable graph.
 
 ## Layers
 
@@ -40,13 +40,13 @@ Future adapters may include:
 - European Data Portal
 - internal organizational catalogues
 
-Source-specific concepts should not leak into downstream features unless preserved as optional source metadata.
+Source-specific concepts should not leak into downstream features unless preserved as optional metadata.
 
-Before building a large multi-catalogue harvester, evaluate existing infrastructure such as Ceres/Magda rather than rebuilding mature catalogue plumbing.
+Do not assume we should build all multi-catalogue harvesting ourselves. Ceres, Magda, DCAT and similar infrastructure should be evaluated before expanding this layer.
 
 ### 2. Canonical catalogue
 
-`DatasetRecord` is the durable product object.
+`DatasetRecord` is the durable catalogue object.
 
 It contains:
 - identity and provenance
@@ -56,26 +56,12 @@ It contains:
 - licence
 - freshness
 - formats
-- spatial / temporal characteristics when source metadata supports them
+- known spatial / temporal characteristics
 - semantic enrichment
 
 This is deliberately not a full copy of every source schema.
 
 ### 3. Use-case intent
-
-The user's real-world question becomes a structured `UseCaseIntent`.
-
-The raw statement is always retained. Structured hints may include:
-- domain hints
-- geographic scope
-- spatial requirement
-- temporal requirement
-- desired outcome
-- constraints
-
-The first parser should be deterministic. LLM-based interpretation may be added later behind an interface.
-
-### 4. Discovery / relevance
 
 Current implementation is deterministic and transparent:
 - tokenize the user's use case
@@ -86,109 +72,166 @@ Current implementation is deterministic and transparent:
 
 Future versions can add embeddings and LLM reranking, but semantic relevance remains only a **candidate evidence signal**.
 
-A high relevance score does not imply datasets can be joined.
+The output of discovery should evolve from a flat score into evidence classes:
+- direct
+- supporting
+- contextual
+- missing
 
-### 5. Evidence plan
+### 4. Structured use-case intent
 
-A workspace should evolve from a selected dataset list into an explicit evidence plan.
+Introduce a source-independent `UseCaseIntent` before deeper AI integration.
 
-Each evidence item should have an analytical role such as:
-- analysis backbone
-- primary measure
-- context
-- constraint
-- denominator
-- geography
-- validation
-- external dependency
-- missing evidence
+Suggested shape:
 
-This layer answers:
-
-> What evidence does this question require, and what role would each source play?
-
-Roles inferred by rules or AI are hypotheses, not source facts.
-
-### 6. Dataset structure inspection
-
-Selected datasets require deeper inspection before composition.
-
-A `DatasetStructure` should capture observed or source-declared information such as:
-- fields and types
-- labels
-- bounded sample values
-- geometry type / CRS / extent where available
-- temporal fields / coverage / grain
-- candidate keys
-- record count
-- evidence source for each structural claim
-
-Evidence levels must distinguish at least:
-- `catalog_metadata`
-- `schema_observed`
-- `sample_observed`
-
-Sampling should be bounded and performed only for selected datasets.
-
-### 7. Compatibility validation
-
-This is the central differentiation target.
-
-For any proposed dataset relationship, create a structured `CompatibilityAssessment` before adding a meaningful edge to the composition graph.
-
-Possible relation classes:
-- direct join
-- spatial join
-- nearest
-- interpolation required
-- aggregate required
-- resample required
-- incompatible
-- unknown
-
-An assessment should include:
-- left/right dataset
-- relation
-- confidence
-- reasons
-- warnings
-- candidate keys where relevant
-- proposed operation
-- evidence level
-
-The system must be comfortable saying `unknown` or `incompatible`.
-
-Examples:
-
-```text
-Tree canopy ↔ route geometry
-relation: spatial_join
-confidence: high
-evidence: schema_observed
-reason: polygon coverage can be intersected with route geometry
+```ts
+interface UseCaseIntent {
+  statement: string;
+  domainHints: string[];
+  geographicScope?: string;
+  temporalNeed?: 'current' | 'historical' | 'forecast' | 'mixed';
+  spatialNeed?: boolean;
+  desiredOutcome?: string;
+  constraints: string[];
+}
 ```
 
-```text
-Air quality ↔ route geometry
-relation: interpolation_required
-confidence: medium
-evidence: schema_observed
-warning: point sensor density may be insufficient for precise route-level claims
+The structure does not need to capture all human meaning. It exists to make downstream reasoning inspectable and testable.
+
+### 5. Evidence workspace
+
+A workspace is a selected set of datasets attached to one use case.
+
+It should grow to contain:
+- `UseCaseIntent`
+- selected datasets
+- evidence role of each dataset
+- unresolved evidence roles
+- compatibility assessments
+- composition graph
+- derived outputs
+
+### 6. Evidence plan
+
+Before datasets are joined, define **why each dataset exists in the method**.
+
+Suggested roles:
+
+```ts
+type EvidenceRoleType =
+  | 'analysis_backbone'
+  | 'primary_measure'
+  | 'context'
+  | 'constraint'
+  | 'denominator'
+  | 'geography'
+  | 'validation'
+  | 'external_dependency'
+  | 'missing';
+
+interface EvidenceRole {
+  id: string;
+  label: string;
+  roleType: EvidenceRoleType;
+  datasetId?: string;
+  required: boolean;
+  reason: string;
+}
 ```
 
-Important distinction:
+Example for a running comfort use case:
+- route geometry → analysis backbone
+- canopy → primary shade measure
+- air quality → environmental exposure
+- traffic → contextual stress
+- construction → temporary constraint
+- fountains → amenity access
+- elevation → effort
+- pollen → missing / external dependency
 
-```text
-semantic relation
-  !=
-analytical compatibility
+This plan is a better boundary for LLM reasoning than an unconstrained prompt over the whole catalogue.
+
+### 7. Data structure inspection
+
+Level 2/3 requires more than catalogue metadata.
+
+For selected datasets, build a `DatasetStructure` from source schema and safe sample observations where available.
+
+Suggested shape:
+
+```ts
+interface DatasetStructure {
+  datasetId: string;
+  fields: FieldProfile[];
+  geometry?: {
+    type: string;
+    crs?: string;
+    extent?: [number, number, number, number];
+  };
+  temporal?: {
+    fields: string[];
+    start?: string;
+    end?: string;
+    grain?: string;
+  };
+  candidateKeys: string[];
+  recordCount?: number;
+  observedFrom: 'catalog_metadata' | 'schema' | 'sample_records';
+}
 ```
 
-### 8. Composition graph
+Keep metadata-derived and observation-derived claims distinct.
 
-Only after compatibility information exists should Level 2 introduce typed operation nodes and edges.
+### 8. Compatibility engine
 
-Example operation primitives:
+This is a core differentiation layer.
+
+A relationship between two datasets is not accepted merely because titles or descriptions are semantically similar.
+
+The engine should assess:
+- spatial extent overlap
+- geometry compatibility
+- CRS compatibility
+- temporal overlap
+- temporal grain mismatch
+- granularity/resolution mismatch
+- candidate identifier/key compatibility
+- units where relevant
+- record/sample evidence
+
+Suggested model:
+
+```ts
+type CompatibilityRelation =
+  | 'direct_join'
+  | 'spatial_join'
+  | 'nearest'
+  | 'interpolation_required'
+  | 'aggregate_required'
+  | 'resample_required'
+  | 'incompatible'
+  | 'unknown';
+
+interface CompatibilityAssessment {
+  leftDatasetId: string;
+  rightDatasetId: string;
+  relation: CompatibilityRelation;
+  confidence: 'high' | 'medium' | 'low';
+  reasons: string[];
+  warnings: string[];
+  candidateKeys?: Array<{left: string; right: string}>;
+  proposedOperation?: string;
+  evidenceLevel: 'metadata_only' | 'schema_observed' | 'sample_validated';
+}
+```
+
+A strong UI should show when a relationship is only a candidate.
+
+### 9. Composition graph
+
+After compatibility is assessed, Level 4 introduces typed operations between evidence sources.
+
+Example primitives:
 - select / filter
 - spatial intersect
 - within
@@ -204,24 +247,23 @@ Example operation primitives:
 
 Every significant graph edge should be backed by a compatibility assessment.
 
-The graph is an executable intermediate representation, not a decorative knowledge graph.
+A composition edge should reference the compatibility assessment that justified it.
 
-### 9. Execution layer
+### 10. Execution layer
 
-Level 3 turns a validated composition graph into deterministic computation.
+Turns a validated composition graph into deterministic computation.
 
 Likely first implementation:
 - DuckDB + spatial extension or equivalent local/server data engine
 - GeoJSON / Parquet-friendly pipelines
-- operation definitions exposed through a small tool interface
+- typed operation definitions
+- transformation provenance
 
 An MCP server may expose these operations to an LLM, but MCP is an interface to the execution layer, not the architecture itself.
 
-Execution introduces a stronger evidence level: a relationship or transformation can be validated by actual computation rather than metadata/schema assumptions.
+### 11. Materialization
 
-### 10. Materialization
-
-Once data + method + result schema exist, the system can propose and generate the appropriate form:
+Once data + validated method + output schema exist, the system can propose and generate the appropriate form:
 - map
 - dashboard
 - ranked table
@@ -232,17 +274,37 @@ Once data + method + result schema exist, the system can propose and generate th
 
 Materialization should follow the data and decision context rather than defaulting to a dashboard.
 
-The output must preserve source and transformation provenance and carry warnings/caveats forward.
+## Evidence levels
+
+Borrow the useful discipline seen in adjacent systems: every claim should make clear what it is grounded in.
+
+Proposed evidence levels:
+
+```text
+CATALOG_METADATA_ONLY
+SCHEMA_OBSERVED
+SAMPLE_VALIDATED
+EXECUTED_RESULT
+MODEL_INFERENCE
+```
+
+Examples:
+- “dataset is geospatial” may come from metadata or schema
+- “these fields share names” may come from schema
+- “these values actually join” requires sample validation
+- “this operation produced 312 matching records” is an executed result
+- “this dataset would likely provide useful context” is model inference
+
+Never collapse these into a single confidence score.
 
 ## AI boundary
 
 AI may:
 - interpret intent
 - identify candidate evidence
-- propose evidence roles
-- rerank candidates
+- assign/propose evidence roles
 - explain relevance
-- propose joins and transformations
+- hypothesize joins and transformations
 - identify likely gaps
 - explain compatibility assessments
 - recommend output forms
@@ -252,14 +314,48 @@ AI must not:
 - fabricate datasets
 - silently invent source fields
 - erase provenance
-- turn semantic similarity into claimed compatibility
+- promote candidate joinability to validated joinability
 - claim an unsupported spatial/temporal join is valid
-- hide uncertainty
 - execute transformations outside the deterministic operation layer
+
+Preferred responsibility split:
+
+```text
+LLM
+  hypothesis / interpretation
+       ↓
+structured evidence plan
+       ↓
+deterministic compatibility checks
+       ↓
+validated composition
+       ↓
+deterministic execution
+```
+
+## Prior-art implications
+
+### Public Data Lens
+Strong reference for discovery and judgement over a public-data portal. Its deterministic plan generation and explicit evidence levels validate our Level 1 direction.
+
+Architectural opportunity:
+- go beyond candidate join fields
+- inspect actual schema/sample data
+- validate spatial/temporal/key compatibility
+- turn a validated plan into executable composition
+
+### Data Commons
+Useful reference for metadata-first agent discovery and normalized public evidence, but it operates on an already-aligned knowledge graph. Our composition layer is for heterogeneous source datasets that may not naturally align.
+
+### Magda / Ceres
+Potential upstream infrastructure or reference implementations for catalogue ingestion, federation and retrieval. Do not duplicate mature catalogue infrastructure unless necessary.
+
+### CARTO
+Strong reference for spatial execution and workflow primitives. Our value is not inventing `buffer` or `intersect`; it is going from intent → evidence → validated method → execution with provenance.
 
 ## Evidence ladder
 
-Use an explicit evidence ladder across the system:
+The current branch ends at a real Level 1 workspace:
 
 ```text
 CATALOG_METADATA
@@ -297,4 +393,8 @@ structured use-case intent
   -> first deterministic compatibility assessment
 ```
 
-Do not jump directly to a polished Compose graph. First make the relationships defensible.
+The next architecture increment should **not** be a fancy Compose graph. It should be:
+
+`selected workspace -> evidence roles -> schema/sample inspection -> compatibility assessments`
+
+Only then should the graph become executable.
