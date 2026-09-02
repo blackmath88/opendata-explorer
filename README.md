@@ -62,7 +62,7 @@ The next build does **not** jump straight to a visual Compose editor. It adds:
 - real dataset schema/sample inspection
 - first deterministic compatibility assessments
 
-See `docs/NEXT_BUILD.md`.
+See `docs/NEXT_BUILD.md` for the engineering plan and `docs/CODEX_NEXT_PROMPT.md` for the ready-to-run Codex handoff.
 
 ## Run locally
 
@@ -88,6 +88,7 @@ See:
 - `docs/ROADMAP.md`
 - `docs/PRIOR_ART.md`
 - `docs/NEXT_BUILD.md`
+- `docs/CODEX_NEXT_PROMPT.md`
 
 ## Principles
 
@@ -134,3 +135,15 @@ We should learn from and reuse adjacent work where sensible:
 The project should not claim novelty for semantic search, basic open-data catalogue browsing or generic spatial workflow nodes.
 
 The main current differentiation target is **evidence compatibility validation between heterogeneous public datasets, followed by executable and provenance-preserving composition**.
+
+## Next gate
+
+Do not start the executable spatial-workbench milestone until the next build can answer these questions from real source evidence:
+
+- what fields actually exist?
+- what geometry does each selected dataset expose?
+- what temporal grain/coverage can be observed?
+- which apparent joins are direct, spatial, nearest-neighbour, interpolation-dependent, aggregate-dependent, incompatible, or simply unknown?
+- what evidence level supports each assessment?
+
+The composition graph should only visualize relationships that have this structured compatibility record behind them.
