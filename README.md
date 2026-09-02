@@ -1,18 +1,50 @@
 # Open Data Explorer / DataFit
 
-A use-case-first interface for public data catalogues.
+A use-case-first interface for public data catalogues that aims to go beyond discovery into **validated evidence composition**.
 
-Instead of asking users to know dataset names, publishers or administrative terminology, DataFit starts with a real-world question:
+Instead of asking users to know dataset names, publishers or administrative terminology, the platform starts with a real-world question:
 
 > What are you trying to understand or build?
 
-The first catalogue is Basel-Stadt Open Government Data (`data.bs.ch`). The longer-term platform goal is to support multiple catalogues through source adapters.
+The first catalogue is Basel-Stadt Open Government Data (`data.bs.ch`). The longer-term platform goal is to support multiple catalogues through source adapters or reusable catalogue infrastructure.
+
+## Current positioning
+
+Semantic dataset discovery is useful, but it is not enough and it is not unique.
+
+The stronger platform direction is:
+
+```text
+question
+  ↓
+discover candidate evidence
+  ↓
+assign evidence roles
+  ↓
+inspect structure / geography / time
+  ↓
+validate compatibility
+  ↓
+build executable composition
+  ↓
+materialize the right output
+```
+
+A key product principle is the distinction between:
+
+> **these datasets sound relevant**
+
+and
+
+> **these datasets can actually support this analytical method**.
+
+See `docs/PRIOR_ART.md` for the research that motivated this shift.
 
 ## Current milestone
 
 **Validated evidence foundation**
 
-Level 1 Discover is merged. The current branch `feat/evidence-validation-foundation` adds the substrate needed before a real Compose graph is justified:
+Level 1 Discover is merged. Building on `feat/level-1-discover-foundation`, the current branch `feat/evidence-validation-foundation` adds the substrate needed before a real Compose graph is justified:
 
 - structured deterministic `UseCaseIntent`
 - inferred evidence classes and analytical roles
@@ -50,19 +82,26 @@ npm run build
 catalogue adapter -> normalized metadata -> use-case intent -> evidence plan -> observed structure -> compatibility assessment -> executable composition -> artefact
 ```
 
-See `docs/ARCHITECTURE.md` and `docs/ROADMAP.md`.
+See:
+- `docs/ARCHITECTURE.md`
+- `docs/ROADMAP.md`
+- `docs/PRIOR_ART.md`
+- `docs/NEXT_BUILD.md`
+- `docs/CODEX_NEXT_PROMPT.md`
 
 ## Principles
 
 1. The catalogue is the canonical evidence source; an LLM is not.
 2. Missing data must be represented explicitly.
-3. AI improves interpretation and composition, not provenance.
-4. Source-specific APIs stop at the adapter boundary.
-5. Semantic relevance does not prove joinability.
-6. Compatibility confidence must state its evidence level.
-7. Composition operations must be inspectable and eventually executable.
-8. The UI follows `DESIGN.md`.
-9. Basel is the first implementation, not a hard-coded product boundary.
+3. Source facts, observations, execution results and model inferences must remain distinguishable.
+4. AI improves interpretation and composition, not provenance.
+5. Source-specific APIs stop at the adapter boundary.
+6. Semantic relevance does not prove joinability.
+7. Candidate relationships must be validated before execution.
+8. Compatibility confidence must state its evidence level.
+9. Composition operations must be inspectable and eventually executable.
+10. The UI follows `DESIGN.md`.
+11. Basel is the first implementation, not a hard-coded product boundary.
 
 ## Basel API
 
@@ -73,6 +112,10 @@ Base API:
 Catalogue:
 
 `GET /catalog/datasets`
+
+Dataset metadata:
+
+`GET /catalog/datasets/{dataset_id}`
 
 Dataset records:
 
