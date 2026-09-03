@@ -2,6 +2,7 @@ import type {
   CompatibilityAssessment,
   CompatibilityRelation,
   Confidence,
+  AssessmentInputs,
   DatasetStructure,
   EvidenceLevel,
   KeyOverlapEvidence,
@@ -9,6 +10,12 @@ import type {
 } from './types';
 import { extentsOverlap, primaryGeometryClass, type GeometryClass } from './geometry';
 import { GRAIN_ORDER } from './data/ods-structure';
+import {
+  COMPATIBILITY_RULE_VERSION,
+  canonicalJson,
+  hashString,
+  structureFingerprint,
+} from './fingerprint';
 
 /**
  * Deterministic compatibility assessment between two datasets.
@@ -53,7 +60,8 @@ export function assessCompatibility(
   const reasons: string[] = [];
   const warnings: string[] = [];
 
-  const keys = assessKeys(left, right, options.keyEvidence ?? [], reasons, warnings);
+  const keyEvidence = options.keyEvidence ?? [];
+  const keys = assessKeys(left, right, keyEvidence, reasons, warnings);
   // Notes that only make sense if the geometry relation is the one we report
   // (a distance-threshold caveat is noise next to a validated attribute join).
   const geometryNotes: string[] = [];
@@ -67,10 +75,10 @@ export function assessCompatibility(
   // A hard contradiction wins over any positive relation: two datasets that
   // cannot occupy the same place or the same time cannot be joined at all.
   if (geometry.relation === 'incompatible') {
-    return finish('incompatible', 'high', reasons, warnings, keys, undefined, geometry.evidence, left, right);
+    return finish('incompatible', 'high', reasons, warnings, keys, undefined, geometry.evidence, left, right, keyEvidence);
   }
   if (time.relation === 'incompatible') {
-    return finish('incompatible', 'high', reasons, warnings, keys, undefined, time.evidence, left, right);
+    return finish('incompatible', 'high', reasons, warnings, keys, undefined, time.evidence, left, right, keyEvidence);
   }
 
   let relation: CompatibilityRelation = 'unknown';
@@ -127,7 +135,7 @@ export function assessCompatibility(
     warnings.push('Confidence is capped: both sides are catalogue claims that have not been schema-verified.');
   }
 
-  return finish(relation, confidence, reasons, warnings, keys, operation, evidence, left, right);
+  return finish(relation, confidence, reasons, warnings, keys, operation, evidence, left, right, keyEvidence);
 }
 
 function finish(
@@ -140,10 +148,15 @@ function finish(
   evidenceLevel: EvidenceLevel,
   left: DatasetStructure,
   right: DatasetStructure,
+  keyEvidence: KeyOverlapEvidence[],
 ): CompatibilityAssessment {
+  const inputs = assessmentInputs(left, right, keyEvidence);
   return {
+    id: assessmentId(inputs),
     leftDatasetId: left.datasetId,
     rightDatasetId: right.datasetId,
+    leftStructureRef: inputs.leftStructureFingerprint,
+    rightStructureRef: inputs.rightStructureFingerprint,
     relation,
     confidence,
     reasons,
@@ -151,7 +164,57 @@ function finish(
     candidateKeys: keys.pairs.length ? keys.pairs : undefined,
     proposedOperation,
     evidenceLevel,
+    // When the assessment was last computed. The id identifies the *content*,
+    // so recomputing unchanged inputs refreshes this without changing the id.
+    assessedAt: new Date().toISOString(),
+    inputs,
   };
+}
+
+export function assessmentInputs(
+  left: DatasetStructure,
+  right: DatasetStructure,
+  keyEvidence: KeyOverlapEvidence[] = [],
+): AssessmentInputs {
+  return {
+    leftDatasetId: left.datasetId,
+    rightDatasetId: right.datasetId,
+    leftStructureFingerprint: structureFingerprint(left),
+    rightStructureFingerprint: structureFingerprint(right),
+    keyEvidenceFingerprint: keyEvidence.length
+      ? hashString(
+          canonicalJson(
+            [...keyEvidence].sort((a, b) =>
+              `${a.leftField}|${a.rightField}` < `${b.leftField}|${b.rightField}` ? -1 : 1,
+            ),
+          ),
+        )
+      : undefined,
+    ruleVersion: COMPATIBILITY_RULE_VERSION,
+  };
+}
+
+/**
+ * Content-derived id. Same inputs and same rules always produce the same id, so
+ * an execution result can be matched back to its justification, and a change in
+ * either structure produces a different id rather than silently reusing one.
+ */
+export function assessmentId(inputs: AssessmentInputs): string {
+  return `CMP-${hashString(canonicalJson(inputs))}`;
+}
+
+/**
+ * True when the assessment no longer describes the supplied structures — the
+ * data or the rules moved on and the conclusion must be recomputed before it is
+ * acted on again.
+ */
+export function isAssessmentStale(
+  assessment: CompatibilityAssessment,
+  left: DatasetStructure,
+  right: DatasetStructure,
+  keyEvidence: KeyOverlapEvidence[] = [],
+): boolean {
+  return assessmentId(assessmentInputs(left, right, keyEvidence)) !== assessment.id;
 }
 
 // ---------------------------------------------------------------------------
@@ -578,7 +641,17 @@ const EVIDENCE_BY_SOURCE: Record<ObservationSource, EvidenceLevel> = {
   sample_records: 'sample_validated',
 };
 
-const LEVEL_ORDER: EvidenceLevel[] = ['metadata_only', 'schema_observed', 'sample_validated'];
+/**
+ * The evidence ladder, weakest first. `execution_validated` is only ever
+ * produced by the execution layer, never by these rules — structure inspection
+ * cannot reach it, so it appears here purely for ordering.
+ */
+export const LEVEL_ORDER: EvidenceLevel[] = [
+  'metadata_only',
+  'schema_observed',
+  'sample_validated',
+  'execution_validated',
+];
 
 /** An assessment is only as good as its weaker input. */
 export function weakestEvidence(left: ObservationSource, right: ObservationSource): EvidenceLevel {

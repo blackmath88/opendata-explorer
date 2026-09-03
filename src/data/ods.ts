@@ -110,9 +110,20 @@ export function bboxFromFeature(value: unknown): [number, number, number, number
 export interface OdsFetchOptions {
   signal?: AbortSignal;
   timeoutMs?: number;
+  /** Extra attempts after a transport-level failure. */
+  retries?: number;
 }
 
-/** Fetch JSON with a timeout, surfacing ODS's structured error message. */
+/**
+ * Transport-level failures observed against this API under sustained
+ * sequential use: a large export occasionally ends in `fetch failed` while the
+ * same request succeeds moments later. A validation engine must not record
+ * that as an inconclusive result, so transport failures are retried. HTTP
+ * error responses are not — a 400 will stay a 400.
+ */
+const RETRY_BASE_MS = 400;
+
+/** Fetch JSON with a timeout and bounded retry, surfacing ODS's error message. */
 export async function odsFetch<T>(
   path: string,
   params: Record<string, string | number> = {},
@@ -121,27 +132,51 @@ export async function odsFetch<T>(
   const url = new URL(`${ODS_BASE}${path}`);
   for (const [key, value] of Object.entries(params)) url.searchParams.set(key, String(value));
 
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), options.timeoutMs ?? 20000);
-  if (options.signal) options.signal.addEventListener('abort', () => controller.abort(), { once: true });
+  const attempts = (options.retries ?? 2) + 1;
+  let lastError: unknown;
 
-  try {
-    const response = await fetch(url, {
-      headers: { Accept: 'application/json' },
-      signal: controller.signal,
-    });
-    if (!response.ok) {
-      let detail = '';
-      try {
-        const body = (await response.json()) as { message?: string };
-        detail = body.message ? ` — ${body.message}` : '';
-      } catch {
-        /* body was not JSON; the status alone is the signal */
+  for (let attempt = 0; attempt < attempts; attempt += 1) {
+    if (attempt > 0) await delay(RETRY_BASE_MS * 2 ** (attempt - 1));
+
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), options.timeoutMs ?? 20000);
+    if (options.signal) options.signal.addEventListener('abort', () => controller.abort(), { once: true });
+
+    try {
+      const response = await fetch(url, {
+        headers: { Accept: 'application/json' },
+        signal: controller.signal,
+      });
+      if (!response.ok) {
+        let detail = '';
+        try {
+          const body = (await response.json()) as { message?: string };
+          detail = body.message ? ` — ${body.message}` : '';
+        } catch {
+          /* body was not JSON; the status alone is the signal */
+        }
+        // A rejected request is an answer, not a glitch: do not retry it.
+        throw new Error(`${url.pathname} returned HTTP ${response.status}${detail}`);
       }
-      throw new Error(`${url.pathname} returned HTTP ${response.status}${detail}`);
+      return (await response.json()) as T;
+    } catch (error) {
+      lastError = error;
+      if (!isTransient(error)) throw error;
+    } finally {
+      clearTimeout(timeout);
     }
-    return (await response.json()) as T;
-  } finally {
-    clearTimeout(timeout);
   }
+
+  throw new Error(
+    `${url.pathname} failed after ${attempts} attempts: ${lastError instanceof Error ? lastError.message : 'unknown error'}`,
+  );
+}
+
+const delay = (ms: number): Promise<void> => new Promise(resolve => setTimeout(resolve, ms));
+
+/** Transport failures and timeouts are worth retrying; HTTP errors are not. */
+function isTransient(error: unknown): boolean {
+  if (!(error instanceof Error)) return false;
+  if (error.name === 'AbortError' || error.name === 'TimeoutError') return true;
+  return /fetch failed|network|ECONNRESET|ETIMEDOUT|EAI_AGAIN|socket|terminated/i.test(error.message);
 }

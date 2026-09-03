@@ -92,3 +92,16 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10px;back
 /* The inspector is a dismissible drawer below the desktop breakpoint, so it needs a control. */
 .inspector-toggle{display:none}
 @media(max-width:1000px){.inspector-toggle{display:inline-block}}
+
+/* Execution validation on a relationship card. Tokens only, no new palette. */
+.exec{margin-top:10px;padding-top:10px;border-top:1px solid var(--divider)}
+.exec-idle{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.exec-running{font-size:11px;color:var(--muted)}
+.exec-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.exec-verdict{font-size:10px;font-weight:700;letter-spacing:.08em;padding:4px 9px;border-radius:999px;border:1px solid var(--border);background:var(--surface2);color:var(--muted)}
+.exec-confirmed .exec-verdict{color:#fff;background:var(--primary2);border-color:var(--primary2)}
+.exec-rejected .exec-verdict{color:var(--danger);background:#f6e3df;border-color:#dfc0b9}
+.exec-failed .exec-verdict{color:var(--warn);background:#f6efe5;border-color:#e0cfb4}
+.exec-facts{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:8px;font-size:11px}
+.exec-sources{margin-top:8px;font-size:10px;color:#414944;display:flex;flex-direction:column;gap:2px}
+.exec-ids{margin-top:8px;display:flex;gap:6px;flex-wrap:wrap}

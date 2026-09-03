@@ -368,8 +368,8 @@ Layer by layer:
 | 6 Evidence plan | role templates per outcome archetype, with gaps and external dependencies | `src/evidence.ts` |
 | 7 Structure inspection | schema for free from the listing; bounded record sampling on request | `src/data/ods-structure.ts` |
 | 8 Compatibility engine | implemented, pure, deterministic | `src/compatibility.ts` |
-| 9 Composition graph | **not started** — the workbench lists assessments, it does not compose | — |
-| 10 Execution | **not started** | — |
+| 9 Composition graph | **not started** — the workbench lists assessments and their executions, it does not compose them | — |
+| 10 Execution | first slice: one operation at a time, derived from one assessment | `src/execution/` |
 | 11 Materialization | **not started** | — |
 
 ### Notes the model gained from contact with a real API
@@ -388,9 +388,42 @@ Layer by layer:
 - **`unknown` and `incompatible` are load-bearing outputs.** Three of eight
   tested Basel pairs land there, and each names what is missing.
 
+### What execution added, and what it cost
+
+The evidence ladder now ends at `execution_validated`, and the boundary is
+enforced rather than described:
+
+```text
+CompatibilityAssessment  (id derived from its inputs)
+        ↓  planOperation() — the only way to obtain one
+SpatialOperation         (references assessmentId; parameters explicit)
+        ↓  ExecutionEngine.execute()
+ExecutionResult          (references both; records sources, engine, verdict)
+        ↓  deriveStatus()
+EvidenceStatus           (derived, never written back)
+```
+
+Three rules the implementation had to learn from real data:
+
+- **Execution never mutates the assessment.** A result points back at its
+  justification; the proposal and the outcome that tested it stay side by side,
+  because the interesting cases are the ones where they disagree.
+- **A failure is not a rejection.** A run that could not complete proves nothing
+  about the hypothesis and must never read as a verdict.
+- **Bounded inputs produce bounded claims.** A truncated source is a biased
+  subset, not a sample; a truncated target means the true nearest feature may
+  never have loaded. The two are reported differently, and either downgrades a
+  confirmation to `partial`.
+
 ## Next architecture increment
 
 `validated assessments -> typed composition graph -> deterministic execution`
+
+Individual operations now execute. The missing piece is composition: an
+operation whose *input* is another operation's output, rather than a dataset.
+`AggregateParameters.sourceExecutionId` is the first instance of that pattern
+and shows what the graph needs — a node addressed by execution id rather than
+by dataset id.
 
 The graph should carry the compatibility assessment on the edge, not re-derive
 it. Nothing should render an edge that has no assessment behind it.

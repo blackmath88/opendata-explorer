@@ -42,7 +42,7 @@ See `docs/PRIOR_ART.md` for the research that motivated this shift.
 
 ## Current milestone
 
-**Level 2/3 — Evidence plan and compatibility validation**
+**Level 4 (first slice) — Executable spatial validation**
 
 Implemented:
 - Vite + TypeScript + D3 scaffold
@@ -57,13 +57,18 @@ Implemented:
 - deterministic compatibility engine producing typed, evidence-levelled assessments between selected datasets
 - Compose stage as an inspector/workbench, not a node editor
 - six canonical benchmark use cases with unit tests
+- **referenceable assessments** — content-derived ids, structure fingerprints and staleness detection
+- **executable spatial operations** derived from assessments, never from UI edges
+- **a deterministic execution engine** (Turf over GeoJSON) running spatial join, nearest and bounded aggregate against live Basel geometry
+- **execution-validated evidence**, including rejections of the system's own high-confidence proposals
 
-Not built yet, deliberately: DuckDB/spatial execution, MCP, Materialize, LLM
-integration, multi-catalogue support, a visual node editor.
+Not built yet, deliberately: MCP, Materialize, LLM integration, multi-catalogue
+support, a visual node editor, persistence.
 
 See `docs/BASEL_API_FINDINGS.md` for what the live API actually returns and what
-the compatibility engine concluded, `docs/NEXT_BUILD.md` for the engineering plan
-and `docs/CODEX_NEXT_PROMPT.md` for the Codex handoff.
+the compatibility engine concluded, and `docs/BASEL_EXECUTION_FINDINGS.md` for
+what happened when those conclusions were executed against real geometry —
+including three high-confidence `nearest` proposals that execution rejected.
 
 ## Run locally
 
@@ -78,16 +83,24 @@ Build:
 npm run build
 ```
 
-Tests (offline; they run against the frozen catalogue snapshot, never the live API):
+Tests (offline; they run against the frozen catalogue snapshot and fixed GeoJSON
+fixtures, never the live API):
 
 ```bash
 npm test
 ```
 
+Live integration tests, which execute real operations against `data.bs.ch`.
+Opt-in, so CI never depends on a public API being up:
+
+```bash
+npm run test:live
+```
+
 ## Architecture in one line
 
 ```text
-catalogue adapter -> normalized metadata -> data fit -> evidence plan -> compatibility validation -> executable composition -> materialized artefact
+catalogue adapter -> normalized metadata -> data fit -> evidence plan -> compatibility validation -> executed validation -> materialized artefact
 ```
 
 See:
@@ -96,6 +109,7 @@ See:
 - `docs/PRIOR_ART.md`
 - `docs/NEXT_BUILD.md`
 - `docs/BASEL_API_FINDINGS.md`
+- `docs/BASEL_EXECUTION_FINDINGS.md`
 - `docs/CODEX_NEXT_PROMPT.md`
 
 ### Module map
@@ -108,7 +122,9 @@ src/evidence.ts         evidence-role templates and dataset resolution
 src/relevance.ts        deterministic ranking
 src/geometry.ts         geometry families and extent maths
 src/compatibility.ts    deterministic compatibility engine (pure, no I/O)
+src/fingerprint.ts      deterministic structure fingerprints and ids
 src/workspace.ts        bounded orchestration of inspection + assessment
+src/execution/          operation contracts, engine, geometry sources, fixtures
 src/data/               Opendatasoft adapter, normalizer, structure builder, fallback
 src/benchmarks/         six canonical use cases with expectations
 src/ui/                 rendering only

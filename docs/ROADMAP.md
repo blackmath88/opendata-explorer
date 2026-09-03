@@ -185,6 +185,15 @@ Exit condition:
 
 Build milestone name: **Spatial Workbench**.
 
+Status: **first slice complete — individual validations, not yet a graph.**
+Assessments are referenceable, operations are derived only from assessments,
+and a deterministic engine executes spatial join, nearest and a bounded
+aggregate against live Basel geometry, recording execution-validated evidence
+either way. Three high-confidence `nearest` proposals were rejected by
+execution, which is the capability this level exists to prove. See
+`docs/BASEL_EXECUTION_FINDINGS.md`. Still missing: a typed multi-step graph,
+persistence, and execution of interpolation and temporal relations.
+
 ---
 
 ## Level 5 — Materialize

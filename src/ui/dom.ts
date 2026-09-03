@@ -26,12 +26,13 @@ export function formatDate(value?: string): string {
  * claim, something we observed, and something this application inferred must
  * never look like the same kind of statement.
  */
-export type Provenance = 'source' | 'schema' | 'sample' | 'system' | 'ai';
+export type Provenance = 'source' | 'schema' | 'sample' | 'execution' | 'system' | 'ai';
 
 const PROVENANCE_LABEL: Record<Provenance, string> = {
   source: 'source',
   schema: 'schema observed',
   sample: 'sample observed',
+  execution: 'execution validated',
   system: 'system inference',
   ai: 'ai inference',
 };
@@ -40,6 +41,7 @@ const PROVENANCE_TITLE: Record<Provenance, string> = {
   source: 'Published by the data owner in the catalogue metadata.',
   schema: 'Read from the dataset schema exposed by the source API.',
   sample: 'Observed in stored records, or in a server-side aggregate over them.',
+  execution: 'The operation was run against real geometry and produced this result.',
   system: 'Deterministic inference by this application. A proposal, not a source fact.',
   ai: 'Reserved for future model-generated proposals. Nothing in this build uses it.',
 };
@@ -54,7 +56,13 @@ export const observationProvenance = (source: ObservationSource): Provenance =>
   source === 'sample_records' ? 'sample' : source === 'schema' ? 'schema' : 'source';
 
 export const evidenceProvenance = (level: EvidenceLevel): Provenance =>
-  level === 'sample_validated' ? 'sample' : level === 'schema_observed' ? 'schema' : 'source';
+  level === 'execution_validated'
+    ? 'execution'
+    : level === 'sample_validated'
+      ? 'sample'
+      : level === 'schema_observed'
+        ? 'schema'
+        : 'source';
 
 export const originProvenance = (origin: ClaimOrigin): Provenance =>
   origin === 'source_metadata' ? 'source' : origin === 'model_inference' ? 'ai' : 'system';
@@ -63,6 +71,7 @@ export const EVIDENCE_LABEL: Record<EvidenceLevel, string> = {
   metadata_only: 'metadata only',
   schema_observed: 'schema observed',
   sample_validated: 'sample validated',
+  execution_validated: 'execution validated',
 };
 
 export const CONFIDENCE_LABEL: Record<Confidence, string> = {
