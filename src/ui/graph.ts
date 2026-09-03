@@ -1,6 +1,7 @@
 import * as d3 from 'd3';
 import type { DatasetMatch } from '../types';
 import { truncate } from './dom';
+import { GRAPH_LABEL_LIMIT, selectGraphMatches } from '../catalogue-ui';
 
 /**
  * The semantic landscape.
@@ -16,12 +17,10 @@ interface LandscapeNode extends d3.SimulationNodeDatum {
   topic: string;
 }
 
-const MAX_NODES = 80;
 /**
  * Labelling every node produced unreadable overlap on a 361-dataset catalogue,
  * so only the strongest matches (and the selection) carry text.
  */
-const MAX_LABELS = 24;
 
 export function renderGraph(
   container: HTMLElement,
@@ -39,7 +38,7 @@ export function renderGraph(
   svgSelection.attr('viewBox', `0 0 ${width} ${height}`);
   svgSelection.selectAll('*').remove();
 
-  const data = matches.slice(0, MAX_NODES);
+  const data = selectGraphMatches(matches);
   if (!data.length) {
     svgSelection.append('text').attr('x', 24).attr('y', 42).attr('class', 'empty-note')
       .text('No datasets match this filter.');
@@ -49,8 +48,8 @@ export function renderGraph(
   const nodes: LandscapeNode[] = data.map(match => ({
     match,
     topic: match.dataset.semantic.topics[0] ?? match.dataset.themes[0]?.toLowerCase() ?? 'other',
-    x: width / 2,
-    y: height / 2,
+    x: width * (0.2 + seeded(match.dataset.id, 0) * 0.6),
+    y: height * (0.18 + seeded(match.dataset.id, 1) * 0.64),
   }));
 
   const topics = [...new Set(nodes.map(node => node.topic))];
@@ -64,7 +63,7 @@ export function renderGraph(
   const radius = (node: LandscapeNode) => 9 + Math.max(4, node.match.relevance.score * 0.13);
   const labelCutoff = [...nodes]
     .sort((a, b) => b.match.relevance.score - a.match.relevance.score)
-    .slice(0, MAX_LABELS)
+    .slice(0, GRAPH_LABEL_LIMIT)
     .at(-1)?.match.relevance.score ?? 0;
   const isLabelled = (node: LandscapeNode) =>
     node.match.relevance.score >= labelCutoff || selectedId === node.match.dataset.id;
@@ -103,12 +102,16 @@ export function renderGraph(
     .force('y', d3.forceY<LandscapeNode>(d => centers.get(d.topic)?.y ?? height / 2).strength(0.2))
     .force('charge', d3.forceManyBody().strength(-48))
     .force('collide', d3.forceCollide<LandscapeNode>(d => radius(d) + (isLabelled(d) ? 40 : 12)))
-    .on('tick', () => {
-      node.attr(
-        'transform',
-        d => `translate(${clamp(d.x ?? 0, 40, width - 40)},${clamp(d.y ?? 0, 30, height - 46)})`,
-      );
-    });
+    .stop();
+
+  // Compute the layout before paint. The landscape is an index, not an
+  // animation: it must be still while a user reads or selects a dataset.
+  simulation.tick(260);
+  node.attr(
+    'transform',
+    d => `translate(${clamp(d.x ?? 0, 40, width - 40)},${clamp(d.y ?? 0, 30, height - 46)})`,
+  );
+  simulation = null;
 }
 
 export function stopGraph(): void {
@@ -117,6 +120,12 @@ export function stopGraph(): void {
 }
 
 const clamp = (value: number, min: number, max: number): number => Math.max(min, Math.min(max, value));
+
+function seeded(value: string, salt: number): number {
+  let hash = 2166136261 ^ salt;
+  for (const char of value) hash = Math.imul(hash ^ char.charCodeAt(0), 16777619);
+  return (hash >>> 0) / 4294967295;
+}
 
 function fill(match: DatasetMatch): string {
   switch (match.evidenceClass) {

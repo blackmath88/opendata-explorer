@@ -10,7 +10,7 @@ import type {
 } from '../types';
 import { PairAssessment, WorkspaceAnalysis, WorkspaceEntry } from '../workspace';
 import type { ExecutionResult } from '../execution/types';
-import { deriveStatus, STATUS_LABEL, type EvidenceStatus } from '../execution/status';
+import { deriveStatus, STATUS_LABEL } from '../execution/status';
 import {
   CONFIDENCE_LABEL,
   EVIDENCE_LABEL,
@@ -64,6 +64,63 @@ export function renderSourceNotice(catalog: CatalogState): string {
   )}). ${catalog.notes.map(escapeHtml).join(' ')} Nothing shown here is live data.</div>`;
 }
 
+export function renderSourceDiagnostics(catalog: CatalogState): string {
+  const complete = catalog.reportedTotal === undefined || catalog.reportedTotal === catalog.datasets.length;
+  return section('Catalogue source', `<dl class="source-diagnostics">
+    <div><dt>Mode</dt><dd>${catalog.source === 'live' ? 'Live' : 'Fallback cache'}</dd></div>
+    <div><dt>Source</dt><dd>Basel-Stadt OGD</dd></div>
+    <div><dt>Datasets loaded</dt><dd>${formatCount(catalog.datasets.length)}${catalog.reportedTotal !== undefined ? ` / ${formatCount(catalog.reportedTotal)} reported` : ''}</dd></div>
+    <div><dt>Completeness</dt><dd>${complete ? 'Complete' : 'Partial'}</dd></div>
+    <div><dt>Last loaded</dt><dd>${escapeHtml(new Date(catalog.loadedAt).toLocaleString('de-CH'))}</dd></div>
+  </dl>`);
+}
+
+export function renderEvidenceSummary(plan: EvidencePlan, datasets: DatasetRecord[]): string {
+  const byId = new Map(datasets.map(dataset => [dataset.id, dataset]));
+  const counts = { direct: 0, supporting: 0, contextual: 0 };
+  for (const role of plan.roles) {
+    if (!role.datasetId) continue;
+    if (role.required && role.roleType === 'primary_measure') counts.direct += 1;
+    else if (role.roleType === 'context' || role.roleType === 'constraint') counts.contextual += 1;
+    else counts.supporting += 1;
+  }
+  const context = [plan.intent.spatialNeed ? 'Spatial' : '', plan.intent.temporalNeed ? `${plan.intent.temporalNeed} conditions` : '', plan.intent.geographicScope ?? 'Basel'].filter(Boolean).join(' · ');
+  const roles = plan.roles.map(role => `<li><span>${escapeHtml(role.label)}</span><b class="${role.datasetId ? '' : 'missing-role'}">${escapeHtml(role.datasetId ? byId.get(role.datasetId)?.title ?? role.datasetId : 'Missing / external')}</b></li>`).join('');
+  return `<section class="evidence-summary">
+    <div class="question-summary"><span class="eyebrow">Proposed evidence plan · system inferred</span><b>${escapeHtml(plan.intent.statement)}</b><span>${escapeHtml(context)}</span></div>
+    <div class="plan-summary"><span class="eyebrow">Evidence plan</span>
+      <div><b>${counts.direct}</b><span>Direct</span></div><div><b>${counts.supporting}</b><span>Supporting</span></div>
+      <div><b>${counts.contextual}</b><span>Context</span></div><div class="summary-gap"><b>${plan.roles.filter(r => !r.datasetId).length}</b><span>Missing roles</span></div>
+    </div><details class="summary-roles"><summary>Show ${plan.roles.length} evidence roles</summary><ul>${roles}</ul></details>
+  </section>`;
+}
+
+export function renderCatalogueRows(
+  datasets: DatasetRecord[],
+  matches: DatasetMatch[],
+  workspace: Set<string>,
+): string {
+  const matchById = new Map(matches.map(match => [match.dataset.id, match]));
+  if (!datasets.length) return '<div class="catalogue-empty">No datasets match these catalogue filters.</div>';
+  return datasets.map(dataset => {
+    const match = matchById.get(dataset.id);
+    const freshness = formatDate(dataset.modified);
+    return `<article class="catalogue-row" data-id="${escapeHtml(dataset.id)}">
+      <button class="catalogue-open" aria-label="Inspect ${escapeHtml(dataset.title)}">
+        <span class="catalogue-title">${escapeHtml(dataset.title)}</span>
+        <span class="catalogue-id">${escapeHtml(dataset.id)}</span>
+        <span class="catalogue-publisher">${escapeHtml(dataset.publisher || 'Publisher not published')}</span>
+        <span class="catalogue-topics">${escapeHtml([...dataset.themes, ...dataset.semantic.topics].slice(0, 3).join(' · ') || 'No theme')}</span>
+        <span class="catalogue-count">${escapeHtml(formatCount(dataset.recordsCount))}</span>
+        <span class="catalogue-signals">${dataset.characteristics.geospatial ? 'Geo' : '—'} · ${dataset.characteristics.timeSeries || dataset.characteristics.temporalCoverage.length ? 'Time' : '—'}</span>
+        <span class="catalogue-date">${escapeHtml(freshness)}</span>
+        <span class="catalogue-evidence">${match ? escapeHtml(EVIDENCE_CLASS_LABEL[match.evidenceClass]) : 'catalogue'}</span>
+      </button>
+      <button class="small-btn row-workspace ${workspace.has(dataset.id) ? 'added' : ''}">${workspace.has(dataset.id) ? 'Added' : 'Add'}</button>
+    </article>`;
+  }).join('');
+}
+
 export function renderMatches(matches: DatasetMatch[], workspace: Set<string>, plan: EvidencePlan): string {
   if (!matches.length) return section('Top dataset matches', '<div class="dataset-detail">No matches in this filter.</div>');
 
@@ -108,7 +165,7 @@ export function renderMatches(matches: DatasetMatch[], workspace: Set<string>, p
   );
 }
 
-export function renderDatasetDetail(dataset: DatasetRecord, structure?: DatasetStructure): string {
+export function renderDatasetDetail(dataset: DatasetRecord, structure?: DatasetStructure, match?: DatasetMatch, plan?: EvidencePlan): string {
   const characteristics = dataset.characteristics;
   const rows: Array<[string, string]> = [
     ['Dataset id', dataset.id],
@@ -129,13 +186,21 @@ export function renderDatasetDetail(dataset: DatasetRecord, structure?: DatasetS
 
   return section(
     'Dataset detail',
-    `<div class="dataset-detail"><b>${escapeHtml(dataset.title)}</b>
+    `<div class="dataset-detail"><div class="detail-group"><span class="eyebrow">Overview</span><h3>${escapeHtml(dataset.title)}</h3>
+       <p>${escapeHtml(dataset.description || 'No catalogue description published.')}</p>
+       <a href="${escapeHtml(dataset.sourceUrl)}" target="_blank" rel="noreferrer">Open source dataset ↗</a></div>
+       <div class="detail-group"><span class="eyebrow">Catalogue</span>
        <table class="kv">${rows
          .map(([key, value]) => `<tr><th>${escapeHtml(key)}</th><td>${escapeHtml(value)}</td></tr>`)
-         .join('')}</table>
+         .join('')}
+         <tr><th>Themes</th><td>${escapeHtml(dataset.themes.join(', ') || 'not published')}</td></tr>
+         <tr><th>Keywords</th><td>${escapeHtml(dataset.keywords.join(', ') || 'not published')}</td></tr>
+         <tr><th>Formats</th><td>${escapeHtml(dataset.formats.join(', ') || 'not published')}</td></tr>
+         <tr><th>Fields</th><td>${escapeHtml(formatCount(dataset.fieldCount))}</td></tr>
+       </table>
        <div class="prov-row">${provenanceTag('source', 'catalogue metadata')}</div>
-       <p>${escapeHtml(dataset.description || 'No catalogue description published.')}</p>
-       <a href="${escapeHtml(dataset.sourceUrl)}" target="_blank" rel="noreferrer">Open source dataset ↗</a>
+       <div class="detail-links"><a href="${escapeHtml(dataset.sourceUrl)}" target="_blank" rel="noreferrer">Open source dataset ↗</a>${dataset.licenseUrl ? ` <a href="${escapeHtml(dataset.licenseUrl)}" target="_blank" rel="noreferrer">Licence ↗</a>` : ''}</div></div>
+       ${match ? `<div class="detail-group relevance-detail"><span class="eyebrow">Relevance · system inferred</span><div class="badges"><span class="badge badge-${escapeHtml(match.evidenceClass)}">${escapeHtml(EVIDENCE_CLASS_LABEL[match.evidenceClass])}</span>${match.roleIds.map(id => `<span class="badge badge-role">${escapeHtml(plan?.roles.find(role => role.id === id)?.label ?? id)}</span>`).join('')}</div><p>${escapeHtml(match.relevance.explanation)}</p>${provenanceTag('system', 'deterministic ranking')}</div>` : ''}
      </div>
      ${structure ? renderStructure(structure) : ''}`,
   );
@@ -178,13 +243,12 @@ export function renderStructure(structure: DatasetStructure): string {
     : '<li class="quiet">No candidate identifier found.</li>';
 
   const fields = structure.fields
-    .slice(0, 24)
     .map(field => {
       const sample = field.sampleValues?.length
         ? `<span class="field-sample">${escapeHtml(truncate(field.sampleValues.map(v => String(typeof v === 'object' ? JSON.stringify(v) : v)).join(' · '), 60))}</span>`
         : '';
       return `<tr>
-        <td><code>${escapeHtml(field.name)}</code></td>
+        <td><code>${escapeHtml(field.name)}</code><span class="field-description">${escapeHtml(field.label ?? '')}${field.description ? ` · ${escapeHtml(field.description)}` : ''}</span></td>
         <td class="quiet">${escapeHtml(field.type ?? '')}${field.unit ? ` · ${escapeHtml(field.unit)}` : ''}</td>
         <td class="quiet">${escapeHtml((field.roleHints ?? []).join(', '))}</td>
         <td>${sample}</td>
@@ -211,9 +275,9 @@ export function renderStructure(structure: DatasetStructure): string {
     </div>
     <div class="sub-title">Candidate identifiers</div>
     <ul class="key-list">${keys}</ul>
-    <div class="sub-title">Fields (${structure.fields.length})</div>
-    <table class="fields">${fields}</table>
-    ${structure.fields.length > 24 ? `<div class="quiet">…and ${structure.fields.length - 24} more.</div>` : ''}
+    <div class="sub-title">Structure · fields (${structure.fields.length})</div>
+    <table class="fields"><thead><tr><th>Field</th><th>Type</th><th>Role</th><th>Observation</th></tr></thead><tbody>${fields}</tbody></table>
+    <div class="prov-row">${provenanceTag('schema')} ${structure.observedFrom === 'sample_records' ? provenanceTag('sample', 'bounded values') : ''}</div>
     ${structure.notes.length ? `<div class="notice">${structure.notes.map(escapeHtml).join('<br>')}</div>` : ''}`;
 }
 
@@ -338,6 +402,7 @@ function renderPair({ left, right, assessment }: PairAssessment, executions: Exe
 
   return `
   <article class="rel-card rel-${escapeHtml(assessment.relation)}">
+    <div class="phase-label">Proposal · system inferred</div>
     <div class="rel-head">
       <div class="rel-title">${escapeHtml(truncate(left.title, 46))} <span class="rel-arrow">↔</span> ${escapeHtml(
         truncate(right.title, 46),
@@ -411,13 +476,16 @@ function renderExecution(
     .map(([key, value]) => `<div><span class="quiet">${escapeHtml(humanKey(key))}</span> <b>${escapeHtml(String(value))}</b></div>`)
     .join('');
 
-  return `<div class="exec exec-${escapeHtml(statusClass(status))}">
+  const presentation = executionPresentation(execution);
+  return `<div class="exec exec-${escapeHtml(presentation.className)}">
+      <div class="phase-label">Execution · real source data</div>
       <div class="exec-head">
-        <span class="exec-verdict">${escapeHtml(STATUS_LABEL[status].toUpperCase())}</span>
+        <span class="exec-verdict">${escapeHtml(presentation.label)}</span>
         ${provenanceTag('execution')}
         <span class="quiet">${escapeHtml(execution.engine.name)} ${escapeHtml(execution.engine.version)}</span>
       </div>
       ${facts ? `<div class="exec-facts">${facts}</div>` : ''}
+      <div class="exec-interpretation"><span class="eyebrow">Interpretation</span><p>${escapeHtml(presentation.interpretation)}</p></div>
       ${
         execution.validation.reasons.length
           ? `<ul class="rel-reasons">${execution.validation.reasons.map(r => `<li>${escapeHtml(humanise(r))}</li>`).join('')}</ul>`
@@ -447,14 +515,14 @@ function renderExecution(
     </div>`;
 }
 
-const statusClass = (status: EvidenceStatus): string =>
-  status === 'execution_confirmed'
-    ? 'confirmed'
-    : status === 'execution_rejected'
-      ? 'rejected'
-      : status === 'execution_failed' || status === 'execution_stale'
-        ? 'failed'
-        : 'idle';
+export function executionPresentation(execution: ExecutionResult): { label: string; className: string; interpretation: string } {
+  switch (execution.status) {
+    case 'confirmed': return { label: 'CONFIRMED', className: 'confirmed', interpretation: 'The proposed relationship was supported by execution against real source data.' };
+    case 'rejected': return { label: 'REJECTED', className: 'rejected', interpretation: 'The relationship is structurally possible, but execution found it too weak for the proposed analysis.' };
+    case 'partial': return { label: 'PARTIAL', className: 'partial', interpretation: 'The operation ran on a bounded or truncated subset. Treat the result as provisional.' };
+    case 'failed': return { label: 'FAILED', className: 'failed', interpretation: 'Execution could not complete. This is a runtime or transport failure, not evidence against the proposal.' };
+  }
+}
 
 const humanKey = (key: string): string =>
   key
