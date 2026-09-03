@@ -1,0 +1,459 @@
+{
+  "project": {
+    "name": "Open Data Explorer",
+    "working_name": "DataFit",
+    "repository": "https://github.com/blackmath88/opendata-explorer",
+    "initial_catalogue": "Basel-Stadt Open Government Data",
+    "initial_catalogue_url": "https://data.bs.ch",
+    "status": "showcase prototype",
+    "core_thesis": "Public-data access is not the main problem. The harder problem is turning a civic question into a defensible evidence architecture: discovering relevant datasets, understanding their roles, validating whether they can actually work together, and recommending an appropriate representation of the result.",
+    "positioning_sentence": "Open Data Explorer turns civic questions into validated evidence workflows: discover what data fits, test how it can actually work together, execute selected relationships, and recommend the right form for the result."
+  },
+  "product_principles": [
+    "Start with what the user wants to understand or build, not with dataset names.",
+    "The official catalogue and source data remain canonical; AI is never the evidence source.",
+    "Semantic relevance does not prove analytical compatibility.",
+    "Candidate relationships must remain distinguishable from schema-observed, sample-validated and execution-validated relationships.",
+    "Missing or external evidence must be represented explicitly.",
+    "The graph or visualization is a projection of structured evidence, not the source of truth.",
+    "The public prototype should be useful without requiring an LLM, API key, Worker or backend.",
+    "Generative compute should preferably remain on the user's side; the platform provides evidence, method and representation intelligence."
+  ],
+  "showcase_prototype": {
+    "goal": "Create a compelling public prototype suitable for submission to the Basel-Stadt Open Data Showcase portal.",
+    "scope": [
+      "load the complete live Basel-Stadt catalogue in the browser",
+      "provide a better searchable and inspectable index than the source portal",
+      "offer an Atlas view that makes the catalogue navigable through meaningful projections",
+      "accept a natural-language civic use case",
+      "build a proposed evidence plan with direct, supporting, contextual and missing evidence",
+      "inspect real dataset structure and provenance",
+      "assess compatibility between selected datasets",
+      "validate selected spatial relationships against real data",
+      "recommend useful ways to represent the result",
+      "render a small set of client-side visualization templates"
+    ],
+    "explicitly_not_required": [
+      "Cloudflare Worker",
+      "persistent database",
+      "authentication",
+      "multi-city catalogue federation",
+      "live LLM dependency",
+      "MCP deployment",
+      "generic node-editor workflow builder",
+      "full application generator"
+    ]
+  },
+  "canonical_flow": [
+    "catalogue",
+    "atlas_index",
+    "user_intent",
+    "evidence_plan",
+    "dataset_structure",
+    "compatibility_assessment",
+    "execution_validation",
+    "representation_recommendation",
+    "client_side_rendering"
+  ],
+  "levels": [
+    {
+      "level": 0,
+      "name": "Catalogue",
+      "question": "What data exists?",
+      "capabilities": [
+        "complete live catalogue loading",
+        "direct search by id, title, description, publisher, keyword and theme",
+        "filters",
+        "dataset detail",
+        "source provenance",
+        "live versus fallback state"
+      ]
+    },
+    {
+      "level": 1,
+      "name": "Atlas",
+      "question": "How can I navigate the public-data landscape?",
+      "capabilities": [
+        "derived civic taxonomy",
+        "multiple catalogue projections",
+        "hierarchical drill-down",
+        "curated question trails",
+        "recently updated datasets"
+      ]
+    },
+    {
+      "level": 2,
+      "name": "Discover evidence",
+      "question": "Which evidence fits my use case?",
+      "capabilities": [
+        "natural-language use-case input",
+        "structured intent",
+        "evidence roles",
+        "direct, supporting, contextual and missing classes",
+        "transparent relevance reasons",
+        "workspace selection"
+      ]
+    },
+    {
+      "level": 3,
+      "name": "Compose and validate",
+      "question": "Can these datasets actually work together?",
+      "capabilities": [
+        "schema and field inspection",
+        "geometry and temporal inspection",
+        "candidate-key analysis",
+        "typed compatibility assessments",
+        "spatial join, nearest, aggregation and incompatibility proposals",
+        "execution validation against real geometry",
+        "confirmed, rejected, partial and failed outcomes",
+        "provenance-preserving assessment identities"
+      ]
+    },
+    {
+      "level": 4,
+      "name": "Represent",
+      "question": "What is the right form for this result?",
+      "capabilities": [
+        "recommend map, chart, table, comparison cards, brief or reusable data output",
+        "bind executed result fields to visualization templates",
+        "explain why a representation fits the data and user intent"
+      ]
+    },
+    {
+      "level": 5,
+      "name": "Generate",
+      "question": "How is that representation instantiated?",
+      "capabilities": [
+        "client-side template rendering",
+        "optional LLM-host generation from a structured representation specification",
+        "standalone HTML or application output where appropriate"
+      ]
+    }
+  ],
+  "atlas": {
+    "purpose": "Make the complete catalogue feel like navigable terrain rather than an administrative list or an undifferentiated force graph.",
+    "design_reference": "GitHub Atlas interaction grammar: maps over lists, curated lenses, drill-down and signal over noise.",
+    "primary_taxonomy_strategy": {
+      "type": "corpus-derived",
+      "principle": "The topical taxonomy should be induced from the actual Basel catalogue rather than imposed as a generic universal category tree.",
+      "inputs": [
+        "title",
+        "description",
+        "official themes",
+        "keywords",
+        "publisher",
+        "field schema",
+        "geometry characteristics",
+        "temporal characteristics"
+      ],
+      "method": "Use deterministic metadata rules where confidence is high; optionally use an LLM to classify ambiguous records and help induce or refine category boundaries.",
+      "provenance_rule": "LLM category assignments are model inference, never source metadata.",
+      "output": {
+        "primary_category": "one main atlas home",
+        "secondary_categories": "zero or more cross-cutting categories",
+        "confidence": "classification confidence",
+        "reason": "short explanation",
+        "origin": "source, deterministic system inference or model inference"
+      }
+    },
+    "projections": [
+      {
+        "id": "topic",
+        "label": "Civic theme",
+        "question": "What is the data about?",
+        "classification": "Basel-corpus-derived taxonomy",
+        "example_domains": [
+          "Mobility and Transport",
+          "Environment and Climate",
+          "Built City and Infrastructure",
+          "People and Society",
+          "Public Space and Leisure",
+          "Health and Wellbeing",
+          "Education and Research",
+          "Culture and Heritage",
+          "Economy and Work",
+          "Government and Administration"
+        ],
+        "note": "Example labels are scaffolding only; final categories and counts should be derived from the live corpus."
+      },
+      {
+        "id": "space",
+        "label": "Space",
+        "question": "What spatial form does this dataset describe?",
+        "classification": "deterministic",
+        "values": [
+          "non_spatial",
+          "point",
+          "line",
+          "polygon",
+          "mixed_geometry",
+          "raster_or_external_spatial_asset",
+          "unknown"
+        ]
+      },
+      {
+        "id": "time",
+        "label": "Time",
+        "question": "How does this dataset relate to time?",
+        "classification": "deterministic where supported by metadata/schema",
+        "values": [
+          "static_reference",
+          "current_state",
+          "periodic_snapshot",
+          "time_series",
+          "frequently_updated",
+          "historical",
+          "unknown"
+        ],
+        "rule": "Do not label a dataset historical or archived merely because it is old; require supporting metadata or observed temporal structure."
+      },
+      {
+        "id": "readiness",
+        "label": "Readiness",
+        "question": "How usable is this dataset for analysis?",
+        "classification": "derived from source/schema/sample evidence",
+        "values": [
+          "ready",
+          "needs_transformation",
+          "sparse",
+          "external_asset",
+          "empty",
+          "mixed_geometry",
+          "unknown"
+        ]
+      },
+      {
+        "id": "analytical_use",
+        "label": "Analytical use",
+        "question": "What kinds of analytical roles can this dataset play?",
+        "classification": "deterministic plus optional model enrichment",
+        "values": [
+          "locate_things",
+          "measure_conditions",
+          "count_activity",
+          "describe_areas",
+          "track_change",
+          "define_boundaries",
+          "record_events",
+          "connect_entities",
+          "reference_data"
+        ]
+      },
+      {
+        "id": "question",
+        "label": "This question",
+        "question": "How does the catalogue reorganize around the active use case?",
+        "classification": "evidence plan projection",
+        "values": [
+          "direct",
+          "supporting",
+          "contextual",
+          "missing",
+          "incompatible"
+        ]
+      }
+    ],
+    "interaction": {
+      "default": "hierarchical atlas categories, not all datasets in one live force simulation",
+      "drill_down": "domain -> subcategory -> datasets",
+      "alternative_view": "complete searchable list remains available",
+      "d3_role": "render deliberate projections of the same canonical catalogue, with stable layouts rather than continuously drifting nodes"
+    }
+  },
+  "freshness_and_landing_page": {
+    "worker_required_for_showcase": false,
+    "available_now": [
+      "modified timestamp",
+      "update frequency where declared",
+      "catalogue loaded timestamp",
+      "record count and temporal coverage where available"
+    ],
+    "landing_panel": {
+      "title": "Recently updated",
+      "source": "sort live catalogue by modified timestamp",
+      "rule": "Do not call modified datasets new unless a reliable creation timestamp is available."
+    },
+    "future_optional_worker": {
+      "purpose": [
+        "catalogue snapshots",
+        "new/changed/disappeared dataset detection",
+        "historical change feed",
+        "scheduled enrichment",
+        "cached model classifications"
+      ],
+      "not_needed_for": "showing current live catalogue or current recently modified datasets"
+    }
+  },
+  "intelligence_boundary": {
+    "deterministic": [
+      "catalogue loading",
+      "normalization",
+      "space classification",
+      "temporal signals",
+      "freshness",
+      "schema inspection",
+      "compatibility rules",
+      "execution validation",
+      "source and transformation provenance"
+    ],
+    "llm_optional": [
+      "ambiguous topical classification",
+      "taxonomy induction/refinement",
+      "natural-language intent interpretation",
+      "evidence-role suggestions",
+      "short dataset summaries",
+      "possible civic uses",
+      "representation recommendations",
+      "explanation of validated plans"
+    ],
+    "hybrid_indexing_rule": "Algorithmic by default, semantic escalation when uncertain."
+  },
+  "representation_layer": {
+    "principle": "The orchestrator should recommend and describe representations, while rendering/generative compute can happen in the client or user's LLM host.",
+    "canonical_contract": "RepresentationSpec",
+    "library_independent": true,
+    "renderers": {
+      "maps": "MapLibre GL JS",
+      "charts": "Observable Plot",
+      "custom_atlas": "D3.js",
+      "information_views": "HTML/CSS",
+      "optional_interchange": "Vega-Lite-inspired declarative specifications"
+    },
+    "initial_templates": [
+      {
+        "id": "map-point-layer",
+        "renderer": "maplibre",
+        "use_for": ["fountains", "trees", "sensors", "schools"]
+      },
+      {
+        "id": "map-area-metric",
+        "renderer": "maplibre",
+        "use_for": ["choropleths", "counts per area", "coverage metrics"]
+      },
+      {
+        "id": "map-spatial-relationship",
+        "renderer": "maplibre",
+        "use_for": ["points plus zones", "points plus routes", "access relationships"]
+      },
+      {
+        "id": "ranked-bar",
+        "renderer": "observable-plot",
+        "use_for": ["top/bottom areas", "counts by category", "rankings"]
+      },
+      {
+        "id": "time-series",
+        "renderer": "observable-plot",
+        "use_for": ["air quality", "traffic", "temperature", "change over time"]
+      },
+      {
+        "id": "distribution-dot",
+        "renderer": "observable-plot",
+        "use_for": ["distance distributions", "coverage", "variation"]
+      },
+      {
+        "id": "comparison-cards",
+        "renderer": "html-css",
+        "use_for": ["route comparisons", "option comparisons", "small indicator sets"]
+      },
+      {
+        "id": "evidence-brief",
+        "renderer": "html-css",
+        "use_for": ["question/evidence/method/result/caveat/source summaries"]
+      }
+    ],
+    "example_spec": {
+      "template": "ranked-bar",
+      "renderer": "observable-plot",
+      "title": "Fountains by Tempo-30 zone",
+      "bindings": {
+        "category": "zone_name",
+        "value": "fountain_count"
+      },
+      "sort": "descending"
+    }
+  },
+  "mcp_end_state": {
+    "role": "Dataset orchestrator and evidence-architecture service for LLM hosts.",
+    "principle": "The MCP should not merely return data. It should tell an LLM what evidence exists, how it can be combined, what has been validated, what remains missing, and which representation templates fit the result.",
+    "candidate_tools": [
+      "search_datasets",
+      "build_evidence_plan",
+      "inspect_dataset",
+      "assess_compatibility",
+      "validate_relationship",
+      "suggest_analysis",
+      "suggest_representation",
+      "get_template"
+    ],
+    "flow": [
+      "user describes idea in ChatGPT/Claude/other host",
+      "LLM asks DataFit MCP for evidence plan",
+      "MCP returns source-backed dataset candidates and roles",
+      "MCP inspects and validates compatibility",
+      "MCP optionally executes bounded deterministic operations",
+      "MCP returns analysis plan and RepresentationSpec options",
+      "user's LLM host or browser renders/generates the final artefact"
+    ],
+    "compute_model": "Data intelligence and bounded validation can run in the service; expensive generative rendering stays with the user/client where possible."
+  },
+  "current_engine_findings": {
+    "catalogue": {
+      "live_unique_datasets_observed": 361,
+      "fallback_snapshot_datasets": 44,
+      "cors": "open",
+      "pagination_rule": "ordered pagination is required for stable complete catalogue loading"
+    },
+    "important_dataset_findings": [
+      "Baumkronenbedeckung is a table of raster download links, not a directly intersectable vector canopy layer.",
+      "The obvious Baustellen dataset lacks usable geometry; Allmendbewilligungen provides usable permit polygons for construction/public-space analysis.",
+      "Some air-quality datasets are sparse single-site measurements and can be analytically incompatible with city-network questions.",
+      "Structural compatibility can be misleading: high-confidence nearest proposals against sparse cycle-route geometry were rejected by execution."
+    ],
+    "evidence_ladder": [
+      "metadata_only",
+      "schema_observed",
+      "sample_validated",
+      "execution_validated"
+    ]
+  },
+  "showcase_demo": {
+    "target_duration_minutes": "3-5",
+    "moments": [
+      "Show the complete live Basel catalogue and navigate it through Atlas projections.",
+      "Switch between Topic, Space, Time and Readiness to show the same catalogue as different projections.",
+      "Enter a civic use case and show the catalogue reorganize as direct/supporting/contextual/missing evidence.",
+      "Select two datasets and show a compatibility proposal.",
+      "Validate one relationship with real data and show either confirmation or rejection.",
+      "Offer two or three recommended representation templates for the resulting evidence."
+    ],
+    "recommended_demo_cases": [
+      {
+        "name": "Public fountain access",
+        "purpose": "Demonstrate a confirmed spatial relationship and a map/ranking representation."
+      },
+      {
+        "name": "Cycling comfort",
+        "purpose": "Demonstrate why a structurally plausible nearest relationship can be rejected after execution."
+      },
+      {
+        "name": "Running comfort in heat",
+        "purpose": "Demonstrate evidence roles, useful datasets and explicit missing/external dependencies."
+      }
+    ]
+  },
+  "submission_positioning": {
+    "suggested_title": "Open Data Explorer — A navigable atlas for Basel-Stadt Open Data",
+    "suggested_description": "A use-case-first exploration layer for Basel-Stadt's Open Government Data catalogue. The prototype organizes the live catalogue into navigable thematic, spatial, temporal and readiness views, helps users discover datasets from real-world questions, evaluates whether selected datasets can actually be combined, and recommends useful visual forms for the result. Rather than replacing the official portal, it adds an exploratory and analytical layer on top of its APIs.",
+    "datasets_to_list_in_showcase": "List the concrete datasets used in the curated demo executions rather than all catalogue records."
+  },
+  "future_extensions": [
+    "Cloudflare Worker for catalogue snapshots and change history",
+    "LLM-assisted dynamic taxonomy refinement",
+    "MCP dataset orchestrator",
+    "multi-catalogue adapters such as opendata.swiss or Zürich",
+    "persistent evidence workspaces",
+    "larger representation-template registry",
+    "versioned catalogue and enrichment index",
+    "client-generated standalone reports/apps from RepresentationSpec"
+  ]
+}
