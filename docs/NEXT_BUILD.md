@@ -1,386 +1,450 @@
-# Next build — from Discover to validated evidence
+# Next build — trusted evidence beyond Basel
 
-This document is intentionally implementation-focused. The next build should **stabilize Level 1 and create the substrate for compatibility validation**. Do not build a polished Compose graph yet.
+The core prototype now has enough internal machinery to move beyond manual dataset composition.
+
+Current `main` already contains:
+
+- live Basel-Stadt catalogue loading and normalization
+- complete catalogue List/search
+- hierarchical Atlas projections across Topic / Space / Time / Readiness
+- one deterministic D3 hierarchy containing every dataset
+- semantic zoom controls and Atlas focus state
+- use-case intent + evidence-role planning
+- schema/structure inspection
+- deterministic compatibility assessments
+- executable spatial validation against real Basel geometry
+- user-facing **Build** framing instead of exposing `Compose` as the main mental model
+- renderer-independent `RepresentationSpec`
+- deterministic representation recommendations
+
+The product direction is now:
+
+```text
+QUESTION
+  ↓
+LOCAL EVIDENCE — BASEL-STADT
+  ↓
+MISSING / WEAK EVIDENCE ROLES
+  ↓
+TRUSTED SWISS SUPPORTING SOURCES
+  ↓
+BUILD PLAN + REPRESENTATION
+  ↓
+BACKGROUND COMPATIBILITY / VALIDATION
+  ↓
+PREVIEW / RESULT
+  ↓
+MCP ORCHESTRATOR
+```
+
+`Compose` remains an internal system process. A normal user should not have to experiment with arbitrary dataset pairs.
+
+---
+
+# Current UX rule
+
+The normal user journey should answer:
+
+1. What do you want to understand or build?
+2. What local Basel evidence supports it?
+3. What important evidence is missing or too weak locally?
+4. Can a trusted Swiss public source fill that gap?
+5. What can DataFit build from the resulting evidence?
+6. What relationships need checking before the proposed result is trustworthy?
+7. What was confirmed, rejected, partial, or still unknown?
+
+Detailed pairwise compatibility, schemas and provenance remain inspectable as technical detail, not the primary workflow.
+
+---
+
+# Next milestone — Trusted Evidence Registry v1
 
 ## Goal
 
-At the end of the next build, a user should be able to:
+When an evidence role is unresolved or materially weak in the Basel catalogue, DataFit should be able to propose a small curated set of official Swiss public-data sources that are known to be useful for that role.
 
-1. load the real Basel-Stadt catalogue reliably
-2. enter a use case
-3. get a defensible dataset shortlist
-4. add datasets to a workspace
-5. see the intended role of each dataset
-6. inspect real fields/schema/sample records for selected datasets
-7. see first structured compatibility assessments between selected datasets
+This is **not** full multi-catalogue search.
 
-The system does **not** need to execute spatial joins yet.
+This is an opinionated, testable registry of trusted supporting evidence.
 
----
-
-# Phase 1 — Build/runtime verification
-
-## Tasks
-
-- run `npm install`
-- run `npm run build`
-- run app locally
-- fix all TypeScript/runtime errors
-- verify D3 rendering
-- verify responsive shell
-- preserve `DESIGN.md` exactly as the visual source of truth
-
-## Acceptance
-
-- clean build
-- no console errors on first load
-- fallback mode still works
-
----
-
-# Phase 2 — Harden the Basel adapter
-
-## Inspect real endpoints
-
-Base:
-`https://data.bs.ch/api/explore/v2.1`
-
-Required:
-- `/catalog/datasets`
-- `/catalog/datasets/{dataset_id}`
-- `/catalog/datasets/{dataset_id}/records`
-
-## Tasks
-
-- inspect real JSON response shape
-- remove assumptions that do not match source response
-- normalize title, description, publisher, theme, keyword, licence, modified time, features/formats
-- preserve source URL/id
-- verify pagination and catalogue total
-- add explicit loading / live / fallback / failed status
-- verify CORS in browser
-
-## Acceptance
-
-- live catalogue loads from Basel on normal browser run
-- source mode is visible
-- catalogue count is accurate
-- normalizer handles missing optional metadata safely
-
----
-
-# Phase 3 — Introduce structured use-case intent
-
-Create:
-
-```ts
-export interface UseCaseIntent {
-  statement: string;
-  domainHints: string[];
-  spatialNeed: boolean;
-  temporalNeed?: 'current' | 'historical' | 'forecast' | 'mixed';
-  geographicScope?: string;
-  desiredOutcome?: string;
-  constraints: string[];
-}
-```
-
-Start deterministic. Do not require an LLM.
-
-Create a parser that extracts useful hints from the current example use cases.
-
-Canonical examples:
-1. running comfort
-2. urban heat interventions
-3. cycling safety/comfort
-4. public fountain access
-5. construction/mobility impact
-6. school environmental conditions
-
-## Acceptance
-
-- every benchmark prompt creates a stable `UseCaseIntent`
-- parser has unit tests
-- raw statement is always retained
-
----
-
-# Phase 4 — Evidence classes and roles
-
-Add two related concepts.
-
-## Relevance class
-
-```ts
-export type EvidenceClass =
-  | 'direct'
-  | 'supporting'
-  | 'contextual'
-  | 'missing';
-```
-
-## Analytical role
-
-```ts
-export type EvidenceRoleType =
-  | 'analysis_backbone'
-  | 'primary_measure'
-  | 'context'
-  | 'constraint'
-  | 'denominator'
-  | 'geography'
-  | 'validation'
-  | 'external_dependency'
-  | 'missing';
-
-export interface EvidenceRole {
-  id: string;
-  label: string;
-  roleType: EvidenceRoleType;
-  datasetId?: string;
-  required: boolean;
-  reason: string;
-}
-```
-
-## UI
-
-In the inspector/workspace show:
-- evidence class
-- proposed analytical role
-- why the role is useful
-- whether the role is required
-- unresolved/missing roles
-
-Do not make the model's proposal look authoritative. Mark inferred roles clearly.
-
-## Acceptance
-
-For the running example, expected plan includes at least:
-- route geometry → backbone / external
-- canopy → primary measure
-- air quality → primary/context exposure
-- traffic → context
-- fountains → context/amenity
-- construction → constraint
-- elevation → context
-- pollen → missing/external
-
----
-
-# Phase 5 — Dataset structure inspection
-
-Create a new source-adapter method for selected datasets only.
-
-Suggested API:
-
-```ts
-interface CatalogueAdapter {
-  listDatasets(): Promise<DatasetRecord[]>;
-  getDataset(id: string): Promise<DatasetRecord>;
-  inspectDataset(id: string): Promise<DatasetStructure>;
-}
-```
-
-Suggested model:
-
-```ts
-export interface FieldProfile {
-  name: string;
-  type?: string;
-  label?: string;
-  sampleValues?: unknown[];
-  roleHints?: string[];
-}
-
-export interface DatasetStructure {
-  datasetId: string;
-  fields: FieldProfile[];
-  geometry?: {
-    type: string;
-    crs?: string;
-    extent?: [number, number, number, number];
-  };
-  temporal?: {
-    fields: string[];
-    start?: string;
-    end?: string;
-    grain?: string;
-  };
-  candidateKeys: string[];
-  recordCount?: number;
-  observedFrom: 'catalog_metadata' | 'schema' | 'sample_records';
-}
-```
-
-Use source metadata first. Add a small safe record sample only when required.
-
-## Important
-
-Clearly distinguish:
-- metadata claim
-- schema observation
-- sample observation
-
-## Acceptance
-
-Selecting a Basel dataset can display:
-- available fields
-- geometry signal if available
-- likely temporal fields
-- sample values for a bounded number of fields/records
-- evidence level
-
----
-
-# Phase 6 — First compatibility engine
-
-Do not use an LLM for the first implementation.
-
-Create:
-
-```ts
-export type CompatibilityRelation =
-  | 'direct_join'
-  | 'spatial_join'
-  | 'nearest'
-  | 'interpolation_required'
-  | 'aggregate_required'
-  | 'resample_required'
-  | 'incompatible'
-  | 'unknown';
-
-export interface CompatibilityAssessment {
-  leftDatasetId: string;
-  rightDatasetId: string;
-  relation: CompatibilityRelation;
-  confidence: 'high' | 'medium' | 'low';
-  reasons: string[];
-  warnings: string[];
-  candidateKeys?: Array<{ left: string; right: string }>;
-  proposedOperation?: string;
-  evidenceLevel: 'metadata_only' | 'schema_observed' | 'sample_validated';
-}
-```
-
-## First checks
-
-Implement simple deterministic rules for:
-- both datasets have geometry → candidate spatial relation
-- point + polygon → candidate spatial join / within
-- point + line → nearest candidate
-- both have temporal coverage → overlap/no overlap
-- same/similar candidate field names → candidate direct join
-- obvious grain mismatch → aggregate/resample warning
-- insufficient structure → unknown, never fake confidence
-
-## UI
-
-In Compose, show selected dataset pairs and compatibility cards/edges.
-
-Example:
+Example for the running-route use case:
 
 ```text
-Tree canopy ↔ route geometry
-SPATIAL JOIN
-Confidence: high
-Evidence: schema observed
-Reason: polygon coverage can be intersected with route geometry
+LOCAL — BASEL-STADT
+✓ trees / urban nature
+✓ fountains
+✓ traffic / mobility context
+✓ construction context
+△ local air measurements are sparse
 
-Air quality ↔ route geometry
-INTERPOLATION REQUIRED
-Confidence: medium
-Evidence: schema observed
-Warning: sensor point density may be insufficient for precise route-level claims
+SWISS PUBLIC DATA
++ swisstopo road/path network      → route backbone
++ swisstopo elevation / terrain    → slope / effort
++ MeteoSwiss weather               → current weather context
++ MeteoSwiss pollen                → allergen exposure
+
+STILL MISSING
+? evidence that cannot be defensibly resolved
 ```
 
-## Acceptance
-
-Test at least six relationships:
-- 3 expected useful
-- 3 expected uncertain/incompatible
-
-The system must be able to return `unknown` and `incompatible`.
+The UI must make source scope and provenance obvious.
 
 ---
 
-# Phase 7 — Benchmarks
+## 1. Research the real national sources first
 
-Create fixtures/tests for six canonical use cases.
+Verify current official access patterns, metadata and licensing before implementing adapters.
 
-Each benchmark should specify:
-- prompt
-- expected intent hints
-- expected evidence roles
-- datasets/titles expected in top-N where known
-- expected missing roles
+Prioritize:
 
-Do not demand exact ranking numbers. Test semantic outcome.
+### MeteoSwiss
 
-Suggested path:
+Research exact official sources for:
+- weather observations
+- temperature
+- precipitation
+- wind
+- humidity
+- pollen
 
-`src/benchmarks/useCases.ts`
+Determine:
+- catalogue/resource URL
+- actual machine-readable endpoint
+- STAC/REST/download access pattern
+- geometry
+- temporal resolution
+- freshness
+- Basel-area query/filter strategy
+- CORS/browser viability
+- licence / attribution requirements
+
+### swisstopo / geo.admin.ch
+
+Research exact official sources for:
+- road/path network suitable as a route backbone
+- elevation / terrain suitable for slope/effort
+
+Determine:
+- API/download endpoint
+- available geometry/format
+- whether Basel bounding-box extraction is practical
+- browser CORS
+- licence / attribution
+- whether the source is suitable for direct execution or only download/materialization
+
+### Federal Statistical Office — BFS/FSO
+
+Research one or two high-value sources for:
+- population denominators
+- spatial population/geostatistics
+- demographic context
+
+This is secondary to MeteoSwiss + swisstopo for v1.
+
+### opendata.swiss
+
+Use it primarily as:
+- national metadata discovery
+- source validation
+- catalogue linking
+
+Do not ingest the whole national catalogue into DataFit.
+
+Create:
+
+`docs/TRUSTED_EVIDENCE_FINDINGS.md`
+
+Record exact endpoints, formats, CORS, scope, freshness, licensing and caveats. Do not document guessed URLs or capabilities.
 
 ---
 
-# What NOT to build in this pass
+## 2. Introduce a curated registry
 
-- production authentication
-- persistent projects/workspaces
-- full LLM integration
-- embeddings infrastructure unless trivial
-- executable DuckDB spatial pipeline
-- generic visual node editor
-- Materialize generator
+Suggested model — adapt if the current type system suggests a cleaner shape:
+
+```ts
+export type EvidenceScope = 'local' | 'national' | 'external';
+
+export type TrustedAccessType =
+  | 'opendatasoft'
+  | 'ckan'
+  | 'stac'
+  | 'geo_admin'
+  | 'rest'
+  | 'download';
+
+export interface TrustedEvidenceSource {
+  id: string;
+  label: string;
+  provider: string;
+  scope: EvidenceScope;
+  trust: 'official';
+  topics: string[];
+  evidenceRoleIds: string[];
+  accessType: TrustedAccessType;
+  catalogueUrl: string;
+  endpoint?: string;
+  notes: string[];
+}
+```
+
+If useful, distinguish provider/source from an individual curated resource.
+
+The important thing is that the registry knows **why** a resource is useful:
+
+```text
+pollen          → MeteoSwiss pollen
+weather         → MeteoSwiss observations
+route backbone  → swisstopo roads / paths
+elevation       → swisstopo terrain
+population      → BFS geostatistics
+```
+
+This mapping is system curation, not source metadata. Preserve that provenance distinction.
+
+---
+
+## 3. Add an Evidence Resolver
+
+Create a source-independent resolver boundary.
+
+Conceptually:
+
+```text
+EvidencePlan
+   ↓
+role already filled adequately by Basel?
+   ├─ yes → retain local evidence
+   └─ no
+       ↓
+Trusted Evidence Registry
+       ↓
+rank only curated candidates for that role
+       ↓
+ExternalEvidenceCandidate[]
+```
+
+Rules:
+
+- local adequate evidence wins by default
+- national sources fill gaps; they do not automatically replace suitable Basel data
+- a national candidate is a **candidate**, not a validated relationship
+- never turn a registry match into compatibility evidence without inspection/validation
+- do not search arbitrary internet sources
+- do not silently claim retrieval succeeded when only metadata was found
+
+Suggested candidate state:
+
+```ts
+interface ExternalEvidenceCandidate {
+  roleId: string;
+  sourceId: string;
+  reason: string;
+  scope: 'national' | 'external';
+  status: 'known_source' | 'metadata_resolved' | 'retrievable' | 'inspected';
+  origin: 'system_inference';
+}
+```
+
+Exact types may differ.
+
+---
+
+## 4. Keep proxy/server infrastructure minimal
+
+Do **not** add a Worker or proxy merely because the source APIs differ.
+
+First verify direct browser access.
+
+Preferred prototype architecture:
+
+```text
+frontend / DataFit core
+  ├─ Basel adapter
+  ├─ trusted registry
+  ├─ MeteoSwiss adapter
+  └─ swisstopo adapter
+```
+
+If a source cannot be used safely/reliably from the browser because of CORS, request shape or credentials, introduce the smallest normalization/proxy boundary needed and document exactly why.
+
+Long-term we may expose a normalized API such as:
+
+```text
+/api/sources
+/api/search
+/api/datasets/:id
+/api/data/:id
+```
+
+but that is not a requirement for this showcase milestone.
+
+---
+
+## 5. Integrate into Build, not a new catalogue screen
+
+Do not make users browse a second national-data catalogue.
+
+The normal Build summary should become something like:
+
+```text
+EVIDENCE FOR YOUR IDEA
+
+Local · Basel-Stadt
+✓ Tree inventory
+✓ Fountains
+✓ Traffic context
+
+Swiss public data
++ MeteoSwiss pollen
+  Fills: pollen / allergen exposure
+
++ swisstopo terrain
+  Fills: elevation / slope
+
+Still unresolved
+✕ perceived route comfort
+```
+
+Each national candidate should show:
+- provider
+- scope (`Swiss public data`)
+- role it fills
+- why it was proposed
+- retrieval/inspection status
+- source link
+
+Allow technical users to inspect details, but keep this compact by default.
+
+---
+
+## 6. Running demo acceptance case
+
+The canonical running prompt should demonstrate the value of external resolution.
+
+Expected behavior:
+
+- Basel evidence is resolved first
+- route-network weakness is explicitly recognized
+- swisstopo roads/paths is proposed as a stronger route-backbone candidate if verified by research
+- elevation gap resolves to a verified swisstopo source
+- pollen gap resolves to MeteoSwiss pollen
+- weather is offered as useful optional/current context
+- local air-quality limitations remain honest rather than being hidden
+
+Do not force an external candidate if the verified source does not actually support the role.
+
+---
+
+## 7. Tests
+
+Add deterministic offline fixtures and tests for:
+
+- local evidence wins when adequate
+- external resolution happens only for unresolved/weak roles
+- pollen → curated MeteoSwiss source
+- elevation → curated swisstopo source
+- route backbone → curated swisstopo source only if research validates suitability
+- provenance/scope labels
+- candidate status never implies compatibility validation
+- missing remains missing when no curated source exists
+- resolver works with no network
+
+Add opt-in live tests only for stable official endpoints where useful.
+
+Do not make the normal test suite depend on public APIs.
+
+---
+
+# Small parallel UX cleanup allowed
+
+While integrating the resolver, clean up remaining implementation-language leaks in the user-facing Build flow:
+
+- replace `Compose evidence` with `Build` / `Continue` / `Check data fit` language
+- do not show the full pairwise relationship matrix by default
+- keep the recommended `RepresentationSpec` visible as the purpose of the evidence plan
+- show compatibility/validation only for relationships required by the chosen representation
+- preserve technical detail behind an expandable section
+
+Do not redesign the Atlas in this milestone unless an actual regression is discovered.
+
+---
+
+# Explicitly out of scope
+
+Do not build yet:
+
 - MCP server
-- multiple data portals
-- elaborate graph animation
-
-These are later milestones.
-
----
-
-# Recommended commit sequence for Codex
-
-1. `chore: verify build and harden app shell`
-2. `fix: normalize live Basel catalogue metadata`
-3. `feat: add structured use-case intent`
-4. `feat: add evidence classes and analytical roles`
-5. `feat: inspect selected dataset structures`
-6. `feat: add deterministic compatibility assessments`
-7. `test: add canonical use-case benchmarks`
-8. `docs: report findings and remaining unknowns`
+- full opendata.swiss federation
+- embeddings over the whole Swiss catalogue
+- arbitrary web search
+- live LLM classification
+- Worker/history service
+- auth/accounts
+- persistent projects
+- generic dashboard builder
+- arbitrary generated HTML
 
 ---
 
-# Required Codex report
+# After this milestone
 
-At the end, report:
+## Next — Representation preview/rendering
 
-## Build
-- build status
-- runtime status
-- errors fixed
+Use the existing `RepresentationSpec` contract to prove a very small renderer library:
 
-## Basel API
-- actual catalogue schema observations
-- CORS result
-- pagination behaviour
-- fields/features we can reliably normalize
-- fields we expected but could not find
+- MapLibre map
+- Observable Plot chart
+- HTML evidence brief / comparison
 
-## Dataset inspection
-- what schema/field metadata the API exposes
-- how useful sample records are
-- whether geometry type / temporal coverage can be inferred reliably
+Keep generation client-side.
 
-## Compatibility
-- relationships tested
-- what can be validated deterministically now
-- what remains candidate-only
+## Then — MCP orchestrator
 
-## Architecture concerns
-- anything in the current model that should change before execution work
+Expose the proven core to external LLM hosts:
 
-## Recommendation
-- whether the repo is ready to begin the first executable spatial composition
+```text
+search_datasets
+build_evidence_plan
+resolve_missing_evidence
+inspect_dataset
+assess_compatibility
+validate_relationship
+suggest_representation
+get_representation_spec
+```
+
+The MCP is an evidence/data orchestrator, not merely a retrieval API.
+
+## Later
+
+- Worker/history/change feed
+- broader trusted-source registry
+- multi-catalogue federation
+- optional LLM-assisted taxonomy/evidence enrichment
+
+---
+
+# Showcase success condition
+
+A non-technical reviewer should be able to complete this story in roughly five minutes:
+
+```text
+Explore Basel's data Atlas
+  ↓
+Describe an idea
+  ↓
+See useful local Basel evidence
+  ↓
+See important gaps
+  ↓
+See trusted Swiss sources fill appropriate gaps
+  ↓
+See what DataFit proposes to build
+  ↓
+Let DataFit check the necessary relationships in the background
+  ↓
+Understand what is confirmed, rejected or unresolved
+```
+
+That is enough to make the showcase prototype demonstrate the larger platform idea without prematurely building MCP or infrastructure.
