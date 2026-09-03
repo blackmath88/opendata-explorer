@@ -21,8 +21,24 @@
  */
 export type ObservationSource = 'catalog_metadata' | 'schema' | 'sample_records';
 
-/** The same ladder expressed for a relationship between two datasets. */
-export type EvidenceLevel = 'metadata_only' | 'schema_observed' | 'sample_validated';
+/**
+ * The same ladder expressed for a relationship between two datasets.
+ *
+ *   metadata_only       the publishers' claims are consistent with the relation
+ *   schema_observed     both schemas were read and support it
+ *   sample_validated    stored values were compared and support it
+ *   execution_validated the operation was actually run against real geometry
+ *
+ * `execution_validated` is deliberately a separate rung, not a strong flavour
+ * of `sample_validated`: sampling shows that values *look* joinable, execution
+ * shows that the operation *produced a result*, and only the latter can reject
+ * a structurally plausible hypothesis.
+ */
+export type EvidenceLevel =
+  | 'metadata_only'
+  | 'schema_observed'
+  | 'sample_validated'
+  | 'execution_validated';
 
 /**
  * Who is responsible for a statement shown in the UI. Source facts, system
@@ -272,9 +288,39 @@ export type CompatibilityRelation =
 
 export type Confidence = 'high' | 'medium' | 'low';
 
-export interface CompatibilityAssessment {
+/**
+ * What an assessment was computed from.
+ *
+ * Recorded so that an execution result can name its justification precisely,
+ * and so a later reader can tell whether the assessment still describes the
+ * data. If either fingerprint no longer matches the current structure, the
+ * assessment is stale — see `isAssessmentStale`.
+ */
+export interface AssessmentInputs {
   leftDatasetId: string;
   rightDatasetId: string;
+  leftStructureFingerprint: string;
+  rightStructureFingerprint: string;
+  /** Digest of the value-level key evidence that was available, if any. */
+  keyEvidenceFingerprint?: string;
+  /** Rule set that produced the outcome. */
+  ruleVersion: string;
+}
+
+export interface CompatibilityAssessment {
+  /**
+   * Derived from `inputs`, so the same inputs always yield the same id and any
+   * change to the structures or the rules yields a different one. An execution
+   * result referencing an id that no longer reproduces is visibly stale.
+   */
+  id: string;
+
+  leftDatasetId: string;
+  rightDatasetId: string;
+
+  /** Fingerprint of each side's structure at assessment time. */
+  leftStructureRef: string;
+  rightStructureRef: string;
 
   relation: CompatibilityRelation;
 
@@ -288,6 +334,10 @@ export interface CompatibilityAssessment {
   proposedOperation?: string;
 
   evidenceLevel: EvidenceLevel;
+
+  assessedAt: string;
+
+  inputs: AssessmentInputs;
 }
 
 /**
