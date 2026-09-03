@@ -1,6 +1,11 @@
 import * as d3 from 'd3';
 import type { AtlasBucket } from '../atlas';
 
+interface AtlasHierarchyDatum {
+  bucket?: AtlasBucket;
+  children?: AtlasHierarchyDatum[];
+}
+
 export function renderAtlasBuckets(
   container: HTMLElement,
   svgSelection: d3.Selection<SVGSVGElement, unknown, HTMLElement, unknown>,
@@ -20,46 +25,39 @@ export function renderAtlasBuckets(
     return;
   }
 
+  const rootData: AtlasHierarchyDatum = { children: active.map(bucket => ({ bucket })) };
   const root = d3
-    .hierarchy<{ children?: AtlasBucket[]; value?: number }>({ children: active })
-    .sum(d => ('datasetIds' in d ? (d as unknown as AtlasBucket).datasetIds.length : 0));
-
-  const pack = d3.pack<typeof root.data>().size([width - 28, height - 28]).padding(12);
-  const packed = pack(root).leaves();
+    .hierarchy<AtlasHierarchyDatum>(rootData, datum => datum.children)
+    .sum(datum => datum.bucket?.datasetIds.length ?? 0);
+  const packed = d3.pack<AtlasHierarchyDatum>().size([width - 28, height - 28]).padding(12)(root).leaves();
   const g = svgSelection.append('g').attr('transform', 'translate(14,14)');
 
   const node = g
-    .selectAll('g')
+    .selectAll<SVGGElement, d3.HierarchyCircularNode<AtlasHierarchyDatum>>('g')
     .data(packed)
     .enter()
     .append('g')
-    .attr('class', d => `atlas-node ${selectedBucket === (d.data as unknown as AtlasBucket).id ? 'selected' : ''}`)
+    .attr('class', d => `atlas-node ${selectedBucket === d.data.bucket?.id ? 'selected' : ''}`)
     .attr('transform', d => `translate(${d.x},${d.y})`)
     .style('cursor', 'pointer')
-    .on('click', (_, d) => onSelect((d.data as unknown as AtlasBucket).id));
+    .on('click', (_, d) => d.data.bucket && onSelect(d.data.bucket.id));
 
-  node
-    .append('circle')
-    .attr('r', d => d.r)
-    .attr('class', 'atlas-circle');
-
+  node.append('circle').attr('r', d => d.r).attr('class', 'atlas-circle');
   node
     .append('text')
     .attr('class', 'atlas-label')
     .attr('text-anchor', 'middle')
     .attr('y', -5)
-    .text(d => truncate((d.data as unknown as AtlasBucket).label, Math.max(12, Math.floor(d.r / 4))));
-
+    .text(d => truncate(d.data.bucket?.label ?? '', Math.max(12, Math.floor(d.r / 4))));
   node
     .append('text')
     .attr('class', 'atlas-count')
     .attr('text-anchor', 'middle')
     .attr('y', 14)
-    .text(d => `${(d.data as unknown as AtlasBucket).datasetIds.length} datasets`);
-
+    .text(d => `${d.data.bucket?.datasetIds.length ?? 0} datasets`);
   node.append('title').text(d => {
-    const bucket = d.data as unknown as AtlasBucket;
-    return `${bucket.label} · ${bucket.datasetIds.length} datasets\n${bucket.description}`;
+    const bucket = d.data.bucket;
+    return bucket ? `${bucket.label} · ${bucket.datasetIds.length} datasets\n${bucket.description}` : '';
   });
 }
 
