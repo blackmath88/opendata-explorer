@@ -99,6 +99,12 @@ Exit condition:
 
 Build milestone name: **Evidence Plan**.
 
+Status: **implemented deterministically**. `UseCaseIntent`, role templates per
+outcome archetype, evidence classes, required/optional roles, unresolved roles
+and named external dependencies are all in place and covered by benchmarks. What
+remains for this level is model-assisted role proposal, which must be labelled
+as inference and validated by the layers below it.
+
 ---
 
 ## Level 3 — Join Validation
@@ -144,6 +150,13 @@ Exit condition:
 > The system can distinguish “these datasets sound related” from “these datasets can actually support this method.”
 
 Build milestone name: **Compatibility Engine**.
+
+Status: **first implementation complete**, up to `sample validated`. Geometry,
+temporal and key rules produce typed assessments with confidence, reasons,
+warnings and an evidence level; `unknown` and `incompatible` are ordinary
+results. Value-level key validation is real (one Basel join is validated, not
+assumed). What is *not* validated is whether geometries actually intersect —
+that needs the execution layer. See `docs/BASEL_API_FINDINGS.md`.
 
 ---
 
