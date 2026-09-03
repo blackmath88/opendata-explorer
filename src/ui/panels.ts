@@ -1,5 +1,6 @@
 import type {
   CatalogState,
+  CompatibilityAssessment,
   DatasetMatch,
   DatasetRecord,
   DatasetStructure,
@@ -8,6 +9,8 @@ import type {
   UseCaseIntent,
 } from '../types';
 import { PairAssessment, WorkspaceAnalysis, WorkspaceEntry } from '../workspace';
+import type { ExecutionResult } from '../execution/types';
+import { deriveStatus, STATUS_LABEL, type EvidenceStatus } from '../execution/status';
 import {
   CONFIDENCE_LABEL,
   EVIDENCE_LABEL,
@@ -286,7 +289,20 @@ export function renderEvidencePlan(plan: EvidencePlan, datasets: DatasetRecord[]
     </section>`;
 }
 
-export function renderRelationships(analysis: WorkspaceAnalysis | null, loading: boolean): string {
+export interface ExecutionView {
+  /** Execution results keyed by the assessment they validated. */
+  results: Map<string, ExecutionResult>;
+  running: Set<string>;
+  /** Absent in fallback mode: offline data cannot be executed against. */
+  available: boolean;
+  unavailableReason?: string;
+}
+
+export function renderRelationships(
+  analysis: WorkspaceAnalysis | null,
+  loading: boolean,
+  executions: ExecutionView,
+): string {
   if (loading) {
     return `<section class="workbench-section"><div class="section-title">Relationships</div>
       <div class="quiet">Inspecting structures and assessing compatibility…</div></section>`;
@@ -301,7 +317,7 @@ export function renderRelationships(analysis: WorkspaceAnalysis | null, loading:
   return `
     <section class="workbench-section">
       <div class="section-title">Relationships <span class="section-note">${analysis.pairs.length} assessed</span></div>
-      ${analysis.pairs.map(renderPair).join('') || '<div class="quiet">No pairs to assess yet.</div>'}
+      ${analysis.pairs.map(pair => renderPair(pair, executions)).join('') || '<div class="quiet">No pairs to assess yet.</div>'}
       ${failures.length ? `<div class="warning">${failures.map(failureLine).join('<br>')}</div>` : ''}
       ${analysis.notes.length ? `<div class="notice">${analysis.notes.map(escapeHtml).join('<br>')}</div>` : ''}
     </section>`;
@@ -310,7 +326,7 @@ export function renderRelationships(analysis: WorkspaceAnalysis | null, loading:
 const failureLine = (entry: WorkspaceEntry): string =>
   escapeHtml(`${entry.dataset.title}: ${entry.error ?? 'inspection failed'}`);
 
-function renderPair({ left, right, assessment }: PairAssessment): string {
+function renderPair({ left, right, assessment }: PairAssessment, executions: ExecutionView): string {
   const relation = RELATION_LABEL[assessment.relation] ?? assessment.relation;
   const names = new Map([
     [left.id, left.title],
@@ -357,8 +373,96 @@ function renderPair({ left, right, assessment }: PairAssessment): string {
         : ''
     }
     <div class="prov-row">${provenanceTag('system', 'deterministic compatibility rules')}</div>
+    ${renderExecution(assessment, executions, humanise)}
   </article>`;
 }
+
+/**
+ * The execution panel on a relationship card.
+ *
+ * Execution never rewrites the assessment above it — the proposal and the
+ * result that tested it stay side by side, which is the whole point.
+ */
+function renderExecution(
+  assessment: CompatibilityAssessment,
+  executions: ExecutionView,
+  humanise: (text: string) => string,
+): string {
+  const execution = executions.results.get(assessment.id);
+  const status = deriveStatus(assessment, execution);
+  const running = executions.running.has(assessment.id);
+
+  if (!execution) {
+    if (running) return `<div class="exec exec-running">Executing against real geometry…</div>`;
+    if (!executions.available) {
+      return `<div class="exec exec-idle"><span class="quiet">${escapeHtml(
+        executions.unavailableReason ?? 'Execution is unavailable.',
+      )}</span></div>`;
+    }
+    return `<div class="exec exec-idle">
+        <button class="small-btn validate" data-assessment="${escapeHtml(assessment.id)}">Validate with real data</button>
+        <span class="quiet">Status: ${escapeHtml(STATUS_LABEL[status])}</span>
+      </div>`;
+  }
+
+  const summary = execution.output?.summary ?? {};
+  const facts = Object.entries(summary)
+    .filter(([, value]) => value !== null && value !== undefined && typeof value !== 'object')
+    .map(([key, value]) => `<div><span class="quiet">${escapeHtml(humanKey(key))}</span> <b>${escapeHtml(String(value))}</b></div>`)
+    .join('');
+
+  return `<div class="exec exec-${escapeHtml(statusClass(status))}">
+      <div class="exec-head">
+        <span class="exec-verdict">${escapeHtml(STATUS_LABEL[status].toUpperCase())}</span>
+        ${provenanceTag('execution')}
+        <span class="quiet">${escapeHtml(execution.engine.name)} ${escapeHtml(execution.engine.version)}</span>
+      </div>
+      ${facts ? `<div class="exec-facts">${facts}</div>` : ''}
+      ${
+        execution.validation.reasons.length
+          ? `<ul class="rel-reasons">${execution.validation.reasons.map(r => `<li>${escapeHtml(humanise(r))}</li>`).join('')}</ul>`
+          : ''
+      }
+      ${
+        execution.validation.warnings.length
+          ? `<ul class="rel-warnings">${execution.validation.warnings.map(w => `<li>${escapeHtml(humanise(w))}</li>`).join('')}</ul>`
+          : ''
+      }
+      ${execution.error ? `<div class="rel-warnings"><li>${escapeHtml(execution.error.message)}</li></div>` : ''}
+      <div class="exec-sources">${execution.sourceSnapshots
+        .map(
+          snapshot =>
+            `<div><span class="quiet">${escapeHtml(humanise(snapshot.datasetId))}</span> ${escapeHtml(
+              formatCount(snapshot.recordCount),
+            )} of ${escapeHtml(formatCount(snapshot.totalRecordCount))} features${
+              snapshot.truncated ? ' <b>truncated</b>' : ''
+            } · read ${escapeHtml(formatDate(snapshot.retrievedAt))}</div>`,
+        )
+        .join('')}</div>
+      <div class="exec-ids">
+        <code>${escapeHtml(assessment.id)}</code>
+        <code>${escapeHtml(execution.operationId)}</code>
+        <code>${escapeHtml(execution.id)}</code>
+      </div>
+    </div>`;
+}
+
+const statusClass = (status: EvidenceStatus): string =>
+  status === 'execution_confirmed'
+    ? 'confirmed'
+    : status === 'execution_rejected'
+      ? 'rejected'
+      : status === 'execution_failed' || status === 'execution_stale'
+        ? 'failed'
+        : 'idle';
+
+const humanKey = (key: string): string =>
+  key
+    // Split camelCase and digit-to-capital boundaries alike, so "p90Meters"
+    // reads as "p90 meters" rather than "p90meters".
+    .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+    .replace(/_/g, ' ')
+    .toLowerCase();
 
 // ---------------------------------------------------------------------------
 

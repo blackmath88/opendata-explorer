@@ -5,6 +5,10 @@ import { parseUseCaseIntent } from './intent';
 import { buildEvidencePlan } from './evidence';
 import { rankDatasets } from './relevance';
 import { analyseWorkspace, type WorkspaceAnalysis } from './workspace';
+import { GeoJsonExecutionEngine } from './execution/engine';
+import { OdsGeoJsonSource } from './execution/source';
+import { planOperation } from './execution/operations';
+import type { ExecutionResult } from './execution/types';
 import { BENCHMARK_USE_CASES } from './benchmarks/useCases';
 import { renderGraph, stopGraph } from './ui/graph';
 import { escapeHtml, provenanceTag } from './ui/dom';
@@ -48,6 +52,10 @@ let analysing = false;
 let analysisToken = 0;
 const structures = new Map<string, DatasetStructure>();
 let inspectorOpen = false;
+/** Execution results keyed by the assessment they validated. */
+const executions = new Map<string, ExecutionResult>();
+const executing = new Set<string>();
+let engine: GeoJsonExecutionEngine | null = null;
 
 app.innerHTML = `
 <div class="app">
@@ -193,7 +201,13 @@ function renderWorkbench(): void {
   const datasets = [...workspace].map(id => catalog.datasets.find(d => d.id === id)!).filter(Boolean);
   workbench.innerHTML = `
     ${renderEvidencePlan(plan, catalog.datasets, workspace)}
-    ${renderRelationships(analysis, analysing)}
+    ${renderRelationships(analysis, analysing, {
+      results: executions,
+      running: executing,
+      available: engine !== null,
+      unavailableReason:
+        'Execution needs live source geometry; the offline fallback snapshot cannot be executed against.',
+    })}
     ${
       datasets.length < 2
         ? '<div class="notice">Two or more datasets are needed before compatibility can be assessed.</div>'
@@ -205,6 +219,42 @@ function renderWorkbench(): void {
     row.querySelector('.role-dataset-title')?.addEventListener('click', () => selectDataset(id));
     row.querySelector('.role-add')?.addEventListener('click', () => toggleWorkspace(id));
   });
+  workbench.querySelectorAll<HTMLButtonElement>('.validate').forEach(button =>
+    button.addEventListener('click', () => void validate(button.dataset.assessment!)),
+  );
+}
+
+/**
+ * Run the operation an assessment justifies, against real geometry.
+ *
+ * The result is stored beside the assessment, never merged into it: the
+ * proposal and the execution that tested it must both stay readable.
+ */
+async function validate(assessmentId: string): Promise<void> {
+  const pair = analysis?.pairs.find(item => item.assessment.id === assessmentId);
+  if (!pair || !engine || executing.has(assessmentId)) return;
+
+  const left = structures.get(pair.left.id);
+  const right = structures.get(pair.right.id);
+  if (!left || !right) return;
+
+  const plan = planOperation(pair.assessment, left, right);
+  if (!plan.ok) {
+    workbench
+      .querySelector(`.validate[data-assessment="${CSS.escape(assessmentId)}"]`)
+      ?.closest('.exec')
+      ?.insertAdjacentHTML('beforeend', `<div class="quiet">${escapeHtml(plan.reason)}</div>`);
+    return;
+  }
+
+  executing.add(assessmentId);
+  renderWorkbench();
+  try {
+    executions.set(assessmentId, await engine.execute(plan.operation));
+  } finally {
+    executing.delete(assessmentId);
+    renderWorkbench();
+  }
 }
 
 function render(): void {
@@ -380,5 +430,13 @@ sourcePill.title =
   catalog.source === 'live'
     ? `Loaded from ${adapter.label} at ${catalog.loadedAt}`
     : `Live loading failed: ${catalog.error ?? 'unknown error'}`;
+// Execution needs live geometry; the frozen snapshot has none, so in fallback
+// mode the engine stays null and the UI says why rather than offering a button
+// that cannot work.
+if (catalog.source === 'live') {
+  engine = new GeoJsonExecutionEngine(
+    new OdsGeoJsonSource(new Map(catalog.datasets.map(dataset => [dataset.id, dataset.recordsCount]))),
+  );
+}
 renderExamples();
 render();
