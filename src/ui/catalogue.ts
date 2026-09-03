@@ -59,8 +59,8 @@ export function renderCatalogueList(
 
 export function renderEvidenceSummary(intent: UseCaseIntent, plan: EvidencePlan, matches: DatasetMatch[]): string {
   const classes = ['direct', 'supporting', 'contextual'] as const;
-  const counts = Object.fromEntries(classes.map(value => [value, matches.filter(match => match.evidenceClass === value).length]));
-  const missing = plan.roles.filter(role => role.roleType === 'missing' || role.missing || role.roleType === 'external_dependency');
+  const counts = Object.fromEntries(classes.map(value => [value, matches.filter(match => match.evidenceClass === value).length])) as Record<(typeof classes)[number], number>;
+  const missing = plan.roles.filter(role => role.roleType === 'missing' || role.roleType === 'external_dependency' || Boolean(role.gap));
   const resolved = plan.roles.filter(role => role.datasetId || role.candidates.length);
   return `<section class="evidence-summary">
     <div class="evidence-summary-head">
