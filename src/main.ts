@@ -1,5 +1,6 @@
 import * as d3 from 'd3';
 import './styles.css';
+import './atlas.css';
 import { openCatalogue } from './data/catalogue';
 import { parseUseCaseIntent } from './intent';
 import { buildEvidencePlan } from './evidence';
@@ -10,7 +11,9 @@ import { OdsGeoJsonSource } from './execution/source';
 import { planOperation } from './execution/operations';
 import type { ExecutionResult } from './execution/types';
 import { BENCHMARK_USE_CASES } from './benchmarks/useCases';
-import { renderGraph, stopGraph } from './ui/graph';
+import { buildAtlasIndex, catalogueSearch, datasetsForBucket, recentlyModified, type AtlasIndex, type AtlasLens } from './atlas';
+import { renderAtlasBuckets } from './ui/atlas';
+import { renderCatalogueList, renderEvidenceSummary, renderRecent, renderViewControls } from './ui/catalogue';
 import { escapeHtml, provenanceTag } from './ui/dom';
 import {
   renderDatasetDetail,
@@ -25,34 +28,37 @@ import type {
   CatalogState,
   CatalogueAdapter,
   DatasetMatch,
+  DatasetRecord,
   DatasetStructure,
   EvidencePlan,
   UseCaseIntent,
 } from './types';
 
 const DEFAULT_QUERY = BENCHMARK_USE_CASES[0].prompt;
-
 const app = document.querySelector<HTMLDivElement>('#app')!;
 
 type Stage = 'discover' | 'compose';
+type DiscoverView = 'list' | 'atlas';
 
 let adapter: CatalogueAdapter;
 let catalog: CatalogState;
+let atlasIndex: AtlasIndex;
 let query = DEFAULT_QUERY;
 let intent: UseCaseIntent = parseUseCaseIntent(query);
 let plan: EvidencePlan;
 let matches: DatasetMatch[] = [];
 const workspace = new Set<string>();
 let selectedId: string | null = null;
-let topicFilter = 'all';
 let stage: Stage = 'discover';
+let discoverView: DiscoverView = 'list';
+let atlasLens: AtlasLens = 'topic';
+let atlasBucket: string | null = null;
+let catalogueQuery = '';
 let analysis: WorkspaceAnalysis | null = null;
 let analysing = false;
-/** Bumped on every workspace change so a stale in-flight analysis is discarded. */
 let analysisToken = 0;
 const structures = new Map<string, DatasetStructure>();
 let inspectorOpen = false;
-/** Execution results keyed by the assessment they validated. */
 const executions = new Map<string, ExecutionResult>();
 const executing = new Set<string>();
 let engine: GeoJsonExecutionEngine | null = null;
@@ -72,17 +78,23 @@ app.innerHTML = `
   <div class="shell">
     <nav class="rail">
       <button class="rail-btn active" id="stageDiscover"><span class="rail-icon">⌕</span><span>Discover</span></button>
-      <button class="rail-btn" id="stageCompose" disabled title="Add datasets to the workspace"><span class="rail-icon">⌘</span><span>Compose</span></button>
-      <button class="rail-btn" disabled title="Milestone 5"><span class="rail-icon">▣</span><span>Materialize</span></button>
+      <button class="rail-btn" id="stageCompose" disabled title="Add at least two datasets to the workspace"><span class="rail-icon">⌘</span><span>Compose</span></button>
+      <button class="rail-btn" disabled title="Later milestone"><span class="rail-icon">▣</span><span>Materialize</span></button>
       <div class="rail-spacer"></div>
       <button class="rail-btn" id="legendBtn" title="What the provenance tags mean"><span class="rail-icon">?</span></button>
     </nav>
     <main class="main">
       <div class="canvas-toolbar">
-        <div><strong id="stageTitle">Semantic landscape</strong> · <span id="datasetCount">0 datasets</span></div>
-        <div class="filters" id="filters"></div>
+        <div><strong id="stageTitle">Catalogue</strong> · <span id="datasetCount">0 datasets</span></div>
+        <div id="discoverControls"></div>
       </div>
-      <div class="viz-wrap" id="vizWrap"><svg class="viz" id="viz" aria-label="Dataset landscape"></svg></div>
+      <div class="catalogue-search-wrap" id="catalogueSearchWrap">
+        <input id="catalogueSearch" type="search" placeholder="Search all datasets by title, id, publisher, keyword…" aria-label="Search catalogue" />
+        <span class="catalogue-search-count" id="catalogueSearchCount"></span>
+      </div>
+      <div id="evidenceSummary"></div>
+      <div class="viz-wrap atlas-wrap" id="vizWrap" hidden><svg class="viz" id="viz" aria-label="Open data atlas"></svg></div>
+      <div class="catalogue-list-wrap" id="catalogueList"></div>
       <div class="workbench" id="workbench" hidden></div>
       <div class="prompt-dock">
         <form class="prompt" id="promptForm">
@@ -94,7 +106,7 @@ app.innerHTML = `
     </main>
     <aside class="inspector" id="inspector">
       <h2 id="inspectorTitle">Discover</h2>
-      <div class="sub" id="inspectorSub">Evidence shortlist and dataset detail</div>
+      <div class="sub" id="inspectorSub">Catalogue, evidence and dataset detail</div>
       <div id="inspectorBody"></div>
     </aside>
   </div>
@@ -105,9 +117,14 @@ const inspectorEl = el<HTMLElement>('#inspector');
 const sourcePill = el<HTMLSpanElement>('#sourcePill');
 const datasetCount = el<HTMLSpanElement>('#datasetCount');
 const stageTitle = el<HTMLElement>('#stageTitle');
-const filters = el<HTMLDivElement>('#filters');
+const discoverControls = el<HTMLDivElement>('#discoverControls');
 const workbench = el<HTMLDivElement>('#workbench');
 const vizWrap = el<HTMLDivElement>('#vizWrap');
+const catalogueList = el<HTMLDivElement>('#catalogueList');
+const evidenceSummary = el<HTMLDivElement>('#evidenceSummary');
+const catalogueSearchWrap = el<HTMLDivElement>('#catalogueSearchWrap');
+const catalogueSearchInput = el<HTMLInputElement>('#catalogueSearch');
+const catalogueSearchCount = el<HTMLSpanElement>('#catalogueSearchCount');
 const examples = el<HTMLDivElement>('#examples');
 const composeBtn = el<HTMLButtonElement>('#stageCompose');
 const discoverBtn = el<HTMLButtonElement>('#stageDiscover');
@@ -117,41 +134,12 @@ function el<T extends Element>(selector: string): T {
   return document.querySelector<T>(selector)!;
 }
 
-// ---------------------------------------------------------------------------
-// Rendering
-// ---------------------------------------------------------------------------
-
-function activeMatches(): DatasetMatch[] {
-  if (topicFilter === 'all') return matches;
-  return matches.filter(
-    match =>
-      match.dataset.semantic.topics.includes(topicFilter) ||
-      match.dataset.themes.some(theme => theme.toLowerCase().includes(topicFilter)),
-  );
-}
-
-function renderFilters(): void {
-  const topics = [...new Set(catalog.datasets.flatMap(dataset => dataset.semantic.topics))].sort().slice(0, 8);
-  filters.innerHTML = ['all', ...topics]
-    .map(
-      topic =>
-        `<button class="filter ${topicFilter === topic ? 'active' : ''}" data-topic="${escapeHtml(topic)}">${
-          topic === 'all' ? 'All' : escapeHtml(topic)
-        }</button>`,
-    )
-    .join('');
-  filters.querySelectorAll<HTMLButtonElement>('button').forEach(button =>
-    button.addEventListener('click', () => {
-      topicFilter = button.dataset.topic ?? 'all';
-      render();
-    }),
-  );
-}
-
 function renderExamples(): void {
-  examples.innerHTML = BENCHMARK_USE_CASES.map(
-    useCase => `<button class="example" data-prompt="${escapeHtml(useCase.prompt)}">${escapeHtml(useCase.label)}</button>`,
-  ).join('');
+  const demo = BENCHMARK_USE_CASES.filter(useCase => ['Running comfort', 'Public fountain access', 'Cycling safety / comfort'].includes(useCase.label));
+  const visible = demo.length >= 3 ? demo : BENCHMARK_USE_CASES.slice(0, 3);
+  examples.innerHTML = visible
+    .map(useCase => `<button class="example" data-prompt="${escapeHtml(useCase.prompt)}">${escapeHtml(useCase.label)}</button>`)
+    .join('');
   examples.querySelectorAll<HTMLButtonElement>('button').forEach(button =>
     button.addEventListener('click', () => {
       const prompt = button.dataset.prompt ?? '';
@@ -161,40 +149,109 @@ function renderExamples(): void {
   );
 }
 
+function discoverDatasets(): DatasetRecord[] {
+  let datasets = catalogueSearch(catalog.datasets, catalogueQuery);
+  if (discoverView === 'atlas' && atlasBucket) datasets = datasetsForBucket(atlasIndex, datasets, atlasLens, atlasBucket);
+  return datasets;
+}
+
+function renderDiscoverControls(): void {
+  discoverControls.innerHTML = renderViewControls(discoverView, atlasLens, atlasIndex.buckets[atlasLens], atlasBucket);
+  discoverControls.querySelectorAll<HTMLButtonElement>('[data-view]').forEach(button =>
+    button.addEventListener('click', () => {
+      discoverView = button.dataset.view as DiscoverView;
+      atlasBucket = null;
+      render();
+    }),
+  );
+  discoverControls.querySelectorAll<HTMLButtonElement>('[data-lens]').forEach(button =>
+    button.addEventListener('click', () => {
+      atlasLens = button.dataset.lens as AtlasLens;
+      atlasBucket = null;
+      render();
+    }),
+  );
+  discoverControls.querySelector<HTMLSelectElement>('#bucketSelect')?.addEventListener('change', event => {
+    atlasBucket = (event.target as HTMLSelectElement).value || null;
+    render();
+  });
+}
+
 function renderInspector(): void {
   const selected = selectedId ? catalog.datasets.find(dataset => dataset.id === selectedId) : null;
-  const workspaceList = [...workspace]
-    .map(id => catalog.datasets.find(dataset => dataset.id === id))
-    .filter(Boolean);
+  const workspaceList = [...workspace].map(id => catalog.datasets.find(dataset => dataset.id === id)).filter(Boolean);
+  const recent = recentlyModified(catalog.datasets, 5);
 
   inspectorBody.innerHTML = `
     ${renderSourceNotice(catalog)}
-    ${renderIntentSection(intent)}
-    ${selected ? renderDatasetDetail(selected, structures.get(selected.id)) : ''}
-    ${stage === 'discover' ? renderMatches(activeMatches().slice(0, 10), workspace, plan) : ''}
     ${section(
-      'Workspace',
+      `Workspace · ${workspaceList.length}`,
       workspaceList.length
         ? `<ul class="workspace-list">${workspaceList
-            .map(
-              dataset =>
-                `<li data-id="${escapeHtml(dataset!.id)}"><span>${escapeHtml(dataset!.title)}</span>
-                 <button class="small-btn remove">Remove</button></li>`,
-            )
-            .join('')}</ul>`
-        : '<div class="quiet">No datasets selected. Add candidates from the shortlist or the evidence plan.</div>',
-    )}`;
+            .map(dataset => `<li data-id="${escapeHtml(dataset!.id)}"><span>${escapeHtml(dataset!.title)}</span><button class="small-btn remove">Remove</button></li>`)
+            .join('')}</ul><button class="small-btn compose-cta" ${workspaceList.length < 2 ? 'disabled' : ''}>Compose evidence</button>`
+        : '<div class="quiet">Add datasets from the catalogue or evidence shortlist. Two are needed for Compose.</div>',
+    )}
+    ${renderIntentSection(intent)}
+    ${selected ? renderDatasetDetail(selected, structures.get(selected.id)) : stage === 'discover' ? renderRecent(recent) : ''}
+    ${stage === 'discover' ? renderMatches(matches.slice(0, 10), workspace, plan) : ''}
+  `;
 
   inspectorBody.querySelectorAll<HTMLElement>('.card').forEach(card => {
     const id = card.dataset.id!;
     card.querySelector('.inspect')?.addEventListener('click', () => selectDataset(id));
     card.querySelector('.workspace')?.addEventListener('click', () => toggleWorkspace(id));
   });
+  inspectorBody.querySelectorAll<HTMLButtonElement>('.inspect[data-id]').forEach(button =>
+    button.addEventListener('click', () => selectDataset(button.dataset.id!)),
+  );
   inspectorBody.querySelectorAll<HTMLElement>('.workspace-list li').forEach(item => {
     const id = item.dataset.id!;
     item.querySelector('span')?.addEventListener('click', () => selectDataset(id));
     item.querySelector('.remove')?.addEventListener('click', () => toggleWorkspace(id));
   });
+  inspectorBody.querySelector<HTMLButtonElement>('.compose-cta')?.addEventListener('click', () => setStage('compose'));
+}
+
+function wireCatalogueRows(): void {
+  catalogueList.querySelectorAll<HTMLButtonElement>('.inspect[data-id]').forEach(button =>
+    button.addEventListener('click', () => selectDataset(button.dataset.id!)),
+  );
+  catalogueList.querySelectorAll<HTMLButtonElement>('.workspace[data-id]').forEach(button =>
+    button.addEventListener('click', () => toggleWorkspace(button.dataset.id!)),
+  );
+}
+
+function renderDiscoverSurface(): void {
+  renderDiscoverControls();
+  const datasets = discoverDatasets();
+  catalogueSearchCount.textContent = `${datasets.length} of ${catalog.datasets.length}`;
+  evidenceSummary.innerHTML = renderEvidenceSummary(intent, plan, matches);
+  catalogueSearchWrap.hidden = false;
+
+  if (discoverView === 'list') {
+    vizWrap.hidden = true;
+    catalogueList.hidden = false;
+    catalogueList.innerHTML = renderCatalogueList(datasets, matches, workspace, selectedId);
+    wireCatalogueRows();
+    stageTitle.textContent = 'Catalogue';
+    return;
+  }
+
+  vizWrap.hidden = false;
+  renderAtlasBuckets(vizWrap, svg, atlasIndex.buckets[atlasLens], atlasBucket, id => {
+    atlasBucket = atlasBucket === id ? null : id;
+    render();
+  });
+  stageTitle.textContent = `Atlas · ${atlasLens}`;
+  if (atlasBucket || catalogueQuery) {
+    catalogueList.hidden = false;
+    catalogueList.innerHTML = renderCatalogueList(datasets, matches, workspace, selectedId);
+    wireCatalogueRows();
+  } else {
+    catalogueList.hidden = true;
+    catalogueList.innerHTML = '';
+  }
 }
 
 function renderWorkbench(): void {
@@ -205,14 +262,10 @@ function renderWorkbench(): void {
       results: executions,
       running: executing,
       available: engine !== null,
-      unavailableReason:
-        'Execution needs live source geometry; the offline fallback snapshot cannot be executed against.',
+      unavailableReason: 'Execution needs live source geometry; the offline fallback snapshot cannot be executed against.',
     })}
-    ${
-      datasets.length < 2
-        ? '<div class="notice">Two or more datasets are needed before compatibility can be assessed.</div>'
-        : ''
-    }`;
+    ${datasets.length < 2 ? '<div class="notice">Two or more datasets are needed before compatibility can be assessed.</div>' : ''}
+  `;
 
   workbench.querySelectorAll<HTMLElement>('.role-dataset').forEach(row => {
     const id = row.dataset.id!;
@@ -224,33 +277,24 @@ function renderWorkbench(): void {
   );
 }
 
-/**
- * Run the operation an assessment justifies, against real geometry.
- *
- * The result is stored beside the assessment, never merged into it: the
- * proposal and the execution that tested it must both stay readable.
- */
 async function validate(assessmentId: string): Promise<void> {
   const pair = analysis?.pairs.find(item => item.assessment.id === assessmentId);
   if (!pair || !engine || executing.has(assessmentId)) return;
-
   const left = structures.get(pair.left.id);
   const right = structures.get(pair.right.id);
   if (!left || !right) return;
-
-  const plan = planOperation(pair.assessment, left, right);
-  if (!plan.ok) {
+  const operationPlan = planOperation(pair.assessment, left, right);
+  if (!operationPlan.ok) {
     workbench
       .querySelector(`.validate[data-assessment="${CSS.escape(assessmentId)}"]`)
       ?.closest('.exec')
-      ?.insertAdjacentHTML('beforeend', `<div class="quiet">${escapeHtml(plan.reason)}</div>`);
+      ?.insertAdjacentHTML('beforeend', `<div class="quiet">${escapeHtml(operationPlan.reason)}</div>`);
     return;
   }
-
   executing.add(assessmentId);
   renderWorkbench();
   try {
-    executions.set(assessmentId, await engine.execute(plan.operation));
+    executions.set(assessmentId, await engine.execute(operationPlan.operation));
   } finally {
     executing.delete(assessmentId);
     renderWorkbench();
@@ -259,31 +303,29 @@ async function validate(assessmentId: string): Promise<void> {
 
 function render(): void {
   matches = rankDatasets(intent, catalog.datasets, { plan });
-  datasetCount.textContent = `${catalog.datasets.length} datasets`;
-  composeBtn.disabled = workspace.size === 0;
+  const complete = catalog.reportedTotal !== undefined && catalog.datasets.length === catalog.reportedTotal;
+  datasetCount.textContent = `${catalog.datasets.length}${catalog.reportedTotal ? ` / ${catalog.reportedTotal}` : ''} datasets${complete ? ' loaded' : ''}`;
+  composeBtn.disabled = workspace.size < 2;
   composeBtn.classList.toggle('active', stage === 'compose');
   discoverBtn.classList.toggle('active', stage === 'discover');
-  stageTitle.textContent = stage === 'discover' ? 'Semantic landscape' : 'Evidence workbench';
   el<HTMLElement>('#inspectorTitle').textContent = stage === 'discover' ? 'Discover' : 'Compose';
-  el<HTMLElement>('#inspectorSub').textContent =
-    stage === 'discover' ? 'Evidence shortlist and dataset detail' : 'Selected evidence and its structure';
+  el<HTMLElement>('#inspectorSub').textContent = stage === 'discover' ? 'Catalogue, evidence and dataset detail' : 'Selected evidence, compatibility and validation';
 
-  vizWrap.hidden = stage !== 'discover';
-  workbench.hidden = stage !== 'compose';
-  filters.hidden = stage !== 'discover';
-
-  renderFilters();
-  renderInspector();
-  if (stage === 'discover') renderGraph(vizWrap, svg, activeMatches(), selectedId, selectDataset);
-  else {
-    stopGraph();
+  if (stage === 'discover') {
+    workbench.hidden = true;
+    renderDiscoverSurface();
+  } else {
+    catalogueSearchWrap.hidden = true;
+    evidenceSummary.innerHTML = '';
+    discoverControls.innerHTML = '';
+    vizWrap.hidden = true;
+    catalogueList.hidden = true;
+    workbench.hidden = false;
+    stageTitle.textContent = 'Evidence workbench';
     renderWorkbench();
   }
+  renderInspector();
 }
-
-// ---------------------------------------------------------------------------
-// Actions
-// ---------------------------------------------------------------------------
 
 function applyQuery(next: string): void {
   query = next.trim() || DEFAULT_QUERY;
@@ -301,7 +343,6 @@ function selectDataset(id: string): void {
   void loadStructure(id);
 }
 
-/** Structure inspection is lazy: it only runs for a dataset the user opened. */
 async function loadStructure(id: string): Promise<void> {
   if (structures.has(id)) return;
   try {
@@ -311,12 +352,7 @@ async function loadStructure(id: string): Promise<void> {
   } catch (error) {
     const dataset = catalog.datasets.find(item => item.id === id);
     if (dataset && selectedId === id) {
-      inspectorBody.insertAdjacentHTML(
-        'beforeend',
-        `<div class="warning">Structure inspection failed: ${escapeHtml(
-          error instanceof Error ? error.message : 'unknown error',
-        )}</div>`,
-      );
+      inspectorBody.insertAdjacentHTML('beforeend', `<div class="warning">Structure inspection failed: ${escapeHtml(error instanceof Error ? error.message : 'unknown error')}</div>`);
     }
   }
 }
@@ -338,11 +374,9 @@ async function refreshAnalysis(): Promise<void> {
     if (stage === 'compose') renderWorkbench();
     return;
   }
-
   const token = ++analysisToken;
   analysing = true;
   if (stage === 'compose') renderWorkbench();
-
   try {
     const result = await analyseWorkspace(adapter, datasets);
     if (token !== analysisToken) return;
@@ -357,27 +391,24 @@ async function refreshAnalysis(): Promise<void> {
 }
 
 function setStage(next: Stage): void {
+  if (next === 'compose' && workspace.size < 2) return;
   stage = next;
   render();
   if (next === 'compose' && !analysis) void refreshAnalysis();
 }
 
-/**
- * Below the desktop breakpoint the inspector is an overlay. It used to be
- * permanently on top of the canvas with no way to dismiss it.
- */
 function syncInspector(): void {
   inspectorEl.classList.toggle('open', inspectorOpen);
   el<HTMLButtonElement>('#inspectorToggle').setAttribute('aria-expanded', String(inspectorOpen));
 }
 
-// ---------------------------------------------------------------------------
-// Wiring
-// ---------------------------------------------------------------------------
-
 el<HTMLFormElement>('#promptForm').addEventListener('submit', event => {
   event.preventDefault();
   applyQuery(el<HTMLInputElement>('#promptInput').value);
+});
+catalogueSearchInput.addEventListener('input', () => {
+  catalogueQuery = catalogueSearchInput.value;
+  render();
 });
 discoverBtn.addEventListener('click', () => setStage('discover'));
 composeBtn.addEventListener('click', () => setStage('compose'));
@@ -392,51 +423,36 @@ el<HTMLButtonElement>('#legendBtn').addEventListener('click', () => {
     'afterbegin',
     section(
       'How to read provenance',
-      `<div class="legend">
-        <div>${provenanceTag('source')} published by the data owner.</div>
-        <div>${provenanceTag('schema')} read from the dataset schema.</div>
-        <div>${provenanceTag('sample')} observed in stored records.</div>
-        <div>${provenanceTag('system')} inferred deterministically here — a proposal.</div>
-        <div>${provenanceTag('ai')} reserved; no model output is used in this build.</div>
-      </div>`,
+      `<div class="legend"><div>${provenanceTag('source')} published by the data owner.</div><div>${provenanceTag('schema')} read from the dataset schema.</div><div>${provenanceTag('sample')} observed in stored records.</div><div>${provenanceTag('system')} inferred deterministically here — a proposal.</div><div>${provenanceTag('ai')} reserved; no model output is used in this build.</div></div>`,
     ),
   );
 });
 
-// Resize re-runs the layout; debounce so a drag does not start dozens of
-// simulations.
 let resizeTimer: number | undefined;
 window.addEventListener('resize', () => {
   window.clearTimeout(resizeTimer);
   resizeTimer = window.setTimeout(() => {
-    if (stage === 'discover') renderGraph(vizWrap, svg, activeMatches(), selectedId, selectDataset);
-  }, 150);
+    if (stage === 'discover' && discoverView === 'atlas') renderDiscoverSurface();
+  }, 180);
 });
-
-// ---------------------------------------------------------------------------
-// Boot
-// ---------------------------------------------------------------------------
 
 const session = await openCatalogue();
 adapter = session.adapter;
 catalog = session.state;
+atlasIndex = buildAtlasIndex(catalog.datasets);
 plan = buildEvidencePlan(intent, catalog.datasets, { selectedIds: [] });
+const complete = catalog.reportedTotal !== undefined && catalog.datasets.length === catalog.reportedTotal;
 sourcePill.textContent =
   catalog.source === 'live'
-    ? `Live catalogue · ${catalog.datasets.length}`
-    : `Fallback snapshot · ${catalog.datasets.length}`;
+    ? `LIVE · ${catalog.datasets.length}${catalog.reportedTotal ? `/${catalog.reportedTotal}` : ''}${complete ? ' complete' : ''}`
+    : `FALLBACK · ${catalog.datasets.length} cached`;
 sourcePill.classList.toggle('live', catalog.source === 'live');
 sourcePill.title =
   catalog.source === 'live'
     ? `Loaded from ${adapter.label} at ${catalog.loadedAt}`
     : `Live loading failed: ${catalog.error ?? 'unknown error'}`;
-// Execution needs live geometry; the frozen snapshot has none, so in fallback
-// mode the engine stays null and the UI says why rather than offering a button
-// that cannot work.
 if (catalog.source === 'live') {
-  engine = new GeoJsonExecutionEngine(
-    new OdsGeoJsonSource(new Map(catalog.datasets.map(dataset => [dataset.id, dataset.recordsCount]))),
-  );
+  engine = new GeoJsonExecutionEngine(new OdsGeoJsonSource(new Map(catalog.datasets.map(dataset => [dataset.id, dataset.recordsCount]))));
 }
 renderExamples();
 render();
