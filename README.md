@@ -42,27 +42,28 @@ See `docs/PRIOR_ART.md` for the research that motivated this shift.
 
 ## Current milestone
 
-**Level 1 — Discover foundation**
+**Level 2/3 — Evidence plan and compatibility validation**
 
-Implemented in `feat/level-1-discover-foundation`:
+Implemented:
 - Vite + TypeScript + D3 scaffold
-- Basel Opendatasoft Explore API adapter
+- hardened Basel Opendatasoft Explore API adapter behind a `CatalogueAdapter` boundary
 - normalized catalogue model independent of Basel/Opendatasoft
-- browser-side live catalogue loading with explicit fallback mode
-- deterministic use-case relevance scoring
-- semantic landscape visualization
-- topic filters
-- dataset detail inspection
-- temporary workspace selection
-- canonical `DESIGN.md`
+- live browser-side catalogue loading, with a frozen 44-dataset offline snapshot as an explicitly marked fallback
+- deterministic `UseCaseIntent` parser (no LLM)
+- deterministic evidence plan: analytical roles, required/optional, unresolved roles and named external dependencies
+- evidence classes: direct / supporting / contextual / missing
+- real dataset structure inspection — fields, geometry, temporal grain and coverage, candidate identifiers — with per-claim provenance
+- bounded record sampling and value-level key validation
+- deterministic compatibility engine producing typed, evidence-levelled assessments between selected datasets
+- Compose stage as an inspector/workbench, not a node editor
+- six canonical benchmark use cases with unit tests
 
-The next build does **not** jump straight to a visual Compose editor. It adds:
-- structured `UseCaseIntent`
-- evidence classes and analytical roles
-- real dataset schema/sample inspection
-- first deterministic compatibility assessments
+Not built yet, deliberately: DuckDB/spatial execution, MCP, Materialize, LLM
+integration, multi-catalogue support, a visual node editor.
 
-See `docs/NEXT_BUILD.md` for the engineering plan and `docs/CODEX_NEXT_PROMPT.md` for the ready-to-run Codex handoff.
+See `docs/BASEL_API_FINDINGS.md` for what the live API actually returns and what
+the compatibility engine concluded, `docs/NEXT_BUILD.md` for the engineering plan
+and `docs/CODEX_NEXT_PROMPT.md` for the Codex handoff.
 
 ## Run locally
 
@@ -77,6 +78,12 @@ Build:
 npm run build
 ```
 
+Tests (offline; they run against the frozen catalogue snapshot, never the live API):
+
+```bash
+npm test
+```
+
 ## Architecture in one line
 
 ```text
@@ -88,7 +95,24 @@ See:
 - `docs/ROADMAP.md`
 - `docs/PRIOR_ART.md`
 - `docs/NEXT_BUILD.md`
+- `docs/BASEL_API_FINDINGS.md`
 - `docs/CODEX_NEXT_PROMPT.md`
+
+### Module map
+
+```text
+src/types.ts            canonical models and the adapter interface
+src/vocabulary.ts       one shared DE/EN domain vocabulary
+src/intent.ts           deterministic UseCaseIntent parser
+src/evidence.ts         evidence-role templates and dataset resolution
+src/relevance.ts        deterministic ranking
+src/geometry.ts         geometry families and extent maths
+src/compatibility.ts    deterministic compatibility engine (pure, no I/O)
+src/workspace.ts        bounded orchestration of inspection + assessment
+src/data/               Opendatasoft adapter, normalizer, structure builder, fallback
+src/benchmarks/         six canonical use cases with expectations
+src/ui/                 rendering only
+```
 
 ## Principles
 
@@ -121,7 +145,18 @@ Dataset records:
 
 `GET /catalog/datasets/{dataset_id}/records`
 
-The first build attempts live browser-side catalogue loading. If that fails, it clearly enters fallback mode using a small representative Basel dataset set.
+The app loads the catalogue directly from the browser — `access-control-allow-origin: *`
+means no proxy is needed. If that fails it enters fallback mode, which is labelled
+everywhere and cannot reach sample-level evidence.
+
+Two behaviours of this API are load-bearing and easy to get wrong:
+
+- `/catalog/datasets` **must** be paged with `order_by`. Without it, consecutive
+  pages overlap: a four-page walk returned 361 rows containing 360 distinct datasets.
+- the listing already embeds every dataset's **full field schema**, so structure
+  inspection costs no extra requests.
+
+Both are documented with evidence in `docs/BASEL_API_FINDINGS.md`.
 
 ## Prior-art stance
 

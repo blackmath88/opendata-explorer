@@ -350,14 +350,47 @@ Potential upstream infrastructure or reference implementations for catalogue ing
 ### CARTO
 Strong reference for spatial execution and workflow primitives. Our value is not inventing `buffer` or `intersect`; it is going from intent → evidence → validated method → execution with provenance.
 
-## Current first-build boundary
+## Implementation status
 
-The current branch ends at a real Level 1 workspace:
+Built and running:
 
-`Basel API -> normalized catalogue -> relevance ranking -> D3 landscape -> dataset inspection -> selected workspace`
+`Basel API -> normalized catalogue -> intent -> evidence plan -> structure inspection -> compatibility assessments -> workbench`
 
-The next architecture increment should **not** be a fancy Compose graph. It should be:
+Layer by layer:
 
-`selected workspace -> evidence roles -> schema/sample inspection -> compatibility assessments`
+| Layer | State | Module |
+| --- | --- | --- |
+| 1 Source adapters | implemented for Basel/Opendatasoft behind `CatalogueAdapter`, plus an offline fallback adapter | `src/data/basel.ts`, `src/data/fallback.ts` |
+| 2 Canonical catalogue | implemented | `src/types.ts`, `src/data/normalize.ts` |
+| 3 Discovery / relevance | deterministic, driven by the shared vocabulary; emits evidence classes | `src/relevance.ts` |
+| 4 Structured intent | deterministic parser, no LLM | `src/intent.ts` |
+| 5 Evidence workspace | in-memory, bounded orchestration | `src/workspace.ts` |
+| 6 Evidence plan | role templates per outcome archetype, with gaps and external dependencies | `src/evidence.ts` |
+| 7 Structure inspection | schema for free from the listing; bounded record sampling on request | `src/data/ods-structure.ts` |
+| 8 Compatibility engine | implemented, pure, deterministic | `src/compatibility.ts` |
+| 9 Composition graph | **not started** — the workbench lists assessments, it does not compose | — |
+| 10 Execution | **not started** | — |
+| 11 Materialization | **not started** | — |
 
-Only then should the graph become executable.
+### Notes the model gained from contact with a real API
+
+- **Provenance is per claim, not per object.** One `observedFrom` on
+  `DatasetStructure` was not enough: geometry can be a metadata claim while the
+  field list is a schema observation and the coverage window a record
+  observation. Each block carries its own `observedFrom`, and
+  `candidateKeys` is backed by `keyProfiles` recording whether the publisher
+  declared the identifier or we guessed it from the name.
+- **An assessment's evidence level is the level of the evidence the winning
+  relation rests on**, not the best level reached anywhere. Sampling both sides
+  does not make a geometry rule sample-validated.
+- **Bounded observation must not produce unbounded claims.** A capped value
+  comparison that finds no overlap reports "unverified", never "disproved".
+- **`unknown` and `incompatible` are load-bearing outputs.** Three of eight
+  tested Basel pairs land there, and each names what is missing.
+
+## Next architecture increment
+
+`validated assessments -> typed composition graph -> deterministic execution`
+
+The graph should carry the compatibility assessment on the edge, not re-derive
+it. Nothing should render an edge that has no assessment behind it.
