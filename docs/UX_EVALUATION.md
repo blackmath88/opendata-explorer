@@ -13,6 +13,7 @@ recorded so visual QA is not overstated.
 ## First-time-user account
 
 The opening view looks polished and immediately suggests that datasets are
+
 clustered by topic. It does not, however, behave like a complete catalogue. The
 question box changes a semantic ranking, the graph shows only its first 80
 matches, only 24 nodes are labelled, and the inspector shows only ten cards.

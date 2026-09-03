@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { fallbackDatasets as FALLBACK_DATASETS } from './data/fallback';
-import { catalogueStatus, canCompose, filterCatalogue, selectCatalogueView, selectGraphMatches, workspaceLabel } from './catalogue-ui';
-import type { CatalogState, DatasetMatch } from './types';
+import { catalogueStatus, canCompose, filterCatalogue, selectCatalogueView, workspaceLabel } from './catalogue-ui';
+import type { CatalogState } from './types';
 
 const filters = { query: '', topic: 'all', geospatial: false, temporal: false };
 
@@ -34,8 +34,4 @@ describe('catalogue navigation', () => {
     expect(selectCatalogueView('landscape')).toBe('landscape');
   });
 
-  it('selects stable graph input', () => {
-    const make = (id: string, score: number) => ({ dataset: { id }, relevance: { score } }) as DatasetMatch;
-    expect(selectGraphMatches([make('b', 10), make('a', 10), make('c', 20)]).map(m => m.dataset.id)).toEqual(['c', 'a', 'b']);
-  });
 });

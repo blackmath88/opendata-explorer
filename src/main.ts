@@ -12,6 +12,7 @@ import type { ExecutionResult } from './execution/types';
 import { BENCHMARK_USE_CASES } from './benchmarks/useCases';
 import { canCompose, catalogueStatus, filterCatalogue, type CatalogueView } from './catalogue-ui';
 import { renderGraph, stopGraph } from './ui/graph';
+import { ATLAS_LENS_LABEL, atlasSummaries, datasetsAtPath, type AtlasLens, type AtlasState } from './atlas';
 import { escapeHtml, provenanceTag } from './ui/dom';
 import {
   renderDatasetDetail,
@@ -51,6 +52,7 @@ let selectedId: string | null = null;
 let topicFilter = 'all';
 let catalogueView: CatalogueView = 'list';
 let catalogueQuery = '';
+let atlas: AtlasState = { lens: 'topic' };
 let geoOnly = false;
 let temporalOnly = false;
 let stage: Stage = 'discover';
@@ -97,7 +99,14 @@ app.innerHTML = `
         <label><input id="geoOnly" type="checkbox"> Geospatial</label><label><input id="temporalOnly" type="checkbox"> Temporal</label>
       </div>
       <div class="catalogue-list" id="catalogueList"></div>
-      <div class="viz-wrap" id="vizWrap"><div class="landscape-info"><b id="landscapeCount">Top 80 relevant datasets</b><span id="landscapeTotal">from the loaded catalogue</span><div class="landscape-legend"><span><i class="direct"></i>Direct</span><span><i class="supporting"></i>Supporting</span><span><i class="contextual"></i>Contextual</span></div></div><svg class="viz" id="viz" aria-label="Dataset landscape"></svg></div>
+      <div class="viz-wrap" id="vizWrap">
+        <div class="atlas-nav">
+          <div class="atlas-lenses" id="atlasLenses" aria-label="Atlas lens"><button data-lens="topic" class="active">Topic</button><button data-lens="space">Space</button><button data-lens="time">Time</button><button data-lens="readiness">Readiness</button></div>
+          <nav class="atlas-breadcrumb" id="atlasBreadcrumb" aria-label="Atlas breadcrumb"></nav>
+          <div class="landscape-info"><b id="landscapeCount">Atlas categories</b><span id="landscapeTotal">all loaded datasets</span></div>
+        </div>
+        <div class="viz-scroll"><svg class="viz" id="viz" aria-label="Hierarchical catalogue Atlas"></svg></div>
+      </div>
       <div class="workbench" id="workbench" hidden></div>
       <div class="prompt-dock">
         <form class="prompt" id="promptForm">
@@ -151,6 +160,46 @@ function filteredDatasets() {
   const filtered = filterCatalogue(catalog.datasets, { query: catalogueQuery, topic: topicFilter, geospatial: geoOnly, temporal: temporalOnly });
   const rank = new Map(matches.map((match, index) => [match.dataset.id, index]));
   return filtered.sort((a, b) => (rank.get(a.id) ?? Number.MAX_SAFE_INTEGER) - (rank.get(b.id) ?? Number.MAX_SAFE_INTEGER) || a.title.localeCompare(b.title));
+}
+
+function searchDatasetIds(): Set<string> {
+  if (!catalogueQuery.trim()) return new Set(catalog.datasets.map(dataset => dataset.id));
+  return new Set(filterCatalogue(catalog.datasets, { query: catalogueQuery, topic: 'all', geospatial: false, temporal: false }).map(dataset => dataset.id));
+}
+
+function atlasLevel(): 1 | 2 | 3 {
+  return atlas.subcategory ? 3 : atlas.category ? 2 : 1;
+}
+
+function renderAtlasBreadcrumb(): void {
+  const breadcrumb = el<HTMLElement>('#atlasBreadcrumb');
+  const parts = [`<button data-depth="0">${escapeHtml(ATLAS_LENS_LABEL[atlas.lens])}</button>`];
+  if (atlas.category) parts.push(`<span>›</span><button data-depth="1">${escapeHtml(atlas.category)}</button>`);
+  if (atlas.subcategory) parts.push(`<span>›</span><button data-depth="2" aria-current="page">${escapeHtml(atlas.subcategory)}</button>`);
+  breadcrumb.innerHTML = parts.join('');
+  breadcrumb.querySelector<HTMLButtonElement>('[data-depth="0"]')?.addEventListener('click', () => { atlas = { lens: atlas.lens }; render(); });
+  breadcrumb.querySelector<HTMLButtonElement>('[data-depth="1"]')?.addEventListener('click', () => { atlas = { lens: atlas.lens, category: atlas.category }; render(); });
+}
+
+function renderAtlas(): void {
+  const searchMatches = searchDatasetIds();
+  const level = atlasLevel();
+  renderAtlasBreadcrumb();
+  const summaries = level < 3 ? atlasSummaries(catalog.datasets, matches, atlas, searchMatches) : undefined;
+  const datasets = level === 3 ? datasetsAtPath(catalog.datasets, atlas) : undefined;
+  const represented = summaries?.reduce((sum, node) => sum + node.total, 0) ?? datasets?.length ?? 0;
+  const visible = level === 3 && catalogueQuery.trim() ? datasets!.filter(dataset => searchMatches.has(dataset.id)).length : represented;
+  datasetCount.textContent = `${catalog.datasets.length} datasets in Atlas`;
+  el<HTMLElement>('#landscapeCount').textContent = level === 1 ? `${summaries?.length ?? 0} ${ATLAS_LENS_LABEL[atlas.lens]} categories` : level === 2 ? `${summaries?.length ?? 0} subcategories` : `${visible} datasets`;
+  el<HTMLElement>('#landscapeTotal').textContent = catalogueQuery.trim() ? `${searchMatches.size} catalogue search matches highlighted` : `${represented} datasets represented`;
+  renderGraph(vizWrap, svg, { level, summaries, datasets, matches, searchActive: Boolean(catalogueQuery.trim()), searchMatches }, selectedId, workspace, {
+    onDrill: label => {
+      atlas = level === 1 ? { lens: atlas.lens, category: label } : { ...atlas, subcategory: label };
+      render();
+    },
+    onSelect: selectDataset,
+    onWorkspace: toggleWorkspace,
+  });
 }
 
 function renderFilters(): void {
@@ -306,11 +355,15 @@ function render(): void {
   vizWrap.hidden = !discovering || catalogueView !== 'landscape';
   catalogueList.hidden = !listView;
   catalogueControls.hidden = !discovering;
+  catalogueControls.classList.toggle('atlas-search-only', catalogueView === 'landscape');
   evidenceSummary.hidden = !discovering;
   el<HTMLElement>('#viewToggle').hidden = !discovering;
   workbench.hidden = stage !== 'compose';
 
   renderFilters();
+  el<HTMLInputElement>('#catalogueSearch').placeholder = catalogueView === 'landscape'
+    ? 'Search the catalogue within the Atlas'
+    : 'Search title, keyword, dataset id or publisher';
   evidenceSummary.innerHTML = renderEvidenceSummary(plan, catalog.datasets);
   renderInspector();
   if (listView) {
@@ -323,12 +376,7 @@ function render(): void {
       row.querySelector('.row-workspace')?.addEventListener('click', () => toggleWorkspace(row.dataset.id!));
     });
   } else if (stage === 'discover') {
-    const filteredIds = new Set(filteredDatasets().map(dataset => dataset.id));
-    const graphMatches = matches.filter(match => filteredIds.has(match.dataset.id));
-    datasetCount.textContent = `${Math.min(graphMatches.length, 80)} shown · ${catalog.datasets.length} loaded`;
-    el<HTMLElement>('#landscapeCount').textContent = `Top ${Math.min(graphMatches.length, 80)} relevant datasets`;
-    el<HTMLElement>('#landscapeTotal').textContent = `from ${catalog.datasets.length} loaded`;
-    renderGraph(vizWrap, svg, graphMatches, selectedId, selectDataset);
+    renderAtlas();
   }
   else {
     stopGraph();
@@ -443,6 +491,11 @@ el<HTMLElement>('#viewToggle').querySelectorAll<HTMLButtonElement>('button').for
   el<HTMLElement>('#viewToggle').querySelectorAll('button').forEach(item => item.classList.toggle('active', item === button));
   render();
 }));
+el<HTMLElement>('#atlasLenses').querySelectorAll<HTMLButtonElement>('button').forEach(button => button.addEventListener('click', () => {
+  atlas = { lens: button.dataset.lens as AtlasLens };
+  el<HTMLElement>('#atlasLenses').querySelectorAll('button').forEach(item => item.classList.toggle('active', item === button));
+  render();
+}));
 discoverBtn.addEventListener('click', () => setStage('discover'));
 composeBtn.addEventListener('click', () => setStage('compose'));
 el<HTMLButtonElement>('#inspectorToggle').addEventListener('click', () => {
@@ -474,7 +527,7 @@ let resizeTimer: number | undefined;
 window.addEventListener('resize', () => {
   window.clearTimeout(resizeTimer);
   resizeTimer = window.setTimeout(() => {
-    if (stage === 'discover') renderGraph(vizWrap, svg, activeMatches(), selectedId, selectDataset);
+    if (stage === 'discover' && catalogueView === 'landscape') renderAtlas();
   }, 150);
 });
 
