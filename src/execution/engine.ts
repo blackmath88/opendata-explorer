@@ -35,6 +35,9 @@ export const ENGINE_VERSION = '1.0.0';
 /** Everything ODS Explore v2.1 serves is WGS84 lon/lat. Distances are geodesic. */
 export const ASSUMED_CRS = 'EPSG:4326';
 
+/** Below this share of matched source features, a join is executable but thin. */
+const LOW_MATCH_RATE = 0.05;
+
 /** Matches held for a later aggregate. In-memory only; no persistence yet. */
 export interface MatchRecord {
   sourceIndex: number;
@@ -144,13 +147,16 @@ export class GeoJsonExecutionEngine implements ExecutionEngine {
       reasons.push('The assessment predicted no spatial relationship, but features do intersect.');
     }
 
-    const truncated = source.truncated || target.truncated;
-    if (truncated) {
+    const matchRate = points.length ? matchedSources / points.length : 0;
+    // "The operation works" and "the relationship is substantial" are different
+    // claims. A 1% containment rate is a real join and a weak one; say both.
+    if (matches.length > 0 && matchRate < LOW_MATCH_RATE) {
       warnings.push(
-        'Inputs were truncated to the feature budget, so counts are a lower bound and coverage is not exhaustive.',
+        `Only ${(matchRate * 100).toFixed(1)}% of source features fall inside any area. The join is executable, but it describes a small minority of the data.`,
       );
     }
 
+    const truncated = noteTruncation(source, target, warnings, 'containment');
     const artifactRef = this.storeArtifact(operation, { matches, sourceCount: points.length, targetCount: areas.length });
 
     return this.finish(
@@ -168,6 +174,7 @@ export class GeoJsonExecutionEngine implements ExecutionEngine {
           targetFeatures: areas.length,
           matchedSourceFeatures: matchedSources,
           matchedTargetFeatures: matchedTargets,
+          matchRate: Number(matchRate.toFixed(4)),
           crs: ASSUMED_CRS,
         },
       },
@@ -252,13 +259,7 @@ export class GeoJsonExecutionEngine implements ExecutionEngine {
       );
     }
 
-    const truncated = source.truncated || target.truncated;
-    if (truncated) {
-      warnings.push(
-        'Inputs were truncated to the feature budget; the true nearest feature may lie outside the loaded subset, so distances are an upper bound.',
-      );
-    }
-
+    const truncated = noteTruncation(source, target, warnings, 'nearest');
     const artifactRef = this.storeArtifact(operation, {
       matches,
       sourceCount: points.length,
@@ -504,26 +505,92 @@ export function distanceToFeature(
   }
 }
 
-/** Warn when loaded geometry does not match what the schema promised. */
+/**
+ * Warn when loaded geometry does not match what the schema promised.
+ *
+ * This is one of the things only execution can find: Basel's Tempo-30 layer
+ * declares Polygon throughout, and one of its 187 published features turns out
+ * to carry no geometry at all.
+ */
 function noteGeometryDrift(
   loaded: LoadedFeatures,
   expected: 'point' | 'polygon',
   usable: number,
   warnings: string[],
 ): void {
-  if (usable === loaded.features.length) return;
-  const families = [...new Set(loaded.features.map(f => geometryFamily(f.geometry)))].sort();
+  const total = loaded.features.length;
+  if (usable === total) return;
+
+  const empty = loaded.features.filter(f => f.geometry === null).length;
+  const wrongType = [
+    ...new Set(
+      loaded.features
+        .map(f => geometryFamily(f.geometry))
+        .filter(family => family !== 'none' && family !== expected),
+    ),
+  ].sort();
+
+  const parts: string[] = [];
+  if (empty) parts.push(`${empty} with no geometry at all`);
+  if (wrongType.length) parts.push(`${total - usable - empty} carrying ${wrongType.join('/')} geometry`);
+
   warnings.push(
-    `${loaded.datasetId}: ${loaded.features.length - usable} of ${loaded.features.length} loaded features are not ${expected} geometry (found ${families.join(', ')}); only the usable ones were processed.`,
+    `${loaded.datasetId} declares ${expected} geometry, but ${total - usable} of ${total} loaded features do not provide it (${parts.join(', ')}). Only the usable features were processed.`,
   );
 }
 
+/**
+ * Truncation means different things on each side, and conflating them would
+ * misstate the result.
+ *
+ * A truncated *source* is a biased subset — ODS returns the first N rows, not a
+ * random sample — so the rates computed over it may not hold for the whole
+ * dataset. A truncated *target* means the true nearest or containing feature
+ * may never have been loaded, so distances are upper bounds and matches a lower
+ * bound.
+ */
+function noteTruncation(
+  source: LoadedFeatures,
+  target: LoadedFeatures,
+  warnings: string[],
+  kind: 'containment' | 'nearest',
+): boolean {
+  if (source.truncated) {
+    warnings.push(
+      `${source.datasetId} was truncated to the feature budget (${source.features.length} of ${source.totalRecordCount ?? 'many'}). Those are the first rows the source returned, not a random sample, so these rates need not hold for the whole dataset.`,
+    );
+  }
+  if (target.truncated) {
+    warnings.push(
+      kind === 'nearest'
+        ? `${target.datasetId} was truncated, so the true nearest feature may never have been loaded: distances are upper bounds and coverage is a lower bound.`
+        : `${target.datasetId} was truncated, so features may fall inside areas that were never loaded: match counts are a lower bound.`,
+    );
+  }
+  return source.truncated || target.truncated;
+}
+
+/**
+ * A stable label for a matched target. Prefers a published identifier so an
+ * aggregate names real features; falls back to position only when the layer
+ * offers nothing.
+ */
 const featureKey = (feature: GeoJsonFeature, index: number): string => {
   const props = feature.properties ?? {};
+  const scalar = (value: unknown): value is string | number =>
+    typeof value === 'string' || typeof value === 'number';
+
   for (const candidate of ['id', 'gml_id', 'objectid', 'objid', 'name']) {
-    const value = props[candidate];
-    if (typeof value === 'string' || typeof value === 'number') return String(value);
+    if (scalar(props[candidate])) return String(props[candidate]);
   }
+  // Basel names identifiers after the thing they identify (`id_tempo30`,
+  // `id_zst`), so fall back to that convention before giving up.
+  const named = Object.keys(props)
+    .filter(key => /^id[_-]|[_-]id$|nummer$|^nr$/i.test(key))
+    .sort()
+    .find(key => scalar(props[key]));
+  if (named) return String(props[named]);
+
   return `#${index}`;
 };
 

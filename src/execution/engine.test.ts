@@ -88,7 +88,8 @@ describe('spatial join', () => {
     const result = await engine.execute(op('spatial_join', joinParams('points', 'square', 2)));
 
     expect(result.status).toBe('partial');
-    expect(result.validation.warnings.join(' ')).toMatch(/truncated/i);
+    // Source truncation is a sampling-bias warning, not an upper-bound one.
+    expect(result.validation.warnings.join(' ')).toMatch(/not a random sample/i);
   });
 
   it('rejects when a side turns out to carry no geometry', async () => {
@@ -103,7 +104,8 @@ describe('spatial join', () => {
     const engine = engineWith({ mixed: fx.MISLABELLED, square: fx.SQUARE });
     const result = await engine.execute(op('spatial_join', joinParams('mixed', 'square')));
 
-    expect(result.validation.warnings.join(' ')).toMatch(/not point geometry/i);
+    expect(result.validation.warnings.join(' ')).toMatch(/declares point geometry, but/i);
+    expect(result.validation.warnings.join(' ')).toMatch(/carrying line geometry/i);
   });
 
   it('confirms an incompatible verdict when execution also finds nothing', async () => {
@@ -249,5 +251,49 @@ describe('geometry helpers', () => {
   it('summarises a distribution without crashing on an empty one', () => {
     expect(summarise([1, 2, 3, 4]).median).toBe(3);
     expect(Number.isNaN(summarise([]).median)).toBe(true);
+  });
+});
+
+describe('honesty about weak and truncated results', () => {
+  it('flags a containment join that works but describes almost nothing', async () => {
+    // One point inside a big polygon out of many points scattered elsewhere.
+    const many: GeoJsonFeature[] = [
+      { type: 'Feature', geometry: { type: 'Point', coordinates: [7.5885, 47.5595] }, properties: { id: 'in' } },
+      ...Array.from({ length: 40 }, (_, i) => ({
+        type: 'Feature' as const,
+        geometry: { type: 'Point' as const, coordinates: [7.7 + i * 0.001, 47.65] },
+        properties: { id: `out-${i}` },
+      })),
+    ];
+    const engine = engineWith({ many, square: fx.SQUARE });
+    const result = await engine.execute(op('spatial_join', joinParams('many', 'square')));
+
+    expect(result.status).toBe('confirmed');
+    expect(result.output?.summary?.matchRate).toBeLessThan(0.05);
+    expect(result.validation.warnings.join(' ')).toMatch(/small minority of the data/i);
+  });
+
+  it('distinguishes a truncated target from a truncated source', async () => {
+    const engine = engineWith({ pts: fx.POINTS_NEAR_STREET, street: [...fx.STREET, ...fx.STREET] });
+    const result = await engine.execute(op('nearest', nearestParams('pts', 'street', { maxFeatures: 1 })));
+
+    const warnings = result.validation.warnings.join(' ');
+    expect(warnings).toMatch(/distances are upper bounds/i);
+  });
+
+  it('names matched targets by a published identifier when one exists', async () => {
+    const squares: GeoJsonFeature[] = fx.TWO_SQUARES.map((f, i) => ({
+      ...f,
+      // Basel's convention: the identifier is named after the thing.
+      properties: { id_tempo30: 5100 + i },
+    }));
+    const engine = engineWith({ points: fx.POINTS, squares });
+    const join = await engine.execute(op('spatial_join', joinParams('points', 'squares')));
+    const plan = planAggregate(join);
+    if (!plan.ok) throw new Error(plan.reason);
+
+    const result = await engine.execute(plan.operation);
+    const top = result.output?.summary?.top as Array<{ target: string }>;
+    expect(top[0].target).toMatch(/^51\d\d$/);
   });
 });
