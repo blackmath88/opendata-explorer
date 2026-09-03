@@ -137,6 +137,29 @@ describe('live Basel executions', () => {
     expect(result.output?.recordCount ?? 0).toBe(0);
   });
 
+  it('H. trees within traffic-calmed zones — containment over a truncated source', async () => {
+    const { result } = await run('100052', '100252');
+    // 32k trees against a 5k budget: matches are real, the rate is not
+    // generalisable, and the status must say so.
+    expect(result.sourceSnapshots.some(s => s.truncated)).toBe(true);
+    expect(result.status).toBe('partial');
+    expect(result.validation.warnings.join(' ')).toMatch(/not a random sample/i);
+  });
+
+  it('I. refuses a mixed-geometry layer rather than guessing an operation', async () => {
+    const [left, right] = await Promise.all([structureOf('100029'), structureOf('100252')]);
+    const assessment = assessCompatibility(left, right);
+    const plan = planOperation(assessment, left, right);
+
+    console.log(`\n### ${title('100029')}  ↔  ${title('100252')}`);
+    console.log(`  proposal   ${assessment.relation} / ${assessment.confidence}`);
+    console.log(`  PLAN       ${plan.ok ? 'planned' : 'REFUSED: ' + plan.reason}`);
+
+    // Schulstandorte publishes Point *and* Polygon; there is no single correct
+    // operation, and inventing one would be worse than declining.
+    expect(plan.ok).toBe(false);
+  });
+
   it('G. aggregates an executed relationship into a derived measure', async () => {
     const { result: join } = await run('100008', '100252');
     const plan = planAggregate(join);
