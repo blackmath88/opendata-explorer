@@ -21,9 +21,9 @@ describe('catalogue navigation', () => {
     expect(catalogueStatus(fallback).label).toContain('FALLBACK');
   });
 
-  it('requires two datasets for Compose', () => {
+  it('opens Compose once a first dataset is selected', () => {
     expect(canCompose(0)).toBe(false);
-    expect(canCompose(1)).toBe(false);
+    expect(canCompose(1)).toBe(true);
     expect(canCompose(2)).toBe(true);
     expect(canCompose(3)).toBe(true);
     expect(workspaceLabel(3)).toBe('Workspace · 3');

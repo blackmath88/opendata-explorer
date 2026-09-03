@@ -12,7 +12,7 @@ import type { ExecutionResult } from './execution/types';
 import { BENCHMARK_USE_CASES } from './benchmarks/useCases';
 import { canCompose, catalogueStatus, filterCatalogue, type CatalogueView } from './catalogue-ui';
 import { renderGraph, stopGraph } from './ui/graph';
-import { ATLAS_LENS_LABEL, atlasSummaries, datasetsAtPath, type AtlasLens, type AtlasState } from './atlas';
+import { ATLAS_LENS_LABEL, atlasSummaries, datasetsAtPath, shouldSubdivide, type AtlasLens, type AtlasState } from './atlas';
 import { escapeHtml, provenanceTag } from './ui/dom';
 import {
   renderDatasetDetail,
@@ -52,7 +52,7 @@ let selectedId: string | null = null;
 let topicFilter = 'all';
 let catalogueView: CatalogueView = 'list';
 let catalogueQuery = '';
-let atlas: AtlasState = { lens: 'topic' };
+let atlas: AtlasState = { lens: 'topic', path: [] };
 let geoOnly = false;
 let temporalOnly = false;
 let stage: Stage = 'discover';
@@ -167,34 +167,34 @@ function searchDatasetIds(): Set<string> {
   return new Set(filterCatalogue(catalog.datasets, { query: catalogueQuery, topic: 'all', geospatial: false, temporal: false }).map(dataset => dataset.id));
 }
 
-function atlasLevel(): 1 | 2 | 3 {
-  return atlas.subcategory ? 3 : atlas.category ? 2 : 1;
-}
-
 function renderAtlasBreadcrumb(): void {
   const breadcrumb = el<HTMLElement>('#atlasBreadcrumb');
   const parts = [`<button data-depth="0">${escapeHtml(ATLAS_LENS_LABEL[atlas.lens])}</button>`];
-  if (atlas.category) parts.push(`<span>›</span><button data-depth="1">${escapeHtml(atlas.category)}</button>`);
-  if (atlas.subcategory) parts.push(`<span>›</span><button data-depth="2" aria-current="page">${escapeHtml(atlas.subcategory)}</button>`);
+  atlas.path.forEach((label, index) => parts.push(`<span>›</span><button data-depth="${index + 1}" ${index === atlas.path.length - 1 ? 'aria-current="page"' : ''}>${escapeHtml(label)}</button>`));
   breadcrumb.innerHTML = parts.join('');
-  breadcrumb.querySelector<HTMLButtonElement>('[data-depth="0"]')?.addEventListener('click', () => { atlas = { lens: atlas.lens }; render(); });
-  breadcrumb.querySelector<HTMLButtonElement>('[data-depth="1"]')?.addEventListener('click', () => { atlas = { lens: atlas.lens, category: atlas.category }; render(); });
+  breadcrumb.querySelectorAll<HTMLButtonElement>('button').forEach(button => button.addEventListener('click', () => {
+    const depth = Number(button.dataset.depth);
+    atlas = { lens: atlas.lens, path: atlas.path.slice(0, depth), showDatasets: depth > 0 && !shouldSubdivide(datasetsAtPath(catalog.datasets, { lens: atlas.lens, path: atlas.path.slice(0, depth) }), { lens: atlas.lens, path: atlas.path.slice(0, depth) }) };
+    render();
+  }));
 }
 
 function renderAtlas(): void {
   const searchMatches = searchDatasetIds();
-  const level = atlasLevel();
+  const level: 1 | 2 | 3 = atlas.showDatasets ? 3 : atlas.path.length ? 2 : 1;
   renderAtlasBreadcrumb();
-  const summaries = level < 3 ? atlasSummaries(catalog.datasets, matches, atlas, searchMatches) : undefined;
-  const datasets = level === 3 ? datasetsAtPath(catalog.datasets, atlas) : undefined;
+  const summaries = !atlas.showDatasets ? atlasSummaries(catalog.datasets, matches, atlas, searchMatches) : undefined;
+  const datasets = atlas.showDatasets ? datasetsAtPath(catalog.datasets, atlas) : undefined;
   const represented = summaries?.reduce((sum, node) => sum + node.total, 0) ?? datasets?.length ?? 0;
   const visible = level === 3 && catalogueQuery.trim() ? datasets!.filter(dataset => searchMatches.has(dataset.id)).length : represented;
   datasetCount.textContent = `${catalog.datasets.length} datasets in Atlas`;
-  el<HTMLElement>('#landscapeCount').textContent = level === 1 ? `${summaries?.length ?? 0} ${ATLAS_LENS_LABEL[atlas.lens]} categories` : level === 2 ? `${summaries?.length ?? 0} subcategories` : `${visible} datasets`;
+  el<HTMLElement>('#landscapeCount').textContent = level === 1 ? `${summaries?.length ?? 0} ${ATLAS_LENS_LABEL[atlas.lens]} categories` : level === 2 ? `${summaries?.length ?? 0} subdivisions` : `${visible} datasets`;
   el<HTMLElement>('#landscapeTotal').textContent = catalogueQuery.trim() ? `${searchMatches.size} catalogue search matches highlighted` : `${represented} datasets represented`;
   renderGraph(vizWrap, svg, { level, summaries, datasets, matches, searchActive: Boolean(catalogueQuery.trim()), searchMatches }, selectedId, workspace, {
     onDrill: label => {
-      atlas = level === 1 ? { lens: atlas.lens, category: label } : { ...atlas, subcategory: label };
+      const next = { lens: atlas.lens, path: [...atlas.path, label] };
+      const bucket = datasetsAtPath(catalog.datasets, next);
+      atlas = { ...next, showDatasets: !shouldSubdivide(bucket, next) };
       render();
     },
     onSelect: selectDataset,
@@ -280,16 +280,38 @@ function renderInspector(): void {
 
 function renderWorkbench(): void {
   const datasets = [...workspace].map(id => catalog.datasets.find(d => d.id === id)!).filter(Boolean);
+  const covered = plan.roles.filter(role => role.datasetId && workspace.has(role.datasetId)).length;
+  const missing = plan.roles.filter(role => !role.datasetId).length;
+  const possiblePairs = datasets.length * (datasets.length - 1) / 2;
+  const latestExecution = [...executions.values()].at(-1);
+  const executable = new Set<string>();
+  for (const pair of analysis?.pairs ?? []) {
+    const left = structures.get(pair.left.id);
+    const right = structures.get(pair.right.id);
+    if (left && right && planOperation(pair.assessment, left, right).ok) executable.add(pair.assessment.id);
+  }
+  const next = datasets.length === 0 ? 'Add datasets from Discover.'
+    : datasets.length === 1 ? 'Add one more dataset to compare or combine.'
+      : analysing ? 'Inspecting dataset structures and testing compatibility rules…'
+        : !analysis ? 'Analyse compatibility to see how the selected datasets can work together.'
+          : latestExecution?.status === 'confirmed' ? 'Validation confirmed the relationship. Use it as supported evidence for the question.'
+            : latestExecution?.status === 'rejected' ? 'Validation rejected the relationship. Do not rely on it; inspect another proposal or add better evidence.'
+              : latestExecution?.status === 'partial' ? 'Validation is partial. Review its limits before using the relationship.'
+                : latestExecution?.status === 'failed' ? 'Validation failed technically. Review the caveats and retry when the source is available.'
+            : 'Select a relationship to inspect or validate.';
   workbench.innerHTML = `
-    <div class="compose-intro"><span class="eyebrow">Compose evidence</span><h2>How can these datasets work together?</h2><p>Compatibility is a proposal until real data validates it.</p></div>
-    ${renderEvidencePlan(plan, catalog.datasets, workspace)}
-    ${renderRelationships(analysis, analysing, {
+    <section class="compose-overview"><div><span class="eyebrow">Active question</span><h2>${escapeHtml(query)}</h2><p>${escapeHtml(next)}</p></div>
+      <div class="compose-metrics"><div><b>${datasets.length}</b><span>datasets selected</span></div><div><b>${covered}</b><span>roles covered</span></div><div><b>${missing}</b><span>missing / external</span></div><div><b>${analysis?.pairs.length ?? possiblePairs}</b><span>relationships ${analysis ? 'assessed' : 'possible'}</span></div></div>
+      ${datasets.length >= 2 && !analysis && !analysing ? '<button class="analyse-btn">Analyse compatibility</button>' : ''}
+    </section>
+    <div class="compose-grid"><div>${renderEvidencePlan(plan, catalog.datasets, workspace)}</div><div>${renderRelationships(analysis, analysing, {
       results: executions,
       running: executing,
       available: engine !== null,
+      executable,
       unavailableReason:
         'Execution needs live source geometry; the offline fallback snapshot cannot be executed against.',
-    })}
+    })}</div></div>
     ${
       datasets.length < 2
         ? '<div class="notice">Two or more datasets are needed before compatibility can be assessed.</div>'
@@ -304,6 +326,7 @@ function renderWorkbench(): void {
   workbench.querySelectorAll<HTMLButtonElement>('.validate').forEach(button =>
     button.addEventListener('click', () => void validate(button.dataset.assessment!)),
   );
+  workbench.querySelector<HTMLButtonElement>('.analyse-btn')?.addEventListener('click', () => void refreshAnalysis());
 }
 
 /**
@@ -351,6 +374,7 @@ function render(): void {
     stage === 'discover' ? 'Evidence shortlist and dataset detail' : 'Selected evidence and its structure';
 
   const discovering = stage === 'discover';
+  document.querySelector('.shell')?.classList.toggle('compose-mode', !discovering);
   const listView = discovering && catalogueView === 'list';
   vizWrap.hidden = !discovering || catalogueView !== 'landscape';
   catalogueList.hidden = !listView;
@@ -430,7 +454,6 @@ function toggleWorkspace(id: string): void {
   plan = buildEvidencePlan(intent, catalog.datasets, { selectedIds: [...workspace] });
   analysis = null;
   render();
-  void refreshAnalysis();
 }
 
 async function refreshAnalysis(): Promise<void> {
@@ -462,7 +485,6 @@ async function refreshAnalysis(): Promise<void> {
 function setStage(next: Stage): void {
   stage = next;
   render();
-  if (next === 'compose' && !analysis) void refreshAnalysis();
 }
 
 /**
@@ -492,7 +514,7 @@ el<HTMLElement>('#viewToggle').querySelectorAll<HTMLButtonElement>('button').for
   render();
 }));
 el<HTMLElement>('#atlasLenses').querySelectorAll<HTMLButtonElement>('button').forEach(button => button.addEventListener('click', () => {
-  atlas = { lens: button.dataset.lens as AtlasLens };
+  atlas = { lens: button.dataset.lens as AtlasLens, path: [] };
   el<HTMLElement>('#atlasLenses').querySelectorAll('button').forEach(item => item.classList.toggle('active', item === button));
   render();
 }));

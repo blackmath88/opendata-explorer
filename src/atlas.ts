@@ -5,6 +5,7 @@ export type AtlasLens = 'topic' | 'space' | 'time' | 'readiness';
 export interface AtlasPath {
   category: string;
   subcategory: string;
+  detail?: string;
 }
 
 export interface AtlasNodeSummary {
@@ -21,9 +22,11 @@ export interface AtlasNodeSummary {
 
 export interface AtlasState {
   lens: AtlasLens;
-  category?: string;
-  subcategory?: string;
+  path: string[];
+  showDatasets?: boolean;
 }
+
+export const ATLAS_BROWSE_LIMIT = 25;
 
 export const ATLAS_LENS_LABEL: Record<AtlasLens, string> = {
   topic: 'Topic',
@@ -86,9 +89,27 @@ function text(dataset: DatasetRecord): string {
 function topicPath(dataset: DatasetRecord): AtlasPath {
   const haystack = text(dataset);
   for (const [category, subcategories] of TOPIC_RULES) {
-    for (const [subcategory, pattern] of subcategories) if (pattern.test(haystack)) return { category, subcategory };
+    for (const [subcategory, pattern] of subcategories) if (pattern.test(haystack)) return { category, subcategory, detail: topicDetail(subcategory, haystack) };
   }
   return { category: 'Other / review needed', subcategory: 'Unclassified' };
+}
+
+function topicDetail(subcategory: string, haystack: string): string | undefined {
+  const rules: Record<string, ReadonlyArray<Rule>> = {
+    'Urban nature': [
+      ['Trees & canopy', /baum|tree|canopy|allee|gehölz|gehoelz/],
+      ['Parks & green space', /park|grünanlage|gruenanlage|green space|garten|garden|wiese/],
+      ['Biodiversity', /biodiv|flora|fauna|artenschutz|species|biotop|habitat/],
+      ['Urban maintenance', /pflege|maintenance|unterhalt|schnitt|bewässer|bewaesser/],
+    ],
+    'Road traffic': [['Traffic counts', /zähl|zaehl|count|frequenz/], ['Road network', /strasse|straße|street|route|netz/], ['Incidents & safety', /unfall|accident|sicherheit|safety/]],
+    Population: [['Residents', /einwohner|resident|wohnbevölkerung/], ['Demographics', /alter|age|geschlecht|gender|demograph/], ['Households', /haushalt|household/]],
+    Buildings: [['Building inventory', /inventar|bestand|inventory/], ['Addresses', /adresse|address/], ['Energy & condition', /energie|energy|zustand|condition/]],
+    Administration: [['Elections & votes', /wahl|election|abstimmung|vote/], ['Services & offices', /dienst|service|amt|office|behörde|behoerde/]],
+  };
+  const candidates = rules[subcategory];
+  if (!candidates) return undefined;
+  return candidates.find(([, pattern]) => pattern.test(haystack))?.[0] ?? `${subcategory} (other)`;
 }
 
 function normalizedGeometry(dataset: DatasetRecord): string[] {
@@ -138,6 +159,11 @@ export function atlasPath(dataset: DatasetRecord, lens: AtlasLens): AtlasPath {
   return readinessPath(dataset);
 }
 
+export function atlasSegments(dataset: DatasetRecord, lens: AtlasLens): string[] {
+  const path = atlasPath(dataset, lens);
+  return [path.category, path.subcategory, path.detail].filter((value): value is string => Boolean(value));
+}
+
 export function atlasSummaries(
   datasets: DatasetRecord[],
   matches: DatasetMatch[],
@@ -147,9 +173,10 @@ export function atlasSummaries(
   const matchById = new Map(matches.map(match => [match.dataset.id, match]));
   const groups = new Map<string, DatasetRecord[]>();
   for (const dataset of datasets) {
-    const path = atlasPath(dataset, state.lens);
-    if (state.category && path.category !== state.category) continue;
-    const label = state.category ? path.subcategory : path.category;
+    const segments = atlasSegments(dataset, state.lens);
+    if (!state.path.every((part, index) => segments[index] === part)) continue;
+    const label = segments[state.path.length];
+    if (!label) continue;
     const group = groups.get(label) ?? [];
     group.push(dataset);
     groups.set(label, group);
@@ -182,9 +209,16 @@ function summarize(label: string, datasets: DatasetRecord[], matches: Map<string
 }
 
 export function datasetsAtPath(datasets: DatasetRecord[], state: AtlasState): DatasetRecord[] {
-  if (!state.category || !state.subcategory) return [];
-  return datasets.filter(dataset => {
-    const path = atlasPath(dataset, state.lens);
-    return path.category === state.category && path.subcategory === state.subcategory;
-  });
+  return datasets.filter(dataset => state.path.every((part, index) => atlasSegments(dataset, state.lens)[index] === part));
+}
+
+export function shouldSubdivide(datasets: DatasetRecord[], state: AtlasState): boolean {
+  if (datasets.length <= ATLAS_BROWSE_LIMIT) return false;
+  const segments = datasets.map(dataset => atlasSegments(dataset, state.lens));
+  const next = new Set(segments.map(parts => parts[state.path.length]).filter(Boolean));
+  if (next.size >= 2) return true;
+  // A single semantic child is worth traversing only when it unlocks a real
+  // split one level later; otherwise it is a redundant label, not navigation.
+  const deeper = new Set(segments.map(parts => parts[state.path.length + 1]).filter(Boolean));
+  return next.size === 1 && deeper.size >= 2;
 }

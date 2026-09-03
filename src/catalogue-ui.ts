@@ -50,7 +50,7 @@ export function catalogueStatus(catalog: CatalogState): { label: string; complet
 }
 
 export function canCompose(workspaceSize: number): boolean {
-  return workspaceSize >= 2;
+  return workspaceSize >= 1;
 }
 
 export function selectCatalogueView(view: CatalogueView): CatalogueView {

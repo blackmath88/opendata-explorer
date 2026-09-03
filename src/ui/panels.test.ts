@@ -31,9 +31,9 @@ describe('product surface rendering', () => {
       leftStructureRef: 'l', rightStructureRef: 'r', assessedAt: '',
       inputs: { leftDatasetId: left.id, rightDatasetId: right.id, leftStructureFingerprint: 'l', rightStructureFingerprint: 'r', ruleVersion: '1' },
     } }] } as WorkspaceAnalysis;
-    const html = renderRelationships(analysis, false, { results: new Map(), running: new Set(), available: true });
-    expect(html).toContain('Proposal · system inferred');
-    expect(html).toContain('Validate with real data');
+    const html = renderRelationships(analysis, false, { results: new Map(), running: new Set(), available: true, executable: new Set(['assessment']) });
+    expect(html).toContain('plausible / unvalidated');
+    expect(html).toContain('Validate relationship');
   });
 
   it.each([

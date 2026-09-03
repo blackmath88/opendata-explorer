@@ -339,12 +339,19 @@ export function renderEvidencePlan(plan: EvidencePlan, datasets: DatasetRecord[]
   };
 
   const gaps = plan.roles.filter(role => !role.datasetId);
+  const summaryRows = plan.roles.map(role => {
+    const dataset = role.datasetId ? byId.get(role.datasetId) : undefined;
+    const covered = Boolean(dataset && workspace.has(dataset.id));
+    const status = covered ? '✓ Covered' : dataset ? '○ Available' : role.gap?.kind === 'not_in_catalogue' ? '✕ External' : '✕ Missing';
+    return `<tr class="role-dataset" ${dataset ? `data-id="${escapeHtml(dataset.id)}"` : ''}><td>${escapeHtml(role.label)}</td><td class="${covered ? 'role-covered' : 'role-uncovered'}">${escapeHtml(status)}</td><td>${escapeHtml(dataset?.title ?? role.gap?.suggestion ?? 'No dataset')}</td>${dataset ? `<td><button class="small-btn ${covered ? 'added' : ''} role-add">${covered ? 'Selected' : 'Add'}</button></td>` : '<td></td>'}</tr>`;
+  }).join('');
   return `
     <section class="workbench-section">
-      <div class="section-title">Evidence plan <span class="section-note">${plan.roles.length} roles · ${
+      <div class="section-title">1. Evidence coverage <span class="section-note">${plan.roles.length} roles · ${
         plan.unresolved.length
       } required unresolved</span></div>
-      <div class="role-grid">${plan.roles.map(card).join('')}</div>
+      <table class="coverage-table"><thead><tr><th>Role</th><th>Status</th><th>Dataset</th><th></th></tr></thead><tbody>${summaryRows}</tbody></table>
+      <details class="evidence-details"><summary>Show candidates and reasoning</summary><div class="role-grid">${plan.roles.map(card).join('')}</div></details>
       ${
         gaps.length
           ? `<div class="notice">Unresolved roles are part of the method, not an error. They state what this analysis would still need.</div>`
@@ -360,6 +367,8 @@ export interface ExecutionView {
   /** Absent in fallback mode: offline data cannot be executed against. */
   available: boolean;
   unavailableReason?: string;
+  /** Assessments for which the operation planner produced a runnable operation. */
+  executable: Set<string>;
 }
 
 export function renderRelationships(
@@ -368,19 +377,19 @@ export function renderRelationships(
   executions: ExecutionView,
 ): string {
   if (loading) {
-    return `<section class="workbench-section"><div class="section-title">Relationships</div>
+    return `<section class="workbench-section"><div class="section-title">2. Proposed relationships</div>
       <div class="quiet">Inspecting structures and assessing compatibility…</div></section>`;
   }
   if (!analysis) {
-    return `<section class="workbench-section"><div class="section-title">Relationships</div>
-      <div class="quiet">Add two or more datasets to the workspace to assess how they can be combined.</div></section>`;
+    return `<section class="workbench-section"><div class="section-title">2. Proposed relationships</div>
+      <div class="quiet">Select two or more datasets, then choose Analyse compatibility.</div></section>`;
   }
 
   const failures = analysis.entries.filter(entry => entry.error);
 
   return `
     <section class="workbench-section">
-      <div class="section-title">Relationships <span class="section-note">${analysis.pairs.length} assessed</span></div>
+      <div class="section-title">2. Proposed relationships <span class="section-note">${analysis.pairs.length} assessed</span></div>
       ${analysis.pairs.map(pair => renderPair(pair, executions)).join('') || '<div class="quiet">No pairs to assess yet.</div>'}
       ${failures.length ? `<div class="warning">${failures.map(failureLine).join('<br>')}</div>` : ''}
       ${analysis.notes.length ? `<div class="notice">${analysis.notes.map(escapeHtml).join('<br>')}</div>` : ''}
@@ -392,6 +401,9 @@ const failureLine = (entry: WorkspaceEntry): string =>
 
 function renderPair({ left, right, assessment }: PairAssessment, executions: ExecutionView): string {
   const relation = RELATION_LABEL[assessment.relation] ?? assessment.relation;
+  const currentState = executions.results.has(assessment.id)
+    ? `validated ${executions.results.get(assessment.id)!.status}`
+    : assessment.relation === 'incompatible' ? 'incompatible' : 'plausible / unvalidated';
   const names = new Map([
     [left.id, left.title],
     [right.id, right.title],
@@ -402,12 +414,9 @@ function renderPair({ left, right, assessment }: PairAssessment, executions: Exe
 
   return `
   <article class="rel-card rel-${escapeHtml(assessment.relation)}">
-    <div class="phase-label">Proposal · system inferred</div>
+    <div class="phase-label">${escapeHtml(currentState)} · system inferred</div>
     <div class="rel-head">
-      <div class="rel-title">${escapeHtml(truncate(left.title, 46))} <span class="rel-arrow">↔</span> ${escapeHtml(
-        truncate(right.title, 46),
-      )}</div>
-      <span class="rel-relation">${escapeHtml(relation)}</span>
+      <div class="relationship-flow"><b>${escapeHtml(truncate(left.title, 38))}</b><span>${escapeHtml(relation)}</span><b>${escapeHtml(truncate(right.title, 38))}</b></div>
     </div>
     <div class="rel-meta">
       <span>Confidence: <b>${escapeHtml(CONFIDENCE_LABEL[assessment.confidence])}</b></span>
@@ -464,21 +473,21 @@ function renderExecution(
         executions.unavailableReason ?? 'Execution is unavailable.',
       )}</span></div>`;
     }
+    if (!executions.executable.has(assessment.id)) {
+      return '<div class="exec exec-idle"><span class="quiet">Validation is not executable for this proposed relationship.</span></div>';
+    }
     return `<div class="exec exec-idle">
-        <button class="small-btn validate" data-assessment="${escapeHtml(assessment.id)}">Validate with real data</button>
+        <button class="small-btn validate" data-assessment="${escapeHtml(assessment.id)}">Validate relationship</button>
         <span class="quiet">Status: ${escapeHtml(STATUS_LABEL[status])}</span>
       </div>`;
   }
 
   const summary = execution.output?.summary ?? {};
-  const facts = Object.entries(summary)
-    .filter(([, value]) => value !== null && value !== undefined && typeof value !== 'object')
-    .map(([key, value]) => `<div><span class="quiet">${escapeHtml(humanKey(key))}</span> <b>${escapeHtml(String(value))}</b></div>`)
-    .join('');
+  const facts = executionFacts(summary);
 
   const presentation = executionPresentation(execution);
   return `<div class="exec exec-${escapeHtml(presentation.className)}">
-      <div class="phase-label">Execution · real source data</div>
+      <div class="phase-label">3. Execution result · real source data</div>
       <div class="exec-head">
         <span class="exec-verdict">${escapeHtml(presentation.label)}</span>
         ${provenanceTag('execution')}
@@ -497,7 +506,7 @@ function renderExecution(
           : ''
       }
       ${execution.error ? `<div class="rel-warnings"><li>${escapeHtml(execution.error.message)}</li></div>` : ''}
-      <div class="exec-sources">${execution.sourceSnapshots
+      <details class="execution-technical"><summary>Technical detail and provenance</summary><div class="exec-sources">${execution.sourceSnapshots
         .map(
           snapshot =>
             `<div><span class="quiet">${escapeHtml(humanise(snapshot.datasetId))}</span> ${escapeHtml(
@@ -506,13 +515,28 @@ function renderExecution(
               snapshot.truncated ? ' <b>truncated</b>' : ''
             } · read ${escapeHtml(formatDate(snapshot.retrievedAt))}</div>`,
         )
-        .join('')}</div>
+        .join('')}</div><pre>${escapeHtml(JSON.stringify(summary, null, 2))}</pre>
       <div class="exec-ids">
         <code>${escapeHtml(assessment.id)}</code>
         <code>${escapeHtml(execution.operationId)}</code>
         <code>${escapeHtml(execution.id)}</code>
-      </div>
+      </div></details>
     </div>`;
+}
+
+function executionFacts(summary: Record<string, unknown>): string {
+  const definitions: Array<[string, string, (value: number) => string]> = [
+    ['medianMeters', 'Median distance', value => `${value.toLocaleString('de-CH')} m`],
+    ['thresholdMeters', 'Distance threshold', value => `${value.toLocaleString('de-CH')} m`],
+    ['coverage', 'Within threshold', value => `${(value * 100).toFixed(1)}%`],
+    ['matchRate', 'Matched source features', value => `${(value * 100).toFixed(1)}%`],
+    ['withinThreshold', 'Features within threshold', value => value.toLocaleString('de-CH')],
+    ['totalMatches', 'Total matches', value => value.toLocaleString('de-CH')],
+    ['groups', 'Matched groups', value => value.toLocaleString('de-CH')],
+  ];
+  return definitions.flatMap(([key, label, format]) => typeof summary[key] === 'number'
+    ? [`<div><span class="quiet">${label}</span> <b>${format(summary[key] as number)}</b></div>`]
+    : []).join('');
 }
 
 export function executionPresentation(execution: ExecutionResult): { label: string; className: string; interpretation: string } {
@@ -523,14 +547,6 @@ export function executionPresentation(execution: ExecutionResult): { label: stri
     case 'failed': return { label: 'FAILED', className: 'failed', interpretation: 'Execution could not complete. This is a runtime or transport failure, not evidence against the proposal.' };
   }
 }
-
-const humanKey = (key: string): string =>
-  key
-    // Split camelCase and digit-to-capital boundaries alike, so "p90Meters"
-    // reads as "p90 meters" rather than "p90meters".
-    .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
-    .replace(/_/g, ' ')
-    .toLowerCase();
 
 // ---------------------------------------------------------------------------
 
