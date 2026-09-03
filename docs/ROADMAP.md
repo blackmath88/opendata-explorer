@@ -213,6 +213,9 @@ Exit condition:
 
 Build milestone name: **Evidence to Artefact**.
 
+Status: **next milestone**. The renderer-independent `RepresentationSpec`
+exists, but no representation renderer has been built yet.
+
 ---
 
 ## Level 6 — Multi-catalogue fabric
@@ -237,6 +240,11 @@ Exit condition:
 > Basel is simply one source in a larger open-data evidence fabric.
 
 Build milestone name: **Open Data Fabric**.
+
+Status: **first curated boundary implemented, federation deliberately not
+started**. Trusted Evidence Registry v1 resolves missing or weak roles from five
+verified official Swiss resources while preserving access state and provenance.
+It is not catalogue federation and makes no compatibility claim.
 
 ---
 

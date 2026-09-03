@@ -14,6 +14,9 @@ import { canCompose, catalogueStatus, filterCatalogue, type CatalogueView } from
 import { renderGraph, resetAtlasZoom, stopGraph, zoomAtlasIn, zoomAtlasOut, zoomAtlasTo, type AtlasGraphActions } from './ui/graph';
 import { ATLAS_LENS_LABEL, buildAtlasHierarchy, type AtlasHierarchyDatum, type AtlasLens, type AtlasState } from './atlas';
 import { recommendRepresentations, type RepresentationSpec, type RepresentationType } from './representation';
+import { resolveTrustedEvidence } from './evidence-sources/resolver';
+import { providerById, resourceById } from './evidence-sources/registry';
+import type { EvidenceResolution } from './evidence-sources/types';
 import { escapeHtml, provenanceTag } from './ui/dom';
 import {
   renderDatasetDetail,
@@ -86,7 +89,7 @@ app.innerHTML = `
   <div class="shell">
     <nav class="rail">
       <button class="rail-btn active" id="stageDiscover"><span class="rail-icon">⌕</span><span>Discover</span></button>
-      <button class="rail-btn" id="stageCompose" disabled title="Build with selected datasets"><span class="rail-icon">⌘</span><span>Build</span></button>
+      <button class="rail-btn" id="stageCompose" title="Build from the evidence plan"><span class="rail-icon">⌘</span><span>Build</span></button>
       <button class="rail-btn" disabled title="Milestone 5"><span class="rail-icon">▣</span><span>Materialize</span></button>
       <div class="rail-spacer"></div>
       <button class="rail-btn" id="legendBtn" title="What the provenance tags mean"><span class="rail-icon">?</span></button>
@@ -256,14 +259,14 @@ function renderInspector(): void {
     ${section(
       'Workspace',
       workspaceList.length
-        ? `<div class="workspace-heading"><b>Workspace · ${workspaceList.length}</b><button class="small-btn compose-now" ${canCompose(workspaceList.length) ? '' : 'disabled'}>Compose evidence</button></div><ul class="workspace-list">${workspaceList
+        ? `<div class="workspace-heading"><b>Workspace · ${workspaceList.length}</b><button class="small-btn compose-now">Build with this evidence</button></div><ul class="workspace-list">${workspaceList
             .map(
               dataset =>
                 `<li data-id="${escapeHtml(dataset!.id)}"><span>${escapeHtml(dataset!.title)}</span>
                  <button class="small-btn remove">Remove</button></li>`,
             )
             .join('')}</ul>`
-        : '<div class="quiet">Workspace · 0. Add two datasets to compose evidence.</div>',
+        : '<div class="quiet">Workspace · 0. Build can start from the question; manually adding datasets is an expert override.</div>',
     )}
     ${renderIntentSection(intent)}
     ${selected ? renderDatasetDetail(selected, structures.get(selected.id), selectedMatch, plan) : ''}
@@ -290,6 +293,7 @@ function renderWorkbench(): void {
   const possiblePairs = datasets.length * (datasets.length - 1) / 2;
   const latestExecution = [...executions.values()].at(-1);
   const recommendations = recommendRepresentations({ intent, plan, selected: datasets, analysis, executions });
+  const evidenceResolution = resolveTrustedEvidence(plan, catalog.datasets);
   const selectedSpec = recommendations.find(spec => spec.type === selectedRepresentationType) ?? recommendations[0];
   selectedRepresentationType = selectedSpec.type;
   const executable = new Set<string>();
@@ -309,6 +313,7 @@ function renderWorkbench(): void {
             : 'Select a relationship to inspect or validate.';
   workbench.innerHTML = `
     ${renderBuildProposal(selectedSpec, recommendations, covered, plan.roles.length, missing, next, analysis, executable)}
+    ${renderTrustedEvidence(evidenceResolution)}
     <div class="build-secondary"><details><summary>Technical evidence plan</summary>${renderEvidencePlan(plan, catalog.datasets, workspace)}</details>
     <details ${analysis ? 'open' : ''}><summary>Dataset relationships</summary>${renderRelationships(analysis, analysing, {
       results: executions,
@@ -336,6 +341,26 @@ function renderWorkbench(): void {
   workbench.querySelector<HTMLButtonElement>('.analyse-btn')?.addEventListener('click', () => void refreshAnalysis());
   workbench.querySelectorAll<HTMLButtonElement>('.representation-choice').forEach(button => button.addEventListener('click', () => { selectedRepresentationType = button.dataset.type as RepresentationType; renderWorkbench(); }));
   workbench.querySelector<HTMLButtonElement>('.validate-representation')?.addEventListener('click', () => void validateRepresentation(selectedSpec, executable));
+}
+
+function renderTrustedEvidence(resolution: EvidenceResolution): string {
+  const local = resolution.roles.filter(role => role.localStatus !== 'missing');
+  const external = [...resolution.roles.flatMap(role => role.candidates), ...resolution.supplemental]
+    .filter((item, index, all) => all.findIndex(other => other.resourceId === item.resourceId && other.roleId === item.roleId) === index);
+  const localRows = local.length ? local.map(role => {
+    const dataset = catalog.datasets.find(item => item.id === role.localDatasetId);
+    return `<li><span class="source-state ${role.localStatus === 'locally_available' ? 'ready' : 'weak'}">${role.localStatus === 'locally_available' ? '✓' : '△'}</span><b>${escapeHtml(role.label)}</b><span>${escapeHtml(dataset?.title ?? role.localReason)}</span></li>`;
+  }).join('') : '<li><span class="source-state">—</span><span>No local role is resolved yet.</span></li>';
+  const externalRows = external.length ? external.map(candidate => {
+    const resource = resourceById(candidate.resourceId)!;
+    const provider = providerById(candidate.providerId)!;
+    const status = candidate.status.replace('_', ' ');
+    return `<li><span class="source-state candidate">+</span><div><b>${escapeHtml(resource.label)}</b><span>${escapeHtml(provider.label)} · national · ${escapeHtml(status)} · not validated</span><small>Fills: ${escapeHtml(candidate.roleId.replaceAll('_', ' '))}</small><p>${escapeHtml(candidate.reason)}</p><details><summary>Technical source details</summary><p>Access: ${escapeHtml(resource.accessType)} · ${escapeHtml(resource.formats.join(', '))}</p><p>${escapeHtml(resource.notes.join(' '))}</p><a href="${escapeHtml(resource.catalogueUrl)}" target="_blank" rel="noreferrer">Official source</a></details></div></li>`;
+  }).join('') : '<li><span class="source-state">—</span><span>No national gap-fill is needed.</span></li>';
+  const missingRows = resolution.unresolved.length
+    ? resolution.unresolved.map(role => `<li><span class="source-state missing">×</span><b>${escapeHtml(role.label)}</b><span>${escapeHtml(role.localReason)}</span></li>`).join('')
+    : '<li><span class="source-state ready">✓</span><span>No unresolved roles without a known source.</span></li>';
+  return `<section class="trusted-evidence"><div><span class="eyebrow">Local Basel evidence</span><ul>${localRows}</ul></div><div><span class="eyebrow">Swiss public data · proposed gap-fill</span><ul>${externalRows}</ul></div><div><span class="eyebrow">Still missing</span><ul>${missingRows}</ul></div></section>`;
 }
 
 function renderBuildProposal(spec: RepresentationSpec, recommendations: RepresentationSpec[], covered: number, totalRoles: number, missing: number, next: string, currentAnalysis: WorkspaceAnalysis | null, executable: Set<string>): string {
@@ -392,7 +417,7 @@ async function validate(assessmentId: string): Promise<void> {
 function render(): void {
   matches = rankDatasets(intent, catalog.datasets, { plan });
   datasetCount.textContent = `${catalog.datasets.length} datasets`;
-  composeBtn.disabled = !canCompose(workspace.size);
+  composeBtn.disabled = false;
   composeBtn.classList.toggle('active', stage === 'compose');
   discoverBtn.classList.toggle('active', stage === 'discover');
   stageTitle.textContent = stage === 'discover' ? 'Basel-Stadt dataset catalogue' : 'Build';

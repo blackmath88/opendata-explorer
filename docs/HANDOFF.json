@@ -2,9 +2,8 @@
   "project": {
     "name": "DataFit / Open Data Explorer",
     "repository": "https://github.com/blackmath88/opendata-explorer",
-    "branch": "main",
-    "handoff_date": "2026-09-04",
-    "current_head_when_written": "e2e7fb32533e81ecaa6378d1dc11c77af3a91eeb"
+    "branch": "feat/trusted-evidence-registry-v1",
+    "handoff_date": "2026-09-04"
   },
   "product_thesis": "Turn a civic question into a defensible evidence workflow: discover what data fits, identify evidence roles and gaps, validate whether sources can actually work together, execute bounded checks, and recommend the right representation while preserving provenance.",
   "user_experience": {
@@ -36,7 +35,12 @@
     "GeoJSON/Turf execution for selected containment, nearest and aggregate operations",
     "Execution result status separated from proposal status",
     "User-facing Build framing",
-    "Renderer-independent RepresentationSpec and deterministic recommendation logic"
+    "Renderer-independent RepresentationSpec and deterministic recommendation logic",
+    "Trusted provider/resource registry for five verified MeteoSwiss, swisstopo and BFS/FSO resources",
+    "Deterministic local-first evidence resolver for missing and materially weak roles",
+    "Explicit metadata_resolved and retrievable candidate states kept separate from compatibility and validation",
+    "Direct-browser MeteoSwiss STAC/current-CSV adapter for Basel pollen and weather stations",
+    "Trusted Swiss supporting evidence integrated into Build with provider, scope, role, reason, status and source link"
   ],
   "important_real_data_findings": [
     "Basel Baumkronenbedeckung is a 3-row raster-link table, not directly usable canopy geometry",
@@ -48,28 +52,17 @@
     "A spatial operation can execute correctly while the analytical relationship remains weak"
   ],
   "current_next_milestone": {
-    "name": "Trusted Evidence Registry v1",
-    "goal": "When Basel evidence is missing or materially weak, resolve only from a small curated registry of official Swiss public-data sources.",
-    "priority_sources": [
-      "MeteoSwiss — weather observations and pollen",
-      "swisstopo / geo.admin.ch — road/path backbone and elevation/terrain",
-      "BFS/FSO — population denominators/geostatistics where useful",
-      "opendata.swiss — metadata discovery and source validation, not runtime federation"
-    ],
-    "required_sequence": [
-      "Research and verify real official endpoints, formats, CORS, licensing and limits",
-      "Document findings in docs/TRUSTED_EVIDENCE_FINDINGS.md",
-      "Add a small explicit trusted-source registry",
-      "Add an EvidenceResolver that prefers adequate Basel evidence and fills only unresolved/weak roles",
-      "Keep national candidates clearly separate from validated compatibility claims",
-      "Implement the smallest useful MeteoSwiss/swisstopo adapters if direct browser use is practical",
-      "Integrate national support into Build UX rather than adding a second catalogue browser",
-      "Use the running case as the main acceptance demo"
+    "name": "Representation preview/rendering",
+    "goal": "Use the existing RepresentationSpec to render a very small client-side set: MapLibre map, Observable Plot chart, and HTML evidence brief/comparison.",
+    "constraints": [
+      "Keep generation client-side",
+      "Preserve evidence, transformation and validation provenance",
+      "Do not turn this into a generic dashboard builder",
+      "Do not start MCP until the representation flow is coherent"
     ]
   },
   "after_current_milestone": [
-    "Representation preview/rendering using the existing RepresentationSpec contract: small MapLibre + Observable Plot + HTML evidence brief set",
-    "Then MCP orchestrator exposing the proven evidence workflow to external LLM hosts",
+    "MCP orchestrator exposing the proven evidence workflow to external LLM hosts",
     "Later: Worker/history/change feed, broader trusted-source registry, full catalogue federation, optional LLM enrichment"
   ],
   "do_not_build_yet": [
