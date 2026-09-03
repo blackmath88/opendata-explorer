@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { atlasPath, atlasSegments, atlasSummaries, datasetsAtPath, shouldSubdivide, type AtlasLens } from './atlas';
+import { atlasPath, atlasSegments, atlasSummaries, buildAtlasHierarchy, datasetsAtPath, shouldSubdivide, type AtlasHierarchyDatum, type AtlasLens } from './atlas';
 import { fallbackDatasets } from './data/fallback';
 import type { DatasetMatch } from './types';
 
@@ -47,5 +47,14 @@ describe('hierarchical Atlas', () => {
     const repeated = Array.from({ length: 30 }, (_, index) => ({ ...fallbackDatasets[0], id: `tree-${index}`, title: index % 2 ? 'Baumkataster' : 'Park Grünanlage' }));
     expect(shouldSubdivide(repeated, { lens: 'topic', path: ['Environment & Climate', 'Urban nature'] })).toBe(true);
     expect(shouldSubdivide(repeated.slice(0, 20), { lens: 'topic', path: ['Environment & Climate', 'Urban nature'] })).toBe(false);
+  });
+
+  it('builds one stable hierarchy containing every dataset exactly once', () => {
+    const collect = (node: AtlasHierarchyDatum): string[] => node.dataset ? [node.dataset.id] : (node.children ?? []).flatMap(collect);
+    const first = buildAtlasHierarchy(fallbackDatasets, matches, 'topic', new Set());
+    const second = buildAtlasHierarchy([...fallbackDatasets].reverse(), matches, 'topic', new Set());
+    expect(collect(first).sort()).toEqual(fallbackDatasets.map(dataset => dataset.id).sort());
+    expect(first).toEqual(second);
+    expect(first.total).toBe(fallbackDatasets.length);
   });
 });

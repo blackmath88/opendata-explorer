@@ -11,8 +11,9 @@ import { planOperation } from './execution/operations';
 import type { ExecutionResult } from './execution/types';
 import { BENCHMARK_USE_CASES } from './benchmarks/useCases';
 import { canCompose, catalogueStatus, filterCatalogue, type CatalogueView } from './catalogue-ui';
-import { renderGraph, stopGraph } from './ui/graph';
-import { ATLAS_LENS_LABEL, atlasSummaries, datasetsAtPath, shouldSubdivide, type AtlasLens, type AtlasState } from './atlas';
+import { renderGraph, resetAtlasZoom, stopGraph, zoomAtlasIn, zoomAtlasOut, zoomAtlasTo, type AtlasGraphActions } from './ui/graph';
+import { ATLAS_LENS_LABEL, buildAtlasHierarchy, type AtlasHierarchyDatum, type AtlasLens, type AtlasState } from './atlas';
+import { recommendRepresentations, type RepresentationSpec, type RepresentationType } from './representation';
 import { escapeHtml, provenanceTag } from './ui/dom';
 import {
   renderDatasetDetail,
@@ -50,9 +51,11 @@ let matches: DatasetMatch[] = [];
 const workspace = new Set<string>();
 let selectedId: string | null = null;
 let topicFilter = 'all';
-let catalogueView: CatalogueView = 'list';
+let catalogueView: CatalogueView = 'landscape';
 let catalogueQuery = '';
 let atlas: AtlasState = { lens: 'topic', path: [] };
+let atlasFocusId = 'lens:topic';
+let atlasRoot: AtlasHierarchyDatum | null = null;
 let geoOnly = false;
 let temporalOnly = false;
 let stage: Stage = 'discover';
@@ -66,6 +69,7 @@ let inspectorOpen = false;
 const executions = new Map<string, ExecutionResult>();
 const executing = new Set<string>();
 let engine: GeoJsonExecutionEngine | null = null;
+let selectedRepresentationType: RepresentationType | null = null;
 
 app.innerHTML = `
 <div class="app">
@@ -82,7 +86,7 @@ app.innerHTML = `
   <div class="shell">
     <nav class="rail">
       <button class="rail-btn active" id="stageDiscover"><span class="rail-icon">⌕</span><span>Discover</span></button>
-      <button class="rail-btn" id="stageCompose" disabled title="Add datasets to the workspace"><span class="rail-icon">⌘</span><span>Compose</span></button>
+      <button class="rail-btn" id="stageCompose" disabled title="Build with selected datasets"><span class="rail-icon">⌘</span><span>Build</span></button>
       <button class="rail-btn" disabled title="Milestone 5"><span class="rail-icon">▣</span><span>Materialize</span></button>
       <div class="rail-spacer"></div>
       <button class="rail-btn" id="legendBtn" title="What the provenance tags mean"><span class="rail-icon">?</span></button>
@@ -90,7 +94,7 @@ app.innerHTML = `
     <main class="main">
       <div class="canvas-toolbar">
         <div><strong id="stageTitle">Catalogue</strong> · <span id="datasetCount">0 datasets</span></div>
-        <div class="view-toggle" id="viewToggle"><button data-view="list" class="active">List</button><button data-view="landscape">Landscape</button></div>
+        <div class="view-toggle" id="viewToggle"><button data-view="list">List</button><button data-view="landscape" class="active">Landscape</button></div>
       </div>
       <div class="evidence-summary-wrap" id="evidenceSummary"></div>
       <div class="catalogue-controls" id="catalogueControls">
@@ -105,6 +109,7 @@ app.innerHTML = `
           <nav class="atlas-breadcrumb" id="atlasBreadcrumb" aria-label="Atlas breadcrumb"></nav>
           <div class="landscape-info"><b id="landscapeCount">Atlas categories</b><span id="landscapeTotal">all loaded datasets</span></div>
         </div>
+        <div class="atlas-zoom-controls" aria-label="Atlas zoom controls"><button id="atlasZoomIn" aria-label="Zoom in">+</button><button id="atlasZoomOut" aria-label="Zoom out">−</button><button id="atlasZoomReset">Reset</button></div>
         <div class="viz-scroll"><svg class="viz" id="viz" aria-label="Hierarchical catalogue Atlas"></svg></div>
       </div>
       <div class="workbench" id="workbench" hidden></div>
@@ -113,7 +118,7 @@ app.innerHTML = `
           <input id="promptInput" value="${escapeHtml(DEFAULT_QUERY)}" aria-label="Describe what you want to understand or build"/>
           <button class="send" type="submit">Find evidence</button>
         </form>
-        <div class="examples" id="examples"></div>
+        <details class="examples-menu"><summary>Try an example question</summary><div class="examples" id="examples"></div></details>
       </div>
     </main>
     <aside class="inspector" id="inspector">
@@ -174,32 +179,32 @@ function renderAtlasBreadcrumb(): void {
   breadcrumb.innerHTML = parts.join('');
   breadcrumb.querySelectorAll<HTMLButtonElement>('button').forEach(button => button.addEventListener('click', () => {
     const depth = Number(button.dataset.depth);
-    atlas = { lens: atlas.lens, path: atlas.path.slice(0, depth), showDatasets: depth > 0 && !shouldSubdivide(datasetsAtPath(catalog.datasets, { lens: atlas.lens, path: atlas.path.slice(0, depth) }), { lens: atlas.lens, path: atlas.path.slice(0, depth) }) };
-    render();
+    const targetPath = atlas.path.slice(0, depth);
+    const target = findAtlasNode(atlasRoot, targetPath);
+    if (target) zoomAtlasTo(target.id, atlasActions);
   }));
 }
 
+function findAtlasNode(root: AtlasHierarchyDatum | null, path: string[]): AtlasHierarchyDatum | null {
+  let node = root;
+  for (const label of path) node = node?.children?.find(child => child.label === label) ?? null;
+  return node;
+}
+
+const atlasActions: AtlasGraphActions = {
+  onFocus: (path, id) => { atlas = { lens: atlas.lens, path }; atlasFocusId = id; renderAtlasBreadcrumb(); },
+  onSelect: selectDataset,
+  onWorkspace: toggleWorkspace,
+};
+
 function renderAtlas(): void {
   const searchMatches = searchDatasetIds();
-  const level: 1 | 2 | 3 = atlas.showDatasets ? 3 : atlas.path.length ? 2 : 1;
+  atlasRoot = buildAtlasHierarchy(catalog.datasets, matches, atlas.lens, searchMatches);
   renderAtlasBreadcrumb();
-  const summaries = !atlas.showDatasets ? atlasSummaries(catalog.datasets, matches, atlas, searchMatches) : undefined;
-  const datasets = atlas.showDatasets ? datasetsAtPath(catalog.datasets, atlas) : undefined;
-  const represented = summaries?.reduce((sum, node) => sum + node.total, 0) ?? datasets?.length ?? 0;
-  const visible = level === 3 && catalogueQuery.trim() ? datasets!.filter(dataset => searchMatches.has(dataset.id)).length : represented;
   datasetCount.textContent = `${catalog.datasets.length} datasets in Atlas`;
-  el<HTMLElement>('#landscapeCount').textContent = level === 1 ? `${summaries?.length ?? 0} ${ATLAS_LENS_LABEL[atlas.lens]} categories` : level === 2 ? `${summaries?.length ?? 0} subdivisions` : `${visible} datasets`;
-  el<HTMLElement>('#landscapeTotal').textContent = catalogueQuery.trim() ? `${searchMatches.size} catalogue search matches highlighted` : `${represented} datasets represented`;
-  renderGraph(vizWrap, svg, { level, summaries, datasets, matches, searchActive: Boolean(catalogueQuery.trim()), searchMatches }, selectedId, workspace, {
-    onDrill: label => {
-      const next = { lens: atlas.lens, path: [...atlas.path, label] };
-      const bucket = datasetsAtPath(catalog.datasets, next);
-      atlas = { ...next, showDatasets: !shouldSubdivide(bucket, next) };
-      render();
-    },
-    onSelect: selectDataset,
-    onWorkspace: toggleWorkspace,
-  });
+  el<HTMLElement>('#landscapeCount').textContent = `${atlasRoot.children?.length ?? 0} ${ATLAS_LENS_LABEL[atlas.lens]} categories`;
+  el<HTMLElement>('#landscapeTotal').textContent = catalogueQuery.trim() ? `${searchMatches.size} catalogue matches highlighted` : `${atlasRoot.total} datasets represented`;
+  renderGraph(vizWrap, svg, { root: atlasRoot, matches, searchActive: Boolean(catalogueQuery.trim()) }, selectedId, workspace, atlasActions, atlasFocusId);
 }
 
 function renderFilters(): void {
@@ -284,6 +289,9 @@ function renderWorkbench(): void {
   const missing = plan.roles.filter(role => !role.datasetId).length;
   const possiblePairs = datasets.length * (datasets.length - 1) / 2;
   const latestExecution = [...executions.values()].at(-1);
+  const recommendations = recommendRepresentations({ intent, plan, selected: datasets, analysis, executions });
+  const selectedSpec = recommendations.find(spec => spec.type === selectedRepresentationType) ?? recommendations[0];
+  selectedRepresentationType = selectedSpec.type;
   const executable = new Set<string>();
   for (const pair of analysis?.pairs ?? []) {
     const left = structures.get(pair.left.id);
@@ -300,18 +308,17 @@ function renderWorkbench(): void {
                 : latestExecution?.status === 'failed' ? 'Validation failed technically. Review the caveats and retry when the source is available.'
             : 'Select a relationship to inspect or validate.';
   workbench.innerHTML = `
-    <section class="compose-overview"><div><span class="eyebrow">Active question</span><h2>${escapeHtml(query)}</h2><p>${escapeHtml(next)}</p></div>
-      <div class="compose-metrics"><div><b>${datasets.length}</b><span>datasets selected</span></div><div><b>${covered}</b><span>roles covered</span></div><div><b>${missing}</b><span>missing / external</span></div><div><b>${analysis?.pairs.length ?? possiblePairs}</b><span>relationships ${analysis ? 'assessed' : 'possible'}</span></div></div>
-      ${datasets.length >= 2 && !analysis && !analysing ? '<button class="analyse-btn">Analyse compatibility</button>' : ''}
-    </section>
-    <div class="compose-grid"><div>${renderEvidencePlan(plan, catalog.datasets, workspace)}</div><div>${renderRelationships(analysis, analysing, {
+    ${renderBuildProposal(selectedSpec, recommendations, covered, plan.roles.length, missing, next, analysis, executable)}
+    <div class="build-secondary"><details><summary>Technical evidence plan</summary>${renderEvidencePlan(plan, catalog.datasets, workspace)}</details>
+    <details ${analysis ? 'open' : ''}><summary>Dataset relationships</summary>${renderRelationships(analysis, analysing, {
       results: executions,
       running: executing,
       available: engine !== null,
       executable,
       unavailableReason:
         'Execution needs live source geometry; the offline fallback snapshot cannot be executed against.',
-    })}</div></div>
+    }, new Set(selectedSpec.requiredAssessmentIds))}</details>
+    <details><summary>Provenance and full compatibility matrix</summary>${renderRelationships(analysis, analysing, { results: executions, running: executing, available: false, executable: new Set(), unavailableReason: 'Validation actions are shown in the focused relationship section above.' })}</details></div>
     ${
       datasets.length < 2
         ? '<div class="notice">Two or more datasets are needed before compatibility can be assessed.</div>'
@@ -327,6 +334,26 @@ function renderWorkbench(): void {
     button.addEventListener('click', () => void validate(button.dataset.assessment!)),
   );
   workbench.querySelector<HTMLButtonElement>('.analyse-btn')?.addEventListener('click', () => void refreshAnalysis());
+  workbench.querySelectorAll<HTMLButtonElement>('.representation-choice').forEach(button => button.addEventListener('click', () => { selectedRepresentationType = button.dataset.type as RepresentationType; renderWorkbench(); }));
+  workbench.querySelector<HTMLButtonElement>('.validate-representation')?.addEventListener('click', () => void validateRepresentation(selectedSpec, executable));
+}
+
+function renderBuildProposal(spec: RepresentationSpec, recommendations: RepresentationSpec[], covered: number, totalRoles: number, missing: number, next: string, currentAnalysis: WorkspaceAnalysis | null, executable: Set<string>): string {
+  const useRows = spec.inputs.map(input => `<li class="input-${input.status}"><span>${input.status === 'selected' ? '✓' : input.status === 'available' ? '△' : '✕'}</span>${escapeHtml(input.label)}${input.status === 'available' ? ' · available, not selected' : input.status === 'external' ? ' · external' : ''}</li>`).join('');
+  const needsValidation = spec.requiredAssessmentIds.filter(id => !executions.has(id));
+  return `<section class="build-proposal">
+    <div class="build-kicker">Build · proposed view</div><div class="build-question">${escapeHtml(query)}</div>
+    <div class="build-proposal-grid"><div><span class="eyebrow">What DataFit proposes</span><h2>${escapeHtml(spec.title)}</h2><p>${escapeHtml(spec.method)}</p></div>
+      <div><span class="eyebrow">Evidence</span><strong>${covered} / ${totalRoles} needs covered</strong><span>${missing} missing or external</span></div>
+      <div><span class="eyebrow">Needs validation</span><strong>${needsValidation.length} data relationships</strong><span>${escapeHtml(next)}</span></div></div>
+    <div class="proposed-preview"><div><span class="eyebrow">Proposed view</span><h3>${escapeHtml(spec.title)}</h3><ul>${useRows}</ul></div><div class="preview-placeholder"><span>${escapeHtml(spec.type.replaceAll('_', ' '))}</span><small>Structural preview · no analytical result claimed</small></div></div>
+    ${recommendations.length > 1 ? `<div class="representation-options"><span>Other suitable outputs</span>${recommendations.map(item => `<button class="representation-choice ${item.type === spec.type ? 'active' : ''}" data-type="${item.type}">${escapeHtml(item.title)}</button>`).join('')}</div>` : ''}
+    <div class="build-action"><span>${escapeHtml(next)}</span>${!currentAnalysis && workspace.size >= 2 ? '<button class="analyse-btn">Check data fit</button>' : needsValidation.some(id => executable.has(id)) ? '<button class="validate-representation">Validate required relationships</button>' : ''}</div>
+  </section>`;
+}
+
+async function validateRepresentation(spec: RepresentationSpec, executable: Set<string>): Promise<void> {
+  for (const id of spec.requiredAssessmentIds) if (executable.has(id) && !executions.has(id)) await validate(id);
 }
 
 /**
@@ -368,8 +395,8 @@ function render(): void {
   composeBtn.disabled = !canCompose(workspace.size);
   composeBtn.classList.toggle('active', stage === 'compose');
   discoverBtn.classList.toggle('active', stage === 'discover');
-  stageTitle.textContent = stage === 'discover' ? 'Basel-Stadt dataset catalogue' : 'Evidence workbench';
-  el<HTMLElement>('#inspectorTitle').textContent = stage === 'discover' ? 'Discover' : 'Compose';
+  stageTitle.textContent = stage === 'discover' ? 'Basel-Stadt dataset catalogue' : 'Build';
+  el<HTMLElement>('#inspectorTitle').textContent = stage === 'discover' ? 'Discover' : 'Build';
   el<HTMLElement>('#inspectorSub').textContent =
     stage === 'discover' ? 'Evidence shortlist and dataset detail' : 'Selected evidence and its structure';
 
@@ -515,9 +542,13 @@ el<HTMLElement>('#viewToggle').querySelectorAll<HTMLButtonElement>('button').for
 }));
 el<HTMLElement>('#atlasLenses').querySelectorAll<HTMLButtonElement>('button').forEach(button => button.addEventListener('click', () => {
   atlas = { lens: button.dataset.lens as AtlasLens, path: [] };
+  atlasFocusId = `lens:${atlas.lens}`;
   el<HTMLElement>('#atlasLenses').querySelectorAll('button').forEach(item => item.classList.toggle('active', item === button));
   render();
 }));
+el<HTMLButtonElement>('#atlasZoomIn').addEventListener('click', zoomAtlasIn);
+el<HTMLButtonElement>('#atlasZoomOut').addEventListener('click', () => zoomAtlasOut(atlasActions));
+el<HTMLButtonElement>('#atlasZoomReset').addEventListener('click', () => resetAtlasZoom(atlasActions));
 discoverBtn.addEventListener('click', () => setStage('discover'));
 composeBtn.addEventListener('click', () => setStage('compose'));
 el<HTMLButtonElement>('#inspectorToggle').addEventListener('click', () => {

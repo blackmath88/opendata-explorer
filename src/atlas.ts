@@ -28,6 +28,21 @@ export interface AtlasState {
 
 export const ATLAS_BROWSE_LIMIT = 25;
 
+export interface AtlasHierarchyDatum {
+  id: string;
+  label: string;
+  kind: 'lens' | 'category' | 'dataset';
+  depth: number;
+  total: number;
+  matching: number;
+  direct: number;
+  supporting: number;
+  contextual: number;
+  aggregateRelevance: number;
+  dataset?: DatasetRecord;
+  children?: AtlasHierarchyDatum[];
+}
+
 export const ATLAS_LENS_LABEL: Record<AtlasLens, string> = {
   topic: 'Topic',
   space: 'Space',
@@ -222,3 +237,54 @@ export function shouldSubdivide(datasets: DatasetRecord[], state: AtlasState): b
   const deeper = new Set(segments.map(parts => parts[state.path.length + 1]).filter(Boolean));
   return next.size === 1 && deeper.size >= 2;
 }
+
+/** One stable hierarchy powers the full semantic-zoom Atlas. */
+export function buildAtlasHierarchy(datasets: DatasetRecord[], matches: DatasetMatch[], lens: AtlasLens, searchMatches: Set<string>): AtlasHierarchyDatum {
+  const matchById = new Map(matches.map(match => [match.dataset.id, match]));
+  const root: AtlasHierarchyDatum = blank(`lens:${lens}`, ATLAS_LENS_LABEL[lens], 'lens', 0);
+  root.children = [];
+  for (const dataset of [...datasets].sort((a, b) => a.id.localeCompare(b.id))) {
+    let parent = root;
+    for (const [index, label] of atlasSegments(dataset, lens).entries()) {
+      parent.children ??= [];
+      let child = parent.children.find(node => node.kind === 'category' && node.label === label);
+      if (!child) {
+        child = blank(`${parent.id}/${slug(label)}`, label, 'category', index + 1);
+        child.children = [];
+        parent.children.push(child);
+      }
+      parent = child;
+    }
+    const match = matchById.get(dataset.id);
+    parent.children ??= [];
+    parent.children.push({
+      ...blank(`dataset:${dataset.id}`, dataset.title, 'dataset', parent.depth + 1),
+      dataset,
+      total: 1,
+      matching: searchMatches.has(dataset.id) ? 1 : 0,
+      direct: match?.evidenceClass === 'direct' ? 1 : 0,
+      supporting: match?.evidenceClass === 'supporting' ? 1 : 0,
+      contextual: match?.evidenceClass === 'contextual' ? 1 : 0,
+      aggregateRelevance: match?.relevance.score ?? 0,
+    });
+  }
+  aggregate(root);
+  sortTree(root);
+  return root;
+}
+
+function blank(id: string, label: string, kind: AtlasHierarchyDatum['kind'], depth: number): AtlasHierarchyDatum {
+  return { id, label, kind, depth, total: 0, matching: 0, direct: 0, supporting: 0, contextual: 0, aggregateRelevance: 0 };
+}
+
+function aggregate(node: AtlasHierarchyDatum): void {
+  if (!node.children?.length) return;
+  node.children.forEach(aggregate);
+  for (const key of ['total', 'matching', 'direct', 'supporting', 'contextual', 'aggregateRelevance'] as const) node[key] = node.children.reduce((sum, child) => sum + child[key], 0);
+}
+
+function sortTree(node: AtlasHierarchyDatum): void {
+  node.children?.sort((a, b) => b.total - a.total || a.label.localeCompare(b.label)).forEach(sortTree);
+}
+
+const slug = (value: string): string => value.toLocaleLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');

@@ -375,6 +375,7 @@ export function renderRelationships(
   analysis: WorkspaceAnalysis | null,
   loading: boolean,
   executions: ExecutionView,
+  assessmentIds?: Set<string>,
 ): string {
   if (loading) {
     return `<section class="workbench-section"><div class="section-title">2. Proposed relationships</div>
@@ -386,11 +387,12 @@ export function renderRelationships(
   }
 
   const failures = analysis.entries.filter(entry => entry.error);
+  const pairs = assessmentIds ? analysis.pairs.filter(pair => assessmentIds.has(pair.assessment.id)) : analysis.pairs;
 
   return `
     <section class="workbench-section">
-      <div class="section-title">2. Proposed relationships <span class="section-note">${analysis.pairs.length} assessed</span></div>
-      ${analysis.pairs.map(pair => renderPair(pair, executions)).join('') || '<div class="quiet">No pairs to assess yet.</div>'}
+      <div class="section-title">2. Proposed relationships <span class="section-note">${pairs.length} relevant · ${analysis.pairs.length} assessed</span></div>
+      ${pairs.map(pair => renderPair(pair, executions)).join('') || '<div class="quiet">This proposed view does not require a cross-dataset relationship.</div>'}
       ${failures.length ? `<div class="warning">${failures.map(failureLine).join('<br>')}</div>` : ''}
       ${analysis.notes.length ? `<div class="notice">${analysis.notes.map(escapeHtml).join('<br>')}</div>` : ''}
     </section>`;
