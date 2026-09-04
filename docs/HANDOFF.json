@@ -2,7 +2,7 @@
   "project": {
     "name": "DataFit / Open Data Explorer",
     "repository": "https://github.com/blackmath88/opendata-explorer",
-    "branch": "feat/trusted-evidence-registry-v1",
+    "branch": "feat/representation-preview-v1",
     "handoff_date": "2026-09-04"
   },
   "product_thesis": "Turn a civic question into a defensible evidence workflow: discover what data fits, identify evidence roles and gaps, validate whether sources can actually work together, execute bounded checks, and recommend the right representation while preserving provenance.",
@@ -18,7 +18,7 @@
       "Validate only the relationships required for that result",
       "Show confirmed, rejected, partial and unresolved claims clearly"
     ],
-    "mental_model": "Discover -> Build",
+    "mental_model": "Discover -> Build -> Result",
     "internal_only_concept": "Compose remains an implementation concept; do not make arbitrary dataset pairing the main user workflow"
   },
   "implemented": [
@@ -40,7 +40,13 @@
     "Deterministic local-first evidence resolver for missing and materially weak roles",
     "Explicit metadata_resolved and retrievable candidate states kept separate from compatibility and validation",
     "Direct-browser MeteoSwiss STAC/current-CSV adapter for Basel pollen and weather stations",
-    "Trusted Swiss supporting evidence integrated into Build with provider, scope, role, reason, status and source link"
+    "Trusted Swiss supporting evidence integrated into Build with provider, scope, role, reason, status and source link",
+    "Representation renderer boundary with explicit ready, partial, blocked and unsupported states",
+    "MapLibre point and relationship maps over bounded GeoJSON preview data",
+    "Observable Plot ranked-bar and time-series rendering gated on deterministic numeric observations",
+    "HTML evidence brief with confirmed, rejected, partial, proposed and unresolved claims",
+    "Build to Result preview transition with per-source provenance and execution timestamps",
+    "On-demand MapLibre and Observable Plot loading"
   ],
   "important_real_data_findings": [
     "Basel Baumkronenbedeckung is a 3-row raster-link table, not directly usable canopy geometry",
@@ -52,22 +58,21 @@
     "A spatial operation can execute correctly while the analytical relationship remains weak"
   ],
   "current_next_milestone": {
-    "name": "Representation preview/rendering",
-    "goal": "Use the existing RepresentationSpec to render a very small client-side set: MapLibre map, Observable Plot chart, and HTML evidence brief/comparison.",
+    "name": "MCP Orchestrator v1",
+    "goal": "Expose the proven question-to-result workflow as a small tool interface without creating a parallel reasoning system.",
     "constraints": [
-      "Keep generation client-side",
-      "Preserve evidence, transformation and validation provenance",
-      "Do not turn this into a generic dashboard builder",
-      "Do not start MCP until the representation flow is coherent"
+      "Wrap existing deterministic capabilities rather than reimplementing them",
+      "Keep evidence and validation provenance in every response",
+      "Do not add a chatbot or autonomous evidence selection",
+      "Keep the web product authoritative"
     ]
   },
   "after_current_milestone": [
-    "MCP orchestrator exposing the proven evidence workflow to external LLM hosts",
-    "Later: Worker/history/change feed, broader trusted-source registry, full catalogue federation, optional LLM enrichment"
+    "Worker/history/change feed, broader trusted-source registry, full catalogue federation, optional LLM enrichment"
   ],
   "do_not_build_yet": [
     "Full opendata.swiss federation",
-    "MCP before the trusted-source and representation flows are coherent",
+    "A parallel MCP reasoning or evidence-selection system",
     "Generic dashboard builder",
     "Arbitrary web search as evidence resolution",
     "Live LLM taxonomy as source truth",
@@ -84,6 +89,8 @@
     "DESIGN.md",
     "src/main.ts",
     "src/representation.ts",
+    "src/renderers/",
+    "src/ui/result.ts",
     "src/evidence.ts",
     "src/compatibility.ts",
     "src/execution/",

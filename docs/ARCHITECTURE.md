@@ -1,5 +1,37 @@
 # Architecture
 
+## Representation renderer boundary
+
+Representation Preview v1 keeps analytical recommendation separate from visual
+rendering:
+
+```text
+Evidence workflow
+  → RepresentationSpec
+  → deterministic renderer selection
+  → RepresentationResult
+  → UI mount (only when ready or partial)
+```
+
+`src/renderers/` consumes the existing intent, evidence plan, trusted-source
+resolution, compatibility analysis, execution results, and explicitly supplied
+preview data. Renderers never infer a new analytical meaning.
+
+Supported types:
+
+- MapLibre: `point_map`, `relationship_map`
+- Observable Plot: `ranked_bar`, `time_series`
+- HTML evidence brief: `evidence_brief`, `comparison_cards`
+
+`route_comparison` and `choropleth` are explicitly unsupported in v1. The
+pipeline returns `unsupported` with a reason and a visibly labelled evidence-
+brief fallback. Maps return `blocked` without GeoJSON. Charts return `blocked`
+without deterministic numeric observations (and timestamps for time series).
+
+Every result carries validation state, claims, caveats, and source provenance.
+Execution snapshots upgrade only inputs actually read to `execution validated`;
+trusted national candidates retain their curated access state and scope.
+
 ## Product progression
 
 ```text

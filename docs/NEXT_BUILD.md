@@ -1,8 +1,9 @@
-# Next build — representation preview/rendering
+# Next build — MCP Orchestrator v1
 
-Trusted Evidence Registry v1 is complete. The next milestone is the small
-renderer set described under **After this milestone** below; do not start MCP
-until those representation outputs are coherent.
+Trusted Evidence Registry v1 and Representation Preview v1 are complete. The
+next milestone is an MCP orchestrator over the proven question → evidence →
+resolution → validation → result pipeline. It must expose this pipeline rather
+than create a parallel reasoning system.
 
 Implemented and verified in the completed milestone:
 
@@ -12,6 +13,15 @@ Implemented and verified in the completed milestone:
 - direct-browser MeteoSwiss station/current-observation adapter;
 - Build integration with provider, scope, role, reason, status and source link;
 - no proxy, full-catalogue federation, arbitrary search, renderer or MCP.
+
+Representation Preview v1 subsequently added:
+
+- explicit ready/partial/blocked/unsupported renderer results;
+- MapLibre point/relationship maps from bounded real GeoJSON;
+- Observable Plot ranked bars/time series only when numeric observations exist;
+- a provenance-rich HTML evidence brief and explicit fallback;
+- on-demand renderer loading;
+- honest unsupported states for route comparison and choropleth.
 
 The core prototype now has enough internal machinery to move beyond manual dataset composition.
 
@@ -400,9 +410,9 @@ Do not build yet:
 
 ---
 
-# After this milestone
+# Completed follow-on milestone
 
-## Next — Representation preview/rendering
+## Representation Preview v1
 
 Use the existing `RepresentationSpec` contract to prove a very small renderer library:
 
@@ -410,9 +420,9 @@ Use the existing `RepresentationSpec` contract to prove a very small renderer li
 - Observable Plot chart
 - HTML evidence brief / comparison
 
-Keep generation client-side.
+Implemented client-side with explicit blocked and unsupported states.
 
-## Then — MCP orchestrator
+## Current next milestone — MCP Orchestrator v1
 
 Expose the proven core to external LLM hosts:
 

@@ -213,8 +213,10 @@ Exit condition:
 
 Build milestone name: **Evidence to Artefact**.
 
-Status: **next milestone**. The renderer-independent `RepresentationSpec`
-exists, but no representation renderer has been built yet.
+Status: **first renderer slice implemented**. `RepresentationSpec` now selects
+a small deterministic MapLibre, Observable Plot, or HTML evidence-brief
+renderer. Unsupported and data-blocked outputs are explicit. Route comparison
+and choropleth remain unimplemented; no fake routes or values are produced.
 
 ---
 

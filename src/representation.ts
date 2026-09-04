@@ -52,7 +52,7 @@ export function recommendRepresentations(options: {
   const specs: Array<Omit<RepresentationSpec, 'inputs' | 'requiredAssessmentIds' | 'validationState' | 'id'>> = [];
 
   if (/route|running|cycling|walking|comfort/.test(statement) && hasLines) specs.push({ type: 'route_comparison', title: 'Interactive route-comparison map', method: 'Score candidate routes using the selected environmental, access and mobility evidence.' });
-  if (hasLines && (hasPoints || hasPolygons)) specs.push({ type: 'relationship_map', title: 'Evidence relationship map', method: 'Attach nearby or intersecting context to the route or network geometry.' });
+  if ((hasLines && (hasPoints || hasPolygons)) || (hasPoints && hasPolygons)) specs.push({ type: 'relationship_map', title: 'Evidence relationship map', method: 'Show selected spatial evidence together and state whether the proposed relationship survived validation.' });
   if (hasPolygons && (/count|per area|district|zone|neighbou?rhood/.test(statement) || hasPoints)) {
     specs.push({ type: 'choropleth', title: 'Area comparison map', method: 'Aggregate evidence into comparable areas and shade them by the resulting measure.' });
     specs.push({ type: 'ranked_bar', title: 'Ranked area comparison', method: 'Rank areas using the same validated aggregate used by the map.' });
