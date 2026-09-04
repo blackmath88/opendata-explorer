@@ -1,4 +1,17 @@
-# Next build — trusted evidence beyond Basel
+# Next build — representation preview/rendering
+
+Trusted Evidence Registry v1 is complete. The next milestone is the small
+renderer set described under **After this milestone** below; do not start MCP
+until those representation outputs are coherent.
+
+Implemented and verified in the completed milestone:
+
+- five curated resources across MeteoSwiss, swisstopo and BFS/FSO;
+- deterministic local-first resolution for missing and materially weak roles;
+- explicit `metadata_resolved` and `retrievable` states that do not imply compatibility;
+- direct-browser MeteoSwiss station/current-observation adapter;
+- Build integration with provider, scope, role, reason, status and source link;
+- no proxy, full-catalogue federation, arbitrary search, renderer or MCP.
 
 The core prototype now has enough internal machinery to move beyond manual dataset composition.
 
@@ -57,7 +70,7 @@ Detailed pairwise compatibility, schemas and provenance remain inspectable as te
 
 ---
 
-# Next milestone — Trusted Evidence Registry v1
+# Completed milestone — Trusted Evidence Registry v1
 
 ## Goal
 

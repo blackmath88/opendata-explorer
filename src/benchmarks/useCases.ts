@@ -50,7 +50,7 @@ export const BENCHMARK_USE_CASES: BenchmarkUseCase[] = [
     id: 'running',
     label: 'Running comfort',
     prompt:
-      'I want to build a running route planner that prefers shade and clean air, avoids heavy traffic, shows fountains and warns about construction.',
+      'Build a comfortable running route in Basel with shade, clean air, fountains, low traffic and sensible effort, and warn about construction.',
     expectedHints: ['running', 'network', 'shade', 'air_quality', 'traffic', 'construction', 'water_access'],
     expectedOutcome: 'route_planner',
     expectedSpatialNeed: true,
@@ -116,6 +116,22 @@ export const BENCHMARK_USE_CASES: BenchmarkUseCase[] = [
     ],
     expectedShortlist: ['Brunnen'],
     knownGaps: ['public benches inventory'],
+  },
+  {
+    id: 'public_service_equity',
+    label: 'Public-service access equity',
+    prompt: 'Where is access to public fountains or green spaces weakest, especially for underserved neighbourhoods?',
+    expectedHints: ['water_access', 'green_space'],
+    expectedOutcome: 'access_gap_analysis',
+    expectedSpatialNeed: true,
+    roles: [
+      { id: 'amenity_locations', roleType: 'primary_measure', required: true, expect: 'resolved', titlePattern: 'brunnen' },
+      { id: 'demand_geography', roleType: 'geography', required: true, expect: 'resolved' },
+      { id: 'population_denominator', roleType: 'denominator', required: false, expect: 'either' },
+      { id: 'walking_network', roleType: 'analysis_backbone', required: false, expect: 'either' },
+    ],
+    expectedShortlist: ['Brunnen'],
+    knownGaps: ['fine-grained population denominator', 'validated walking accessibility'],
   },
   {
     id: 'construction_mobility',

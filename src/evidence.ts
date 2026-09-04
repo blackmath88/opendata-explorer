@@ -38,11 +38,8 @@ interface RoleTemplate {
    * not air temperature, however similar the words are.
    */
   excludeTerms?: string[];
-  /**
-   * Set when we already know the catalogue cannot serve this role. The plan
-   * still shows the slot — a missing input is part of the method.
-   */
-  externalSuggestion?: string;
+  /** Why this analytical role remains a gap. Source selection belongs to the trusted registry. */
+  knownGap?: string;
 }
 
 const ROUTE_BACKBONE: RoleTemplate = {
@@ -51,11 +48,10 @@ const ROUTE_BACKBONE: RoleTemplate = {
   roleType: 'analysis_backbone',
   required: true,
   reason:
-    'Every other measure is attached to a line network. Basel publishes street and cycle-route lines; a running-specific path network would come from OpenStreetMap.',
+    'Every other measure is attached to a line network. A candidate must have sufficient coverage and topology for the intended route method.',
   concepts: ['network', 'cycling', 'walking'],
   geometry: 'line',
-  externalSuggestion:
-    'An OpenStreetMap foot/path network (Overpass or a routing engine), which Basel-Stadt does not publish.',
+  knownGap: 'The Basel catalogue does not provide a demonstrated general-purpose routable path network.',
 };
 
 const TEMPLATES: Record<string, RoleTemplate[]> = {
@@ -117,7 +113,7 @@ const TEMPLATES: Record<string, RoleTemplate[]> = {
       required: false,
       reason: 'Climb is a first-order determinant of effort on a running or cycling route.',
       concepts: ['elevation'],
-      externalSuggestion: 'A terrain model (swisstopo swissALTI3D or an OpenStreetMap elevation service).',
+      knownGap: 'The Basel catalogue does not provide a terrain surface suitable for route elevation profiling.',
     },
     {
       id: 'allergen_exposure',
@@ -127,7 +123,7 @@ const TEMPLATES: Record<string, RoleTemplate[]> = {
       reason:
         'Proposed by the system, not requested: pollen is a standard comfort factor for outdoor exercise and is absent from this catalogue.',
       concepts: ['pollen'],
-      externalSuggestion: 'MeteoSwiss or aha! Swiss Allergy Centre pollen forecast API.',
+      knownGap: 'The Basel catalogue does not provide pollen measurements or an allergen-exposure surface.',
     },
   ],
 
@@ -185,7 +181,7 @@ const TEMPLATES: Record<string, RoleTemplate[]> = {
       reason: 'Independent check on a modelled heat ranking.',
       concepts: ['heat'],
       excludeTerms: ['grundwasser', 'gewässer', 'gartenb', 'wiese', 'birs', 'rhein'],
-      externalSuggestion: 'Landsat/Sentinel land-surface-temperature raster, or a cantonal climate-analysis map.',
+      knownGap: 'The catalogue does not provide a suitable land-surface-temperature raster for this validation role.',
     },
   ],
 
@@ -239,7 +235,7 @@ const TEMPLATES: Record<string, RoleTemplate[]> = {
       required: false,
       reason: '"Uncomfortable" is a perception; recorded collisions do not capture it.',
       concepts: [],
-      externalSuggestion: 'A reporting platform such as Bikeable, or a local survey.',
+      knownGap: 'Published collision records do not capture perceived risk or near misses.',
     },
   ],
 
@@ -322,7 +318,7 @@ const TEMPLATES: Record<string, RoleTemplate[]> = {
       required: false,
       reason: 'Impact needs the extent of each closure, not just that a project exists.',
       concepts: ['construction'],
-      externalSuggestion: 'Traffic-management / detour geometry from the roadworks permit system.',
+      knownGap: 'The catalogue does not provide verified closure and detour geometry for this role.',
     },
   ],
 
@@ -376,7 +372,7 @@ const TEMPLATES: Record<string, RoleTemplate[]> = {
       required: false,
       reason: 'Cantonal stations describe the city, not one schoolyard; a site claim needs local measurement.',
       concepts: [],
-      externalSuggestion: 'Dedicated sensors at the sites, or a modelled dispersion/noise map at street resolution.',
+      knownGap: 'City-level monitoring cannot support a site-level claim without local measurements or a validated fine-resolution model.',
     },
   ],
 };
@@ -520,13 +516,13 @@ function resolveRole(
 
   if (!best) {
     role.gap = {
-      kind: template.externalSuggestion || !scored.length ? 'not_in_catalogue' : 'no_candidate_selected',
-      suggestion: template.externalSuggestion,
+      kind: template.knownGap || !scored.length ? 'not_in_catalogue' : 'no_candidate_selected',
+      suggestion: template.knownGap,
     };
-  } else if (template.externalSuggestion) {
-    // A catalogue dataset exists but the role was still flagged as externally
-    // served; keep the suggestion visible rather than silently dropping it.
-    role.gap = { kind: 'no_candidate_selected', suggestion: template.externalSuggestion };
+  } else if (template.knownGap) {
+    // A weak local candidate can coexist with a known analytical gap. The
+    // trusted resolver, not this plan, decides whether a curated source helps.
+    role.gap = { kind: 'no_candidate_selected', suggestion: template.knownGap };
   }
 
   return role;
