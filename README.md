@@ -7,6 +7,14 @@ result: point/relationship maps, ranked bars, time series, comparison cards, or
 an evidence brief. Every result retains source and validation provenance, and
 unsupported views are reported explicitly rather than simulated.
 
+## MCP
+
+Run the local stdio server with `npm run mcp`, or run the fully offline,
+LLM-free acceptance sequence with `npm run mcp:demo`. The server exposes the
+same deterministic evidence workflow as the web UI through eight typed tools.
+See [`docs/MCP.md`](docs/MCP.md) for host configuration, live/offline modes,
+tool semantics, provenance, and limitations.
+
 Instead of asking users to know dataset names, publishers or administrative terminology, the platform starts with a real-world question:
 
 > What are you trying to understand or build?
@@ -67,8 +75,8 @@ Implemented:
 - **a deterministic execution engine** (Turf over GeoJSON) running spatial join, nearest and bounded aggregate against live Basel geometry
 - **execution-validated evidence**, including rejections of the system's own high-confidence proposals
 
-Not built yet, deliberately: MCP, Materialize, LLM integration, multi-catalogue
-support, a visual node editor, persistence.
+Not built yet, deliberately: hosted MCP transport, Materialize, LLM integration,
+multi-catalogue support, a visual node editor, persistence.
 
 See `docs/BASEL_API_FINDINGS.md` for what the live API actually returns and what
 the compatibility engine concluded, and `docs/BASEL_EXECUTION_FINDINGS.md` for
