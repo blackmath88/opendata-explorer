@@ -2,7 +2,7 @@
   "project": {
     "name": "DataFit / Open Data Explorer",
     "repository": "https://github.com/blackmath88/opendata-explorer",
-    "branch": "feat/representation-preview-v1",
+    "branch": "feat/mcp-orchestrator-v1",
     "handoff_date": "2026-09-04"
   },
   "product_thesis": "Turn a civic question into a defensible evidence workflow: discover what data fits, identify evidence roles and gaps, validate whether sources can actually work together, execute bounded checks, and recommend the right representation while preserving provenance.",
@@ -46,7 +46,12 @@
     "Observable Plot ranked-bar and time-series rendering gated on deterministic numeric observations",
     "HTML evidence brief with confirmed, rejected, partial, proposed and unresolved claims",
     "Build to Result preview transition with per-source provenance and execution timestamps",
-    "On-demand MapLibre and Observable Plot loading"
+    "On-demand MapLibre and Observable Plot loading",
+    "Official MCP TypeScript SDK v2 server over local stdio",
+    "Eight typed MCP tools wrapping the shared deterministic DataFit core",
+    "Process-local plan, inspection, assessment and execution state with stable identifiers",
+    "Offline MCP client/server contract tests and deterministic two-scenario acceptance demo",
+    "Explicit MCP provenance boundaries and honest unsupported-result fallbacks"
   ],
   "important_real_data_findings": [
     "Basel Baumkronenbedeckung is a 3-row raster-link table, not directly usable canopy geometry",
@@ -58,13 +63,13 @@
     "A spatial operation can execute correctly while the analytical relationship remains weak"
   ],
   "current_next_milestone": {
-    "name": "MCP Orchestrator v1",
-    "goal": "Expose the proven question-to-result workflow as a small tool interface without creating a parallel reasoning system.",
+    "name": "Showcase / Agent Experience Hardening",
+    "goal": "Make the completed web and MCP question-to-result workflow concise, legible and reproducible for evaluators without broadening platform scope.",
     "constraints": [
-      "Wrap existing deterministic capabilities rather than reimplementing them",
-      "Keep evidence and validation provenance in every response",
-      "Do not add a chatbot or autonomous evidence selection",
-      "Keep the web product authoritative"
+      "Keep the web UI and MCP aligned through the shared deterministic core",
+      "Preserve evidence and validation provenance in every surfaced result",
+      "Keep unsupported and rejected outcomes explicit",
+      "Do not add hosted infrastructure solely for the showcase"
     ]
   },
   "after_current_milestone": [
@@ -73,6 +78,7 @@
   "do_not_build_yet": [
     "Full opendata.swiss federation",
     "A parallel MCP reasoning or evidence-selection system",
+    "Hosted MCP transport or persistent MCP state",
     "Generic dashboard builder",
     "Arbitrary web search as evidence resolution",
     "Live LLM taxonomy as source truth",
@@ -88,6 +94,9 @@
     "docs/BASEL_EXECUTION_FINDINGS.md",
     "DESIGN.md",
     "src/main.ts",
+    "src/core/orchestrator.ts",
+    "src/mcp/",
+    "docs/MCP.md",
     "src/representation.ts",
     "src/renderers/",
     "src/ui/result.ts",

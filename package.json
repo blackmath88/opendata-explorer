@@ -7,10 +7,14 @@
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
+    "mcp": "tsx src/mcp/stdio.ts",
+    "mcp:demo": "tsx src/mcp/demo.ts",
     "test": "vitest run",
     "test:live": "vitest run --config vitest.live.config.ts"
   },
   "dependencies": {
+    "@modelcontextprotocol/client": "^2.0.0",
+    "@modelcontextprotocol/server": "^2.0.0",
     "@observablehq/plot": "^0.6.17",
     "@turf/bbox": "^7.4.0",
     "@turf/boolean-point-in-polygon": "^7.4.0",
@@ -18,10 +22,13 @@
     "@turf/helpers": "^7.4.0",
     "@turf/point-to-line-distance": "^7.4.0",
     "d3": "^7.9.0",
-    "maplibre-gl": "^6.7.0"
+    "maplibre-gl": "^6.7.0",
+    "zod": "^4.5.4"
   },
   "devDependencies": {
     "@types/d3": "^7.4.3",
+    "@types/node": "^26.4.1",
+    "tsx": "^4.23.13",
     "typescript": "^5.9.2",
     "vite": "^7.1.3",
     "vitest": "^4.1.11"
