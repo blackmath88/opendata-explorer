@@ -11,12 +11,14 @@
     "test:live": "vitest run --config vitest.live.config.ts"
   },
   "dependencies": {
+    "@observablehq/plot": "^0.6.17",
     "@turf/bbox": "^7.4.0",
     "@turf/boolean-point-in-polygon": "^7.4.0",
     "@turf/distance": "^7.4.0",
     "@turf/helpers": "^7.4.0",
     "@turf/point-to-line-distance": "^7.4.0",
-    "d3": "^7.9.0"
+    "d3": "^7.9.0",
+    "maplibre-gl": "^6.7.0"
   },
   "devDependencies": {
     "@types/d3": "^7.4.3",

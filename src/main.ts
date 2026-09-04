@@ -17,6 +17,8 @@ import { recommendRepresentations, type RepresentationSpec, type RepresentationT
 import { resolveTrustedEvidence } from './evidence-sources/resolver';
 import { providerById, resourceById } from './evidence-sources/registry';
 import type { EvidenceResolution } from './evidence-sources/types';
+import { renderRepresentation, type NumericObservation, type PreviewLayer, type RepresentationResult } from './renderers';
+import { mountResult, resultShell } from './ui/result';
 import { escapeHtml, provenanceTag } from './ui/dom';
 import {
   renderDatasetDetail,
@@ -33,6 +35,7 @@ import {
 import type {
   CatalogState,
   CatalogueAdapter,
+  DatasetRecord,
   DatasetMatch,
   DatasetStructure,
   EvidencePlan,
@@ -73,6 +76,10 @@ const executions = new Map<string, ExecutionResult>();
 const executing = new Set<string>();
 let engine: GeoJsonExecutionEngine | null = null;
 let selectedRepresentationType: RepresentationType | null = null;
+let representationResult: RepresentationResult | null = null;
+let resultCleanup: (() => void) | undefined;
+let previewing = false;
+let previewSource: OdsGeoJsonSource | null = null;
 
 app.innerHTML = `
 <div class="app">
@@ -311,9 +318,12 @@ function renderWorkbench(): void {
               : latestExecution?.status === 'partial' ? 'Validation is partial. Review its limits before using the relationship.'
                 : latestExecution?.status === 'failed' ? 'Validation failed technically. Review the caveats and retry when the source is available.'
             : 'Select a relationship to inspect or validate.';
+  resultCleanup?.();
+  resultCleanup = undefined;
   workbench.innerHTML = `
     ${renderBuildProposal(selectedSpec, recommendations, covered, plan.roles.length, missing, next, analysis, executable)}
     ${renderTrustedEvidence(evidenceResolution)}
+    ${representationResult ? resultShell(representationResult) : ''}
     <div class="build-secondary"><details><summary>Technical evidence plan</summary>${renderEvidencePlan(plan, catalog.datasets, workspace)}</details>
     <details ${analysis ? 'open' : ''}><summary>Dataset relationships</summary>${renderRelationships(analysis, analysing, {
       results: executions,
@@ -341,6 +351,8 @@ function renderWorkbench(): void {
   workbench.querySelector<HTMLButtonElement>('.analyse-btn')?.addEventListener('click', () => void refreshAnalysis());
   workbench.querySelectorAll<HTMLButtonElement>('.representation-choice').forEach(button => button.addEventListener('click', () => { selectedRepresentationType = button.dataset.type as RepresentationType; renderWorkbench(); }));
   workbench.querySelector<HTMLButtonElement>('.validate-representation')?.addEventListener('click', () => void validateRepresentation(selectedSpec, executable));
+  workbench.querySelector<HTMLButtonElement>('.preview-result')?.addEventListener('click', () => void previewResult(selectedSpec, evidenceResolution, datasets));
+  if (representationResult) void mountResult(el<HTMLElement>('#representationView'), representationResult).then(cleanup => { resultCleanup = cleanup; });
 }
 
 function renderTrustedEvidence(resolution: EvidenceResolution): string {
@@ -373,8 +385,54 @@ function renderBuildProposal(spec: RepresentationSpec, recommendations: Represen
       <div><span class="eyebrow">Needs validation</span><strong>${needsValidation.length} data relationships</strong><span>${escapeHtml(next)}</span></div></div>
     <div class="proposed-preview"><div><span class="eyebrow">Proposed view</span><h3>${escapeHtml(spec.title)}</h3><ul>${useRows}</ul></div><div class="preview-placeholder"><span>${escapeHtml(spec.type.replaceAll('_', ' '))}</span><small>Structural preview · no analytical result claimed</small></div></div>
     ${recommendations.length > 1 ? `<div class="representation-options"><span>Other suitable outputs</span>${recommendations.map(item => `<button class="representation-choice ${item.type === spec.type ? 'active' : ''}" data-type="${item.type}">${escapeHtml(item.title)}</button>`).join('')}</div>` : ''}
-    <div class="build-action"><span>${escapeHtml(next)}</span>${!currentAnalysis && workspace.size >= 2 ? '<button class="analyse-btn">Check data fit</button>' : needsValidation.some(id => executable.has(id)) ? '<button class="validate-representation">Validate required relationships</button>' : ''}</div>
+    <div class="build-action"><span>${escapeHtml(next)}</span><div>${!currentAnalysis && workspace.size >= 2 ? '<button class="analyse-btn">Check data fit</button>' : needsValidation.some(id => executable.has(id)) ? '<button class="validate-representation">Validate required relationships</button>' : ''}<button class="preview-result" ${previewing ? 'disabled' : ''}>${previewing ? 'Preparing…' : 'Preview result'}</button></div></div>
   </section>`;
+}
+
+async function previewResult(spec: RepresentationSpec, trusted: EvidenceResolution, datasets: DatasetRecord[]): Promise<void> {
+  if (previewing) return;
+  previewing = true;
+  representationResult = null;
+  renderWorkbench();
+  let layers: PreviewLayer[] | undefined;
+  try {
+    if (previewSource && (spec.type === 'point_map' || spec.type === 'relationship_map')) {
+      const spatial = datasets.filter(dataset => dataset.characteristics.geospatial).slice(0, 4);
+      layers = await Promise.all(spatial.map(async dataset => {
+        const loaded = await previewSource!.load(dataset.id, { maxFeatures: 500 });
+        return { id: `preview-${dataset.id}`, label: dataset.title, datasetId: dataset.id, sourceUrl: loaded.sourceUrl ?? dataset.sourceUrl,
+          scope: 'local' as const, features: loaded.features, truncated: loaded.truncated };
+      }));
+    }
+    representationResult = renderRepresentation({ spec, intent, plan, datasets, trusted, analysis, executions, layers,
+      observations: observationsFromExecutions(spec.type) });
+  } catch (error) {
+    representationResult = renderRepresentation({ spec, intent, plan, datasets, trusted, analysis, executions });
+    representationResult = { ...representationResult, status: 'blocked', reason: `Preview data could not be retrieved: ${error instanceof Error ? error.message : 'unknown error'}` };
+  } finally {
+    previewing = false;
+    renderWorkbench();
+    workbench.querySelector('.result-panel')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
+function observationsFromExecutions(type: RepresentationType): NumericObservation[] | undefined {
+  if (type !== 'ranked_bar' && type !== 'time_series') return;
+  const result = [...executions.values()].at(-1);
+  const summary = result?.output?.summary;
+  if (!result || !summary || result.status === 'rejected' || result.status === 'failed') return;
+  if (type === 'ranked_bar' && Array.isArray(summary.top)) return summary.top.flatMap(item => {
+    if (!item || typeof item !== 'object') return [];
+    const row = item as Record<string, unknown>;
+    return typeof row.count === 'number' ? [{ label: String(row.target ?? 'Area'), value: row.count, unit: 'matched features', sourceId: result.id }] : [];
+  });
+  if (type === 'ranked_bar' && typeof summary.matchedSourceFeatures === 'number' && typeof summary.sourceFeatures === 'number') {
+    return [
+      { label: 'Matched', value: summary.matchedSourceFeatures, unit: 'features', sourceId: result.id },
+      { label: 'Not matched', value: summary.sourceFeatures - summary.matchedSourceFeatures, unit: 'features', sourceId: result.id },
+    ];
+  }
+  return;
 }
 
 async function validateRepresentation(spec: RepresentationSpec, executable: Set<string>): Promise<void> {
@@ -469,6 +527,7 @@ function applyQuery(next: string): void {
   intent = parseUseCaseIntent(query);
   plan = buildEvidencePlan(intent, catalog.datasets, { selectedIds: [...workspace] });
   selectedId = null;
+  representationResult = null;
   render();
 }
 
@@ -505,6 +564,7 @@ function toggleWorkspace(id: string): void {
   else workspace.add(id);
   plan = buildEvidencePlan(intent, catalog.datasets, { selectedIds: [...workspace] });
   analysis = null;
+  representationResult = null;
   render();
 }
 
@@ -627,9 +687,8 @@ sourcePill.title =
 // mode the engine stays null and the UI says why rather than offering a button
 // that cannot work.
 if (catalog.source === 'live') {
-  engine = new GeoJsonExecutionEngine(
-    new OdsGeoJsonSource(new Map(catalog.datasets.map(dataset => [dataset.id, dataset.recordsCount]))),
-  );
+  previewSource = new OdsGeoJsonSource(new Map(catalog.datasets.map(dataset => [dataset.id, dataset.recordsCount])));
+  engine = new GeoJsonExecutionEngine(previewSource);
 }
 renderExamples();
 render();

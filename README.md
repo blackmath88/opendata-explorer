@@ -2,6 +2,11 @@
 
 A use-case-first interface for public data catalogues that aims to go beyond discovery into **validated evidence composition**.
 
+Representation Preview v1 turns that evidence state into a small deterministic
+result: point/relationship maps, ranked bars, time series, comparison cards, or
+an evidence brief. Every result retains source and validation provenance, and
+unsupported views are reported explicitly rather than simulated.
+
 Instead of asking users to know dataset names, publishers or administrative terminology, the platform starts with a real-world question:
 
 > What are you trying to understand or build?
