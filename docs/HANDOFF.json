@@ -1,0 +1,105 @@
+{
+  "project": {
+    "name": "DataFit / Open Data Explorer",
+    "repository": "https://github.com/blackmath88/opendata-explorer",
+    "branch": "main",
+    "handoff_date": "2026-09-04",
+    "current_head_when_written": "e2e7fb32533e81ecaa6378d1dc11c77af3a91eeb"
+  },
+  "product_thesis": "Turn a civic question into a defensible evidence workflow: discover what data fits, identify evidence roles and gaps, validate whether sources can actually work together, execute bounded checks, and recommend the right representation while preserving provenance.",
+  "user_experience": {
+    "canonical_design": "DESIGN.md — premium Swiss/public-service workbench; keep this visual language",
+    "normal_user_journey": [
+      "Explore Basel's public-data Atlas",
+      "Describe what you want to understand or build",
+      "Resolve useful Basel evidence",
+      "Identify missing or weak evidence roles",
+      "Fill appropriate gaps from curated official Swiss sources",
+      "Recommend a representation/build plan",
+      "Validate only the relationships required for that result",
+      "Show confirmed, rejected, partial and unresolved claims clearly"
+    ],
+    "mental_model": "Discover -> Build",
+    "internal_only_concept": "Compose remains an implementation concept; do not make arbitrary dataset pairing the main user workflow"
+  },
+  "implemented": [
+    "Live Basel-Stadt OpenDataSoft catalogue adapter with ordered/de-duplicated pagination and explicit fallback mode",
+    "Complete catalogue list/search",
+    "Hierarchical D3 Atlas with Topic / Space / Time / Readiness lenses",
+    "One deterministic hierarchy containing every loaded dataset",
+    "Semantic zoom/focus controls and settled/non-drifting visualization",
+    "Deterministic use-case intent parser",
+    "Evidence plan with roles, required/optional status, unresolved roles and external dependencies",
+    "Dataset structure/schema/sample inspection with provenance levels",
+    "Deterministic compatibility assessment including unknown/incompatible states",
+    "Referenceable assessments and execution_validated evidence level",
+    "GeoJSON/Turf execution for selected containment, nearest and aggregate operations",
+    "Execution result status separated from proposal status",
+    "User-facing Build framing",
+    "Renderer-independent RepresentationSpec and deterministic recommendation logic"
+  ],
+  "important_real_data_findings": [
+    "Basel Baumkronenbedeckung is a 3-row raster-link table, not directly usable canopy geometry",
+    "Basel Baustellen has no geometry; Allmendbewilligungen provides permit polygons",
+    "Air-quality evidence is sparse and some stations sit outside relevant city extents",
+    "Alltagsvelorouten contains only 21 curated lines and is not a general street/routing network",
+    "Every tested high-confidence nearest proposal was rejected by execution, so proximity confidence cannot be inferred from schema/extent alone",
+    "Tempo-30 data contains at least one feature with missing geometry despite polygon declaration",
+    "A spatial operation can execute correctly while the analytical relationship remains weak"
+  ],
+  "current_next_milestone": {
+    "name": "Trusted Evidence Registry v1",
+    "goal": "When Basel evidence is missing or materially weak, resolve only from a small curated registry of official Swiss public-data sources.",
+    "priority_sources": [
+      "MeteoSwiss — weather observations and pollen",
+      "swisstopo / geo.admin.ch — road/path backbone and elevation/terrain",
+      "BFS/FSO — population denominators/geostatistics where useful",
+      "opendata.swiss — metadata discovery and source validation, not runtime federation"
+    ],
+    "required_sequence": [
+      "Research and verify real official endpoints, formats, CORS, licensing and limits",
+      "Document findings in docs/TRUSTED_EVIDENCE_FINDINGS.md",
+      "Add a small explicit trusted-source registry",
+      "Add an EvidenceResolver that prefers adequate Basel evidence and fills only unresolved/weak roles",
+      "Keep national candidates clearly separate from validated compatibility claims",
+      "Implement the smallest useful MeteoSwiss/swisstopo adapters if direct browser use is practical",
+      "Integrate national support into Build UX rather than adding a second catalogue browser",
+      "Use the running case as the main acceptance demo"
+    ]
+  },
+  "after_current_milestone": [
+    "Representation preview/rendering using the existing RepresentationSpec contract: small MapLibre + Observable Plot + HTML evidence brief set",
+    "Then MCP orchestrator exposing the proven evidence workflow to external LLM hosts",
+    "Later: Worker/history/change feed, broader trusted-source registry, full catalogue federation, optional LLM enrichment"
+  ],
+  "do_not_build_yet": [
+    "Full opendata.swiss federation",
+    "MCP before the trusted-source and representation flows are coherent",
+    "Generic dashboard builder",
+    "Arbitrary web search as evidence resolution",
+    "Live LLM taxonomy as source truth",
+    "Worker/history service unless a verified source integration requires a minimal proxy",
+    "Auth/accounts/persistent projects",
+    "Fancy composition graph UI"
+  ],
+  "key_files": [
+    "docs/CONCEPT.json",
+    "docs/NEXT_BUILD.md",
+    "docs/ROADMAP.md",
+    "docs/BASEL_API_FINDINGS.md",
+    "docs/BASEL_EXECUTION_FINDINGS.md",
+    "DESIGN.md",
+    "src/main.ts",
+    "src/representation.ts",
+    "src/evidence.ts",
+    "src/compatibility.ts",
+    "src/execution/",
+    "src/data/",
+    "src/atlas.ts"
+  ],
+  "repo_hygiene": {
+    "stale_pr_7": "Closed as superseded; do not resume work from feat/atlas-index-product-surface",
+    "source_of_truth": "main"
+  },
+  "new_chat_instruction": "Start by checking current main against docs/HANDOFF.json and docs/NEXT_BUILD.md. If code has advanced since this handoff, treat the repository as authoritative and update the plan before proposing the next Codex prompt."
+}
