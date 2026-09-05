@@ -218,6 +218,10 @@ a small deterministic MapLibre, Observable Plot, or HTML evidence-brief
 renderer. Unsupported and data-blocked outputs are explicit. Route comparison
 and choropleth remain unimplemented; no fake routes or values are produced.
 
+MCP Orchestrator v1 now exposes this proven workflow through eight typed stdio
+tools. It reuses the same deterministic core and retains in-memory assessment
+and execution identities; hosted transport and persistence remain future work.
+
 ---
 
 ## Level 6 — Multi-catalogue fabric

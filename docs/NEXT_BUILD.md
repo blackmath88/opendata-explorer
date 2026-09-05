@@ -1,9 +1,10 @@
-# Next build — MCP Orchestrator v1
+# Next build — Showcase / Agent Experience Hardening
 
-Trusted Evidence Registry v1 and Representation Preview v1 are complete. The
-next milestone is an MCP orchestrator over the proven question → evidence →
-resolution → validation → result pipeline. It must expose this pipeline rather
-than create a parallel reasoning system.
+Trusted Evidence Registry v1, Representation Preview v1, and MCP Orchestrator
+v1 are complete. The next milestone is to harden the end-to-end showcase and
+agent experience around the proven question → evidence → resolution →
+validation → result pipeline. It should make the existing truth-preserving
+workflow easier to understand and operate, not expand the platform surface.
 
 Implemented and verified in the completed milestone:
 
@@ -12,7 +13,7 @@ Implemented and verified in the completed milestone:
 - explicit `metadata_resolved` and `retrievable` states that do not imply compatibility;
 - direct-browser MeteoSwiss station/current-observation adapter;
 - Build integration with provider, scope, role, reason, status and source link;
-- no proxy, full-catalogue federation, arbitrary search, renderer or MCP.
+- no proxy, full-catalogue federation, or arbitrary search.
 
 Representation Preview v1 subsequently added:
 
@@ -23,7 +24,12 @@ Representation Preview v1 subsequently added:
 - on-demand renderer loading;
 - honest unsupported states for route comparison and choropleth.
 
-The core prototype now has enough internal machinery to move beyond manual dataset composition.
+MCP Orchestrator v1 subsequently added eight typed stdio tools over the same
+deterministic core, an offline acceptance demo, explicit provenance, and
+process-local state. It deliberately added no hosted transport, resources, or
+parallel reasoning system.
+
+The core prototype now has enough internal machinery for an end-to-end showcase.
 
 Current `main` already contains:
 
@@ -56,8 +62,8 @@ BUILD PLAN + REPRESENTATION
 BACKGROUND COMPATIBILITY / VALIDATION
   ↓
 PREVIEW / RESULT
-  ↓
-MCP ORCHESTRATOR
+  ↕
+WEB UI OR MCP HOST
 ```
 
 `Compose` remains an internal system process. A normal user should not have to experiment with arbitrary dataset pairs.
@@ -397,7 +403,7 @@ Do not redesign the Atlas in this milestone unless an actual regression is disco
 
 Do not build yet:
 
-- MCP server
+- hosted MCP transport or persistent MCP state
 - full opendata.swiss federation
 - embeddings over the whole Swiss catalogue
 - arbitrary web search
@@ -422,7 +428,7 @@ Use the existing `RepresentationSpec` contract to prove a very small renderer li
 
 Implemented client-side with explicit blocked and unsupported states.
 
-## Current next milestone — MCP Orchestrator v1
+## Completed follow-on milestone — MCP Orchestrator v1
 
 Expose the proven core to external LLM hosts:
 
@@ -434,10 +440,25 @@ inspect_dataset
 assess_compatibility
 validate_relationship
 suggest_representation
-get_representation_spec
+build_result
 ```
 
 The MCP is an evidence/data orchestrator, not merely a retrieval API.
+
+Implemented with the official TypeScript SDK over stdio. The default mode is
+offline and deterministic; optional live mode uses the existing Basel adapter.
+See `docs/MCP.md`.
+
+## Current next milestone — Showcase / Agent Experience Hardening
+
+- tighten tool descriptions and host-facing examples from real usage;
+- make the running-route refusal and fountain/Tempo-30 success easy to demo;
+- review error messages, progress visibility, and provenance readability;
+- keep web and MCP outputs aligned through shared-core regression tests;
+- document the shortest reproducible evaluator journey.
+
+Do not add hosted infrastructure, autonomous evidence selection, or catalogue
+federation merely for the showcase.
 
 ## Later
 
@@ -470,4 +491,5 @@ Let DataFit check the necessary relationships in the background
 Understand what is confirmed, rejected or unresolved
 ```
 
-That is enough to make the showcase prototype demonstrate the larger platform idea without prematurely building MCP or infrastructure.
+That is enough to make the showcase prototype demonstrate the larger platform
+idea without prematurely building hosted infrastructure.

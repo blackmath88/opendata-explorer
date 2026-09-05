@@ -1,5 +1,18 @@
 # Architecture
 
+## One core, two interfaces
+
+```text
+Web UI ──┐
+         ├── DataFit core
+MCP ─────┘
+```
+
+`src/core/orchestrator.ts` is a small application-service boundary for MCP
+sessions. It composes existing deterministic modules and holds ephemeral IDs;
+it does not duplicate their reasoning. The web UI directly uses those same
+modules and shares renderer observation extraction with the orchestrator.
+
 ## Representation renderer boundary
 
 Representation Preview v1 keeps analytical recommendation separate from visual

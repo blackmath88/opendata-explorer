@@ -17,7 +17,7 @@ import { recommendRepresentations, type RepresentationSpec, type RepresentationT
 import { resolveTrustedEvidence } from './evidence-sources/resolver';
 import { providerById, resourceById } from './evidence-sources/registry';
 import type { EvidenceResolution } from './evidence-sources/types';
-import { renderRepresentation, type NumericObservation, type PreviewLayer, type RepresentationResult } from './renderers';
+import { observationsFromExecutions, renderRepresentation, type PreviewLayer, type RepresentationResult } from './renderers';
 import { mountResult, resultShell } from './ui/result';
 import { escapeHtml, provenanceTag } from './ui/dom';
 import {
@@ -405,7 +405,7 @@ async function previewResult(spec: RepresentationSpec, trusted: EvidenceResoluti
       }));
     }
     representationResult = renderRepresentation({ spec, intent, plan, datasets, trusted, analysis, executions, layers,
-      observations: observationsFromExecutions(spec.type) });
+      observations: observationsFromExecutions(spec.type, executions) });
   } catch (error) {
     representationResult = renderRepresentation({ spec, intent, plan, datasets, trusted, analysis, executions });
     representationResult = { ...representationResult, status: 'blocked', reason: `Preview data could not be retrieved: ${error instanceof Error ? error.message : 'unknown error'}` };
@@ -414,25 +414,6 @@ async function previewResult(spec: RepresentationSpec, trusted: EvidenceResoluti
     renderWorkbench();
     workbench.querySelector('.result-panel')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
-}
-
-function observationsFromExecutions(type: RepresentationType): NumericObservation[] | undefined {
-  if (type !== 'ranked_bar' && type !== 'time_series') return;
-  const result = [...executions.values()].at(-1);
-  const summary = result?.output?.summary;
-  if (!result || !summary || result.status === 'rejected' || result.status === 'failed') return;
-  if (type === 'ranked_bar' && Array.isArray(summary.top)) return summary.top.flatMap(item => {
-    if (!item || typeof item !== 'object') return [];
-    const row = item as Record<string, unknown>;
-    return typeof row.count === 'number' ? [{ label: String(row.target ?? 'Area'), value: row.count, unit: 'matched features', sourceId: result.id }] : [];
-  });
-  if (type === 'ranked_bar' && typeof summary.matchedSourceFeatures === 'number' && typeof summary.sourceFeatures === 'number') {
-    return [
-      { label: 'Matched', value: summary.matchedSourceFeatures, unit: 'features', sourceId: result.id },
-      { label: 'Not matched', value: summary.sourceFeatures - summary.matchedSourceFeatures, unit: 'features', sourceId: result.id },
-    ];
-  }
-  return;
 }
 
 async function validateRepresentation(spec: RepresentationSpec, executable: Set<string>): Promise<void> {

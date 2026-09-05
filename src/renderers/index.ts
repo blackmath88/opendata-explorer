@@ -4,6 +4,7 @@ import { plotRenderer } from './plot';
 import type { RepresentationRenderer, RepresentationRenderInput, RepresentationResult } from './types';
 
 export * from './types';
+export * from './observations';
 
 export const REPRESENTATION_RENDERERS: RepresentationRenderer[] = [mapRenderer, plotRenderer, evidenceBriefRenderer];
 
