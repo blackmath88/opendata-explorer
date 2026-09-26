@@ -89,6 +89,26 @@ export const ICONS = {
   filter: `<path d="M4 5h16l-6 7.5V19l-4-2v-4.5z"/>`,
   workspace: `<path d="M3.5 13.5l2.5-8h12l2.5 8v5a1.5 1.5 0 0 1-1.5 1.5H5a1.5 1.5 0 0 1-1.5-1.5z"/><path d="M3.5 13.5h5l1 2h5l1-2h5"/>`,
   external: `<path d="M13.5 4.5h6v6M19.5 4.5L11 13"/><path d="M17 14v5a1 1 0 0 1-1 1H5.5a1 1 0 0 1-1-1V8.5a1 1 0 0 1 1-1H10"/>`,
+  // lucide:train-front (Lucide 1.2.137, ISC): Mobility & Transport (via pikto, see .pikto/provenance.json)
+  'topic-mobility': `<path d="M8 3.1V7a4 4 0 0 0 8 0V3.1M9 15l-1-1m7 1 1-1"/><path d="M9 19c-2.8 0-5-2.2-5-5v-4a8 8 0 0 1 16 0v4c0 2.8-2.2 5-5 5Zm-1 0-2 3m10-3 2 3"/>`,
+  // tabler:users-group (Tabler Icons 3.48.0, MIT): People & Society (via pikto, see .pikto/provenance.json)
+  'topic-people': `<path d="M10 13a2 2 0 1 0 4 0 2 2 0 0 0-4 0m-2 8v-1a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v1M15 5a2 2 0 1 0 4 0 2 2 0 0 0-4 0m2 5h2a2 2 0 0 1 2 2v1M5 5a2 2 0 1 0 4 0 2 2 0 0 0-4 0m-2 8v-1a2 2 0 0 1 2-2h2"/>`,
+  // tabler:building (Tabler Icons 3.48.0, MIT): Built City & Infrastructure (via pikto, see .pikto/provenance.json)
+  'topic-built': `<path d="M3 21h18M9 8h1m-1 4h1m-1 4h1m4-8h1m-1 4h1m-1 4h1M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16"/>`,
+  // lucide:trees (Lucide 1.2.137, ISC): Public Space & Leisure (via pikto, see .pikto/provenance.json)
+  'topic-public-space': `<path d="M10 10v.2A3 3 0 0 1 8.9 16H5a3 3 0 0 1-1-5.8V10a3 3 0 0 1 6 0m-3 6v6m6-3v3"/><path d="M12 19h8.3a1 1 0 0 0 .7-1.7L18 14h.3a1 1 0 0 0 .7-1.7L16 9h.2a1 1 0 0 0 .8-1.7L13 3l-1.4 1.5"/>`,
+  // lucide:heart-pulse (Lucide 1.2.137, ISC): Health (via pikto, see .pikto/provenance.json)
+  'topic-health': `<path d="M2 9.5a5.5 5.5 0 0 1 9.59-3.68.56.56 0 0 0 .82 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.49 5.31a2 2 0 0 1-3 .02L5 15c-1.5-1.5-3-3.2-3-5.5"/><path d="M3.22 13H9.5l.5-1 2 4.5 2-7 1.5 3.5h5.27"/>`,
+  // lucide:graduation-cap (Lucide 1.2.137, ISC): Education (via pikto, see .pikto/provenance.json)
+  'topic-education': `<path d="M21.42 10.92a1 1 0 0 0-.02-1.84l-8.57-3.9a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.83l8.57 3.91a2 2 0 0 0 1.66 0zM22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/>`,
+  // lucide:drama (Lucide 1.2.137, ISC): Culture (via pikto, see .pikto/provenance.json)
+  'topic-culture': `<path d="M10 11h.01M14 6h.01M18 6h.01M6.5 13.1h.01M22 5c0 9-4 12-6 12s-6-3-6-12q0-3 6-3c6 0 6 1 6 3"/><path d="M17.4 9.9c-.8.8-2 .8-2.8 0m-4.5-2.8C9 7.2 7.7 7.7 6 8.6c-3.5 2-4.7 3.9-3.7 5.6 4.5 7.8 9.5 8.4 11.2 7.4.9-.5 1.9-2.1 1.9-4.7"/><path d="M9.1 16.5c.3-1.1 1.4-1.7 2.4-1.4"/>`,
+  // tabler:scale (Tabler Icons 3.48.0, MIT): Government & Economy (via pikto, see .pikto/provenance.json)
+  'topic-government': `<path d="M7 20h10M6 6l6-1 6 1m-6-3v17m-3-8L6 6l-3 6a3 3 0 0 0 6 0m12 0-3-6-3 6a3 3 0 0 0 6 0"/>`,
+  // lucide:circle-ellipsis (Lucide 1.2.137, ISC): Other / review needed (via pikto, see .pikto/provenance.json)
+  'topic-other': `<circle cx="12" cy="12" r="10"/><path d="M17 12h.01M12 12h.01M7 12h.01"/>`,
+  // tabler:leaf (Tabler Icons 3.48.0, MIT): Environment & Climate (via pikto, see .pikto/provenance.json)
+  'topic-environment': `<path d="M5 21c.5-4.5 2.5-8 7-10"/><path d="M9 18c6.22 0 10.5-3.29 11-12V4h-4.01c-9 0-11.99 4-12 9 0 1 0 3 2 5z"/>`,
 } as const;
 
 export type IconName = keyof typeof ICONS;
@@ -175,6 +195,18 @@ export const ICON_CATALOGUE: IconGroup[] = [
   { title: 'Catalogue source', note: 'Header source pill.', icons: [
     { name: 'live', label: 'Live', usage: 'Loaded from the live API' },
     { name: 'snapshot', label: 'Offline snapshot', usage: 'Frozen fallback catalogue' },
+  ] },
+  { title: 'Topic categories', note: 'Atlas cards, Topic lens, top level only. Added with pikto; sources in .pikto/provenance.json.', icons: [
+    { name: 'topic-environment', label: 'Environment & Climate', usage: 'Atlas card: Topic' },
+    { name: 'topic-mobility', label: 'Mobility & Transport', usage: 'Atlas card: Topic' },
+    { name: 'topic-people', label: 'People & Society', usage: 'Atlas card: Topic' },
+    { name: 'topic-built', label: 'Built City & Infrastructure', usage: 'Atlas card: Topic' },
+    { name: 'topic-public-space', label: 'Public Space & Leisure', usage: 'Atlas card: Topic' },
+    { name: 'topic-health', label: 'Health', usage: 'Atlas card: Topic' },
+    { name: 'topic-education', label: 'Education', usage: 'Atlas card: Topic' },
+    { name: 'topic-culture', label: 'Culture', usage: 'Atlas card: Topic' },
+    { name: 'topic-government', label: 'Government & Economy', usage: 'Atlas card: Topic' },
+    { name: 'topic-other', label: 'Other / review needed', usage: 'Atlas card: Topic' },
   ] },
   { title: 'Actions', note: 'Buttons and controls.', icons: [
     { name: 'search', label: 'Search', usage: 'Catalogue search' },

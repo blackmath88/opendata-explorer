@@ -1,4 +1,5 @@
 import type { DatasetMatch, DatasetRecord, EvidenceClass } from './types';
+import type { IconName } from './ui/icons';
 
 export type AtlasLens = 'topic' | 'space' | 'time' | 'readiness';
 
@@ -99,6 +100,43 @@ const TOPIC_RULES: ReadonlyArray<readonly [string, ReadonlyArray<Rule>]> = [
 
 function text(dataset: DatasetRecord): string {
   return `${dataset.title} ${dataset.description} ${dataset.themes.join(' ')} ${dataset.keywords.join(' ')} ${dataset.semantic.topics.join(' ')}`.toLocaleLowerCase();
+}
+
+/** Top-level Topic categories, in rule order, plus the fallback bucket. */
+export const TOPIC_CATEGORIES: readonly string[] = [...TOPIC_RULES.map(([category]) => category), 'Other / review needed'];
+
+/**
+ * Icons for top-level Atlas categories. Topic icons were added with pikto (sources and reasoning in
+ * .pikto/provenance.json); Space reuses the set's own geometry glyphs. Time and Readiness buckets and all
+ * subcategories stay text: there an icon would be decoration, not recognition.
+ */
+export const CATEGORY_ICON: Readonly<Partial<Record<AtlasLens, Readonly<Record<string, IconName>>>>> = {
+  topic: {
+    'Environment & Climate': 'topic-environment',
+    'Mobility & Transport': 'topic-mobility',
+    'People & Society': 'topic-people',
+    'Built City & Infrastructure': 'topic-built',
+    'Public Space & Leisure': 'topic-public-space',
+    Health: 'topic-health',
+    Education: 'topic-education',
+    Culture: 'topic-culture',
+    'Government & Economy': 'topic-government',
+    'Other / review needed': 'topic-other',
+  },
+  space: {
+    Point: 'geo-point',
+    Line: 'geo-line',
+    Polygon: 'geo-polygon',
+    Mixed: 'geo-mixed',
+    'Raster / external asset': 'geo-raster',
+    'Non-spatial': 'geo-none',
+  },
+};
+
+export function categoryIcon(node: AtlasHierarchyDatum): IconName | undefined {
+  if (node.kind !== 'category' || node.depth !== 1) return undefined;
+  const lens = node.id.match(/^lens:(\w+)\//)?.[1] as AtlasLens | undefined;
+  return lens ? CATEGORY_ICON[lens]?.[node.label] : undefined;
 }
 
 /** What the publisher says the dataset *is*, as opposed to prose that merely mentions things. */

@@ -1,7 +1,8 @@
 import * as d3 from 'd3';
-import type { AtlasHierarchyDatum } from '../atlas';
+import { categoryIcon, type AtlasHierarchyDatum } from '../atlas';
 import type { DatasetMatch, EvidenceClass } from '../types';
 import { escapeHtml, formatCount } from './dom';
+import { icon } from './icons';
 
 export interface AtlasGraphData { root: AtlasHierarchyDatum; matches: DatasetMatch[]; searchActive: boolean; }
 export interface AtlasGraphActions { onFocus: (path: string[], id: string) => void; onSelect: (id: string) => void; onWorkspace: (id: string) => void; }
@@ -119,7 +120,7 @@ function drawTiles(current: State, children: AtlasHierarchyDatum[]): void {
     Object.assign(element.style, { left: `${tile.x}px`, top: `${tile.y}px`, width: `${tile.width}px`, height: `${tile.height}px` });
     element.innerHTML = `
       <button class="atlas-tile-head" title="${escapeHtml(tooltip(node))}">
-        <span class="atlas-tile-title">${escapeHtml(node.label)}</span>
+        ${categoryIcon(node) && iconFits(node.label, tile.width, size) ? icon(categoryIcon(node)!, { size: size === 'lg' ? 18 : 16 }) : ''}<span class="atlas-tile-title">${escapeHtml(node.label)}</span>
         <span class="atlas-tile-count">${data.searchActive ? `<em>${node.matching}</em> / ` : ''}${node.total}</span>
       </button>
       ${size === 'xs' ? '' : `<div class="atlas-tile-evidence">${evidenceBadges(node)}</div>`}
@@ -199,7 +200,7 @@ function drawCards(current: State, children: AtlasHierarchyDatum[]): void {
         <span class="atlas-card-title">${escapeHtml(dataset.title)}</span>
         <span class="atlas-card-meta">${escapeHtml(dataset.id)} · ${escapeHtml(dataset.publisher)} · ${formatCount(dataset.recordsCount)} records</span>
       </button>
-      <button class="atlas-card-add ${added ? 'added' : ''}" aria-label="${added ? 'Remove from' : 'Add to'} workspace" title="${added ? 'Remove from' : 'Add to'} workspace">${added ? '✓' : '+'}</button>
+      <button class="atlas-card-add ${added ? 'added' : ''}" aria-label="${added ? 'Remove from' : 'Add to'} workspace" title="${added ? 'Remove from' : 'Add to'} workspace">${added ? icon('check', { size: 14 }) : icon('add', { size: 14 })}</button>
     </article>`;
   }).join('');
   grid.querySelectorAll<HTMLElement>('.atlas-card').forEach(card => {
@@ -219,6 +220,14 @@ function rankDatasets(current: State, children: AtlasHierarchyDatum[]): AtlasHie
     || a.label.localeCompare(b.label));
 }
 
+/** A category icon only where the title's longest word still fits beside it; a word must never break for an icon. */
+function iconFits(label: string, width: number, size: 'xs' | 'sm' | 'lg'): boolean {
+  if (size === 'xs') return false;
+  const longest = Math.max(...label.split(/\s+/).map(word => word.length));
+  const room = width - 24 /* padding */ - 34 /* count */ - 24 /* icon + gap */;
+  return room >= longest * (size === 'lg' ? 8.6 : 7.6);
+}
+
 function evidenceClassName(node: AtlasHierarchyDatum): string {
   return node.direct ? 'has-direct' : node.supporting ? 'has-supporting' : node.contextual ? 'has-contextual' : '';
 }
@@ -227,7 +236,7 @@ function evidenceBadges(node: AtlasHierarchyDatum): string {
   // Contextual is the catalogue's baseline, not a signal; only role evidence earns a badge.
   const parts = (['direct', 'supporting'] as const)
     .filter(key => node[key] > 0)
-    .map(key => `<span class="ev-badge ev-${key}"><i></i>${node[key]} ${key}</span>`);
+    .map(key => `<span class="ev-badge ev-${key}">${icon(`evidence-${key}`, { size: 12 })}${node[key]} ${key}</span>`);
   return parts.join('');
 }
 

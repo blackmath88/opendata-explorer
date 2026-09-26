@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { atlasPath, atlasSegments, atlasSummaries, buildAtlasHierarchy, datasetsAtPath, shouldSubdivide, type AtlasHierarchyDatum, type AtlasLens } from './atlas';
+import { CATEGORY_ICON, TOPIC_CATEGORIES, categoryIcon, atlasPath, atlasSegments, atlasSummaries, buildAtlasHierarchy, datasetsAtPath, shouldSubdivide, type AtlasHierarchyDatum, type AtlasLens } from './atlas';
 import { fallbackDatasets } from './data/fallback';
 import type { DatasetMatch } from './types';
 
@@ -64,5 +64,22 @@ describe('hierarchical Atlas', () => {
     expect(atlasPath(parking, 'topic')).toMatchObject({ category: 'Mobility & Transport', subcategory: 'Parking' });
     const signature = { ...base, title: 'Kantonsblatt', themes: [], keywords: [], semantic: { ...base.semantic, topics: [] }, description: 'Mit digitaler Signatur.' };
     expect(atlasPath(signature, 'topic').subcategory).not.toBe('Urban nature');
+  });
+});
+
+describe('Atlas category icons', () => {
+  it('gives every top-level Topic category a distinct icon', () => {
+    const topic = CATEGORY_ICON.topic!;
+    for (const category of TOPIC_CATEGORIES) expect(topic[category], category).toBeDefined();
+    expect(new Set(TOPIC_CATEGORIES.map(category => topic[category])).size).toBe(TOPIC_CATEGORIES.length);
+  });
+
+  it('marks only depth-1 Topic and Space categories', () => {
+    for (const lens of ['topic', 'space'] as const) {
+      const root = buildAtlasHierarchy(fallbackDatasets, matches, lens, new Set());
+      for (const node of root.children!) if (node.kind === 'category' && node.label !== 'Unknown') expect(categoryIcon(node), `${lens}: ${node.label}`).toBeDefined();
+      for (const node of root.children!.flatMap(node => node.children ?? [])) expect(categoryIcon(node)).toBeUndefined();
+    }
+    for (const node of buildAtlasHierarchy(fallbackDatasets, matches, 'time', new Set()).children!) expect(categoryIcon(node)).toBeUndefined();
   });
 });

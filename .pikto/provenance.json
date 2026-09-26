@@ -1,0 +1,261 @@
+{
+  "icons": [
+    {
+      "name": "topic-mobility",
+      "source": "lucide:train-front",
+      "set": "Lucide",
+      "version": "1.2.137",
+      "license": {
+        "title": "ISC",
+        "spdx": "ISC",
+        "url": "https://github.com/lucide-icons/lucide/blob/main/LICENSE"
+      },
+      "author": {
+        "name": "Lucide Contributors",
+        "url": "https://github.com/lucide-icons/lucide"
+      },
+      "source_url": "https://api.iconify.design/lucide/train-front.svg",
+      "operations": [
+        "flatten <g> wrapper",
+        "normalize strokes → width 1.5, caps round, joins round",
+        "remove colour attributes (colour inherited from <Icon>)",
+        "svgo (preset-default; keep primitives, keep per-shape attributes)"
+      ],
+      "meaning": "Mobility & Transport",
+      "reading": "Basel's tram, head-on; lucide:tram-front was 1.74x the set's weight.",
+      "permission": "Discover Atlas cards: Topic category header icon; chosen on pikto docs/sheet-opendata-categories-cards.html, weight checked against the 56 hand-drawn icons with pikto differ",
+      "added": "2026-09-26"
+    },
+    {
+      "name": "topic-people",
+      "source": "tabler:users-group",
+      "set": "Tabler Icons",
+      "version": "3.48.0",
+      "license": {
+        "title": "MIT",
+        "spdx": "MIT",
+        "url": "https://github.com/tabler/tabler-icons/blob/master/LICENSE"
+      },
+      "author": {
+        "name": "Paweł Kuna",
+        "url": "https://github.com/tabler/tabler-icons"
+      },
+      "source_url": "https://api.iconify.design/tabler/users-group.svg",
+      "operations": [
+        "normalize strokes → width 1.5, caps round, joins round",
+        "remove colour attributes (colour inherited from <Icon>)",
+        "svgo (preset-default; keep primitives, keep per-shape attributes)"
+      ],
+      "meaning": "People & Society",
+      "reading": "A group, not one person.",
+      "permission": "Discover Atlas cards: Topic category header icon; chosen on pikto docs/sheet-opendata-categories-cards.html, weight checked against the 56 hand-drawn icons with pikto differ",
+      "added": "2026-09-26"
+    },
+    {
+      "name": "topic-built",
+      "source": "tabler:building",
+      "set": "Tabler Icons",
+      "version": "3.48.0",
+      "license": {
+        "title": "MIT",
+        "spdx": "MIT",
+        "url": "https://github.com/tabler/tabler-icons/blob/master/LICENSE"
+      },
+      "author": {
+        "name": "Paweł Kuna",
+        "url": "https://github.com/tabler/tabler-icons"
+      },
+      "source_url": "https://api.iconify.design/tabler/building.svg",
+      "operations": [
+        "normalize strokes → width 1.5, caps round, joins round",
+        "remove colour attributes (colour inherited from <Icon>)",
+        "svgo (preset-default; keep primitives, keep per-shape attributes)"
+      ],
+      "meaning": "Built City & Infrastructure",
+      "reading": "The built fabric, in the set's light weight.",
+      "permission": "Discover Atlas cards: Topic category header icon; chosen on pikto docs/sheet-opendata-categories-cards.html, weight checked against the 56 hand-drawn icons with pikto differ",
+      "added": "2026-09-26"
+    },
+    {
+      "name": "topic-public-space",
+      "source": "lucide:trees",
+      "set": "Lucide",
+      "version": "1.2.137",
+      "license": {
+        "title": "ISC",
+        "spdx": "ISC",
+        "url": "https://github.com/lucide-icons/lucide/blob/main/LICENSE"
+      },
+      "author": {
+        "name": "Lucide Contributors",
+        "url": "https://github.com/lucide-icons/lucide"
+      },
+      "source_url": "https://api.iconify.design/lucide/trees.svg",
+      "operations": [
+        "flatten <g> wrapper",
+        "normalize strokes → width 1.5, caps round, joins round",
+        "remove colour attributes (colour inherited from <Icon>)",
+        "svgo (preset-default; keep primitives, keep per-shape attributes)"
+      ],
+      "meaning": "Public Space & Leisure",
+      "reading": "A place you go to; distinct from the single leaf.",
+      "permission": "Discover Atlas cards: Topic category header icon; chosen on pikto docs/sheet-opendata-categories-cards.html, weight checked against the 56 hand-drawn icons with pikto differ",
+      "added": "2026-09-26"
+    },
+    {
+      "name": "topic-health",
+      "source": "lucide:heart-pulse",
+      "set": "Lucide",
+      "version": "1.2.137",
+      "license": {
+        "title": "ISC",
+        "spdx": "ISC",
+        "url": "https://github.com/lucide-icons/lucide/blob/main/LICENSE"
+      },
+      "author": {
+        "name": "Lucide Contributors",
+        "url": "https://github.com/lucide-icons/lucide"
+      },
+      "source_url": "https://api.iconify.design/lucide/heart-pulse.svg",
+      "operations": [
+        "flatten <g> wrapper",
+        "normalize strokes → width 1.5, caps round, joins round",
+        "remove colour attributes (colour inherited from <Icon>)",
+        "svgo (preset-default; keep primitives, keep per-shape attributes)"
+      ],
+      "meaning": "Health",
+      "reading": "A vital sign; a cross reads as emergency.",
+      "permission": "Discover Atlas cards: Topic category header icon; chosen on pikto docs/sheet-opendata-categories-cards.html, weight checked against the 56 hand-drawn icons with pikto differ",
+      "added": "2026-09-26"
+    },
+    {
+      "name": "topic-education",
+      "source": "lucide:graduation-cap",
+      "set": "Lucide",
+      "version": "1.2.137",
+      "license": {
+        "title": "ISC",
+        "spdx": "ISC",
+        "url": "https://github.com/lucide-icons/lucide/blob/main/LICENSE"
+      },
+      "author": {
+        "name": "Lucide Contributors",
+        "url": "https://github.com/lucide-icons/lucide"
+      },
+      "source_url": "https://api.iconify.design/lucide/graduation-cap.svg",
+      "operations": [
+        "flatten <g> wrapper",
+        "normalize strokes → width 1.5, caps round, joins round",
+        "remove colour attributes (colour inherited from <Icon>)",
+        "svgo (preset-default; keep primitives, keep per-shape attributes)"
+      ],
+      "meaning": "Education",
+      "reading": "The institution.",
+      "permission": "Discover Atlas cards: Topic category header icon; chosen on pikto docs/sheet-opendata-categories-cards.html, weight checked against the 56 hand-drawn icons with pikto differ",
+      "added": "2026-09-26"
+    },
+    {
+      "name": "topic-culture",
+      "source": "lucide:drama",
+      "set": "Lucide",
+      "version": "1.2.137",
+      "license": {
+        "title": "ISC",
+        "spdx": "ISC",
+        "url": "https://github.com/lucide-icons/lucide/blob/main/LICENSE"
+      },
+      "author": {
+        "name": "Lucide Contributors",
+        "url": "https://github.com/lucide-icons/lucide"
+      },
+      "source_url": "https://api.iconify.design/lucide/drama.svg",
+      "operations": [
+        "flatten <g> wrapper",
+        "normalize strokes → width 1.5, caps round, joins round",
+        "remove colour attributes (colour inherited from <Icon>)",
+        "svgo (preset-default; keep primitives, keep per-shape attributes)"
+      ],
+      "meaning": "Culture",
+      "reading": "Theatre and events.",
+      "permission": "Discover Atlas cards: Topic category header icon; chosen on pikto docs/sheet-opendata-categories-cards.html, weight checked against the 56 hand-drawn icons with pikto differ",
+      "added": "2026-09-26"
+    },
+    {
+      "name": "topic-government",
+      "source": "tabler:scale",
+      "set": "Tabler Icons",
+      "version": "3.48.0",
+      "license": {
+        "title": "MIT",
+        "spdx": "MIT",
+        "url": "https://github.com/tabler/tabler-icons/blob/master/LICENSE"
+      },
+      "author": {
+        "name": "Paweł Kuna",
+        "url": "https://github.com/tabler/tabler-icons"
+      },
+      "source_url": "https://api.iconify.design/tabler/scale.svg",
+      "operations": [
+        "normalize strokes → width 1.5, caps round, joins round",
+        "remove colour attributes (colour inherited from <Icon>)",
+        "svgo (preset-default; keep primitives, keep per-shape attributes)"
+      ],
+      "meaning": "Government & Economy",
+      "reading": "A balance: weighing, law, budget. Columns already mean publisher source (prov-source) here.",
+      "permission": "Discover Atlas cards: Topic category header icon; chosen on pikto docs/sheet-opendata-categories-cards.html, weight checked against the 56 hand-drawn icons with pikto differ",
+      "added": "2026-09-26"
+    },
+    {
+      "name": "topic-other",
+      "source": "lucide:circle-ellipsis",
+      "set": "Lucide",
+      "version": "1.2.137",
+      "license": {
+        "title": "ISC",
+        "spdx": "ISC",
+        "url": "https://github.com/lucide-icons/lucide/blob/main/LICENSE"
+      },
+      "author": {
+        "name": "Lucide Contributors",
+        "url": "https://github.com/lucide-icons/lucide"
+      },
+      "source_url": "https://api.iconify.design/lucide/circle-ellipsis.svg",
+      "operations": [
+        "flatten <g> wrapper",
+        "normalize strokes → width 1.5, caps round, joins round",
+        "remove colour attributes (colour inherited from <Icon>)",
+        "svgo (preset-default; keep primitives, keep per-shape attributes)"
+      ],
+      "meaning": "Other / review needed",
+      "reading": "Not yet sorted; the ? shape is already the help icon.",
+      "permission": "Discover Atlas cards: Topic category header icon; chosen on pikto docs/sheet-opendata-categories-cards.html, weight checked against the 56 hand-drawn icons with pikto differ",
+      "added": "2026-09-26"
+    },
+    {
+      "name": "topic-environment",
+      "source": "tabler:leaf",
+      "set": "Tabler Icons",
+      "version": "3.48.0",
+      "license": {
+        "title": "MIT",
+        "spdx": "MIT",
+        "url": "https://github.com/tabler/tabler-icons/blob/master/LICENSE"
+      },
+      "author": {
+        "name": "Paweł Kuna",
+        "url": "https://github.com/tabler/tabler-icons"
+      },
+      "source_url": "https://api.iconify.design/tabler/leaf.svg",
+      "operations": [
+        "flatten <g> wrapper",
+        "normalize strokes → width 1.5, caps round, joins round",
+        "remove colour attributes (colour inherited from <Icon>)",
+        "svgo (preset-default; keep primitives, keep per-shape attributes)"
+      ],
+      "meaning": "Environment & Climate",
+      "reading": "The organic part, not a place: a leaf, so Public Space keeps the trees. lucide:leaf was dropped: its arc radius (25.9) breaks the set's 'every number within 24' rule.",
+      "permission": "Discover Atlas cards: Topic category header icon; weight 0.98x the hand-drawn set (pikto differ)",
+      "added": "2026-09-26"
+    }
+  ]
+}
