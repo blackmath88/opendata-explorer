@@ -32,8 +32,9 @@ export function renderGraph(container: HTMLElement, svg: d3.Selection<SVGSVGElem
 
   svg.append('defs').append('clipPath').attr('id', 'atlas-clip').append('rect').attr('width', width).attr('height', height);
   const viewport = svg.append('g').attr('class', 'atlas-viewport').attr('clip-path', 'url(#atlas-clip)');
+  const nodeClass = (item: Packed): string => `zoom-node zoom-${item.data.kind} ${item.data.direct ? 'branch-direct' : item.data.supporting ? 'branch-supporting' : ''} ${data.searchActive && item.data.matching === 0 ? 'zero-match' : ''} ${selectedId === item.data.dataset?.id ? 'selected' : ''}`;
   const node = viewport.selectAll<SVGGElement, Packed>('g').data(descendants.slice(1), item => item.data.id).join('g')
-    .attr('class', item => `zoom-node zoom-${item.data.kind} ${item.data.direct ? 'branch-direct' : item.data.supporting ? 'branch-supporting' : ''} ${data.searchActive && item.data.matching === 0 ? 'zero-match' : ''} ${selectedId === item.data.dataset?.id ? 'selected' : ''}`)
+    .attr('class', nodeClass)
     .attr('transform', item => `translate(${item.x},${item.y})`);
 
   node.append('circle').attr('r', item => item.r).attr('class', item => item.data.kind === 'dataset' ? `zoom-circle evidence-${matchById.get(item.data.dataset!.id)?.evidenceClass ?? 'contextual'}` : 'zoom-circle')
@@ -43,42 +44,65 @@ export function renderGraph(container: HTMLElement, svg: d3.Selection<SVGSVGElem
       else zoomToNode(item, true, actions);
     });
   node.append('title').text(item => tooltip(item.data, matchById));
-  node.filter(item => item.data.kind === 'dataset').append('circle').attr('class', item => `zoom-add ${workspace.has(item.data.dataset!.id) ? 'added' : ''}`).attr('cx', item => item.r * .58).attr('cy', item => item.r * .58).attr('r', item => Math.min(10, item.r * .18)).on('click', (event, item) => { event.stopPropagation(); actions.onWorkspace(item.data.dataset!.id); });
-  node.filter(item => item.data.kind === 'dataset').append('text').attr('class', 'zoom-add-label').attr('x', item => item.r * .58).attr('y', item => item.r * .58 + 3).text(item => workspace.has(item.data.dataset!.id) ? '✓' : '+');
+  // the add button keeps its screen size: positioned on the circle, counter-scaled in updateLabels
+  const add = node.filter(item => item.data.kind === 'dataset').append('g').attr('class', 'zoom-add-group');
+  add.append('circle').attr('class', item => `zoom-add ${workspace.has(item.data.dataset!.id) ? 'added' : ''}`).attr('r', 10).on('click', (event, item) => { event.stopPropagation(); actions.onWorkspace(item.data.dataset!.id); });
+  add.append('text').attr('class', 'zoom-add-label').attr('y', 3).text(item => workspace.has(item.data.dataset!.id) ? '✓' : '+');
   // Topic categories carry an icon on the top of their rim, where dataset circles never cover it.
-  const badge = node.filter(item => Boolean(categoryIcon(item.data))).append('g').attr('class', 'zoom-icon');
+  // labels and badges live in their own layer above every circle, so child circles never paint over them
+  const labels = viewport.append('g').attr('class', 'atlas-labels').selectAll<SVGGElement, Packed>('g').data(descendants.slice(1), item => item.data.id).join('g')
+    .attr('class', nodeClass).attr('transform', item => `translate(${item.x},${item.y})`);
+  const badge = labels.filter(item => Boolean(categoryIcon(item.data))).append('g').attr('class', 'zoom-icon');
   badge.append('circle').attr('class', 'zoom-icon-disc').attr('r', 14);
   badge.append('g').attr('transform', 'translate(-9,-9)').html(item => icon(categoryIcon(item.data)!, 18));
-  node.append('text').attr('class', 'zoom-label').each(function(item) {
+  labels.append('text').attr('class', 'zoom-label').each(function(item) {
     const text = d3.select(this);
     text.append('tspan').attr('class', 'zoom-label-title').text(truncate(item.data.label, 34));
-    text.append('tspan').attr('class', 'zoom-label-meta').attr('x', 0).attr('dy', '1.25em').text(item.data.kind === 'dataset' ? item.data.dataset!.id : `${data.searchActive ? `${item.data.matching} / ` : ''}${item.data.total} datasets`);
+    text.attr('data-full', item.data.label);
+    text.append('tspan').attr('class', 'zoom-label-meta').attr('x', 0).attr('dy', '1.25em').text(item.data.kind === 'dataset' ? item.data.dataset!.id : `${data.searchActive ? `${item.data.matching} / ` : ''}${item.data.total} dataset${item.data.total === 1 ? '' : 's'}`);
     if (item.data.kind === 'dataset') text.append('tspan').attr('class', 'zoom-label-detail').attr('x', 0).attr('dy', '1.2em').text(() => { const match = matchById.get(item.data.dataset!.id); return match ? `${match.evidenceClass} · ${match.relevance.score}` : 'catalogue'; });
   });
 
   const zoom = d3.zoom<SVGSVGElement, unknown>().scaleExtent([1, 36]).translateExtent([[-width * .8, -height * .8], [width * 1.8, height * 1.8]]).extent([[0, 0], [width, height]])
-    .on('zoom', event => { viewport.attr('transform', event.transform.toString()); updateLabels(node, event.transform.k); });
+    .on('zoom', event => { viewport.attr('transform', event.transform.toString()); updateLabels(node, labels, event.transform.k); });
   currentZoom = zoom;
   svg.call(zoom).on('dblclick.zoom', null).on('click.atlas-background', event => { if (event.target === svg.node()) zoomAtlasOut(actions); });
   const focus = focusId ? nodesById.get(focusId) : undefined;
-  if (focus) zoomToNode(focus, false, actions); else { currentFocusId = data.root.id; updateLabels(node, 1); actions.onFocus([], data.root.id); }
+  if (focus) zoomToNode(focus, false, actions); else { currentFocusId = data.root.id; updateLabels(node, labels, 1); actions.onFocus([], data.root.id); }
 }
 
-function updateLabels(nodes: d3.Selection<SVGGElement, Packed, SVGGElement, unknown>, scale: number): void {
+// Everything text-like keeps its screen size: it is counter-scaled against the zoom (scale(1/k)), so labels read
+// at 10px at every depth instead of growing with the circles. Category labels sit just inside the top of their rim
+// (below the icon badge, if any) where child circles never cover them; dataset labels stay centred.
+const CHAR_PX = 6.1; // average width of a 10px/650 Inter character
+const RIM_OFFSET = (item: Packed): number => (categoryIcon(item.data) ? 34 : 15);
+function chord(radius: number, depth: number): number { return depth >= radius ? 0 : 2 * Math.sqrt(radius * radius - (radius - depth) ** 2); }
+function fit(label: string, px: number): string { return truncate(label, Math.max(4, Math.floor(px / CHAR_PX))); }
+
+function updateLabels(nodes: d3.Selection<SVGGElement, Packed, SVGGElement, unknown>, labels: d3.Selection<SVGGElement, Packed, SVGGElement, unknown>, scale: number): void {
   const categoryDepth = scale < 1.7 ? 1 : scale < 3.5 ? 2 : scale < 7 ? 3 : Number.POSITIVE_INFINITY;
-  nodes.select<SVGTextElement>('.zoom-label').style('display', item => {
-    const screenRadius = item.r * scale;
-    if (item.data.kind === 'dataset') return screenRadius >= 30 ? null : 'none';
-    return item.depth <= categoryDepth && screenRadius >= 25 && screenRadius <= 420 ? null : 'none';
+  labels.select<SVGTextElement>('.zoom-label')
+    .attr('transform', item => item.data.kind === 'dataset' ? `scale(${1 / scale})` : `translate(0,${-item.r}) scale(${1 / scale}) translate(0,${RIM_OFFSET(item)})`)
+    .each(function(item) {
+      const screen = item.r * scale;
+      const room = item.data.kind === 'dataset' ? screen * 1.7 : chord(screen, RIM_OFFSET(item) + 4) * .9;
+      d3.select(this).select('.zoom-label-title').text(fit(this.getAttribute('data-full') ?? item.data.label, room));
+      this.classList.toggle('too-small', room < 7 * CHAR_PX);
+    });
+  nodes.select<SVGGElement>('.zoom-add-group').attr('transform', item => `translate(${item.r * .58},${item.r * .58}) scale(${1 / scale})`);
+  // One category label per branch: a parent and its child would share the same rim, so the deepest labelled level
+  // wins. A top-level category keeps its icon badge meanwhile, which is what identifies it.
+  const labelled = (item: Packed): boolean => item.data.kind !== 'dataset' && item.depth <= categoryDepth && item.r * scale >= 25 && item.r * scale <= 420;
+  labels.select<SVGTextElement>('.zoom-label').style('display', item => {
+    if (item.data.kind === 'dataset') return item.r * scale >= 36 ? null : 'none';
+    return labelled(item) && !item.children?.some(labelled) ? null : 'none';
   });
-  // icons keep their screen size: counter-scale against the zoom, visible whenever the category's label is
-  nodes.select<SVGGElement>('.zoom-icon')
+  labels.select<SVGGElement>('.zoom-icon')
     .attr('transform', item => `translate(0,${-item.r}) scale(${1 / scale})`)
-    .style('display', item => item.depth <= categoryDepth && item.r * scale >= 25 && item.r * scale <= 420 ? null : 'none');
-  nodes.selectAll<SVGTSpanElement, Packed>('.zoom-label-meta').style('display', item => item.data.kind === 'dataset' ? (item.r * scale >= 46 ? null : 'none') : null);
-  nodes.selectAll<SVGTSpanElement, Packed>('.zoom-label-detail').style('display', item => item.r * scale >= 68 ? null : 'none');
-  nodes.selectAll<SVGCircleElement, Packed>('.zoom-add').style('display', item => item.r * scale >= 45 ? null : 'none');
-  nodes.selectAll<SVGTextElement, Packed>('.zoom-add-label').style('display', item => item.r * scale >= 45 ? null : 'none');
+    .style('display', item => labelled(item) ? null : 'none');
+  labels.selectAll<SVGTSpanElement, Packed>('.zoom-label-meta').style('display', item => item.data.kind === 'dataset' ? (item.r * scale >= 46 ? null : 'none') : null);
+  labels.selectAll<SVGTSpanElement, Packed>('.zoom-label-detail').style('display', item => item.r * scale >= 68 ? null : 'none');
+  nodes.select<SVGGElement>('.zoom-add-group').style('display', item => item.r * scale >= 45 ? null : 'none');
 }
 
 function transformFor(node: Packed): d3.ZoomTransform {

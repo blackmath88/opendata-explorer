@@ -154,3 +154,5 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10px;back
 @media(max-width:700px){.result-head{flex-direction:column}.claim,.result-sources li{grid-template-columns:1fr}.evidence-brief{grid-template-columns:1fr}.maplibregl-map{min-height:300px}}
 .map-preview{position:relative}.map-legend{position:absolute;z-index:2;left:10px;top:26px;display:grid;gap:4px;max-width:260px;padding:8px;background:rgba(252,249,242,.94);border:1px solid var(--border);border-radius:8px;font-size:9px}.map-legend span{display:flex;align-items:center;gap:6px}.map-legend i{width:9px;height:9px;border-radius:2px;flex:0 0 auto}
 .zoom-icon{pointer-events:none;color:var(--primary2)}.zoom-icon-disc{fill:var(--panel);stroke:var(--primary2);stroke-width:1.5;filter:drop-shadow(0 1px 2px rgba(0,0,0,.08))}
+.zoom-circle,.zoom-add{vector-effect:non-scaling-stroke}.zoom-label{paint-order:stroke;stroke:rgba(252,249,242,.85);stroke-width:3px;stroke-linejoin:round}
+.atlas-labels{pointer-events:none}.zoom-label.too-small{visibility:hidden}
