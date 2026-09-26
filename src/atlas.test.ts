@@ -57,4 +57,12 @@ describe('hierarchical Atlas', () => {
     expect(first).toEqual(second);
     expect(first.total).toBe(fallbackDatasets.length);
   });
+
+  it('classifies by what a dataset is, not by what its description mentions', () => {
+    const base = fallbackDatasets[0];
+    const parking = { ...base, title: 'Standorte der öffentlichen Parkhäuser', themes: [], keywords: ['Parkplatz'], semantic: { ...base.semantic, topics: [] }, description: 'Parkhäuser in der Nähe von Grünanlagen und Parks.' };
+    expect(atlasPath(parking, 'topic')).toMatchObject({ category: 'Mobility & Transport', subcategory: 'Parking' });
+    const signature = { ...base, title: 'Kantonsblatt', themes: [], keywords: [], semantic: { ...base.semantic, topics: [] }, description: 'Mit digitaler Signatur.' };
+    expect(atlasPath(signature, 'topic').subcategory).not.toBe('Urban nature');
+  });
 });

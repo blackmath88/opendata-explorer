@@ -54,7 +54,7 @@ type Rule = readonly [string, RegExp];
 
 const TOPIC_RULES: ReadonlyArray<readonly [string, ReadonlyArray<Rule>]> = [
   ['Environment & Climate', [
-    ['Urban nature', /baum|tree|grün|gruen|green|natur|biodiv|wald|forest|park|vegetation|flora|fauna/],
+    ['Urban nature', /baum|tree|grün|gruen|green|\bnatur|biodiv|wald|forest|\bparks?\b|parkanlage|vegetation|flora|fauna/],
     ['Air & emissions', /luft|air quality|emission|co2|stickstoff|feinstaub|ozon/],
     ['Climate / heat', /klima|climate|temperatur|temperature|hitze|heat|wetter|weather/],
     ['Water', /wasser|water|rhein|rhine|brunnen|fountain|gewässer|gewaesser|grundwasser/],
@@ -83,7 +83,7 @@ const TOPIC_RULES: ReadonlyArray<readonly [string, ReadonlyArray<Rule>]> = [
   ]],
   ['Public Space & Leisure', [
     ['Sports', /sport|schwimm|swim|running|fitness|spielplatz/],
-    ['Parks & public space', /freizeit|leisure|public space|allmend|platz|park/],
+    ['Parks & public space', /freizeit|leisure|public space|allmend|\bplatz|\bparks?\b/],
     ['Tourism', /touris|hotel|visitor/],
   ]],
   ['Health', [['Health services', /gesundheit|health|spital|hospital|arzt|doctor|pflege/], ['Public health', /corona|covid|krank|disease|epidem/]]],
@@ -101,10 +101,18 @@ function text(dataset: DatasetRecord): string {
   return `${dataset.title} ${dataset.description} ${dataset.themes.join(' ')} ${dataset.keywords.join(' ')} ${dataset.semantic.topics.join(' ')}`.toLocaleLowerCase();
 }
 
+/** What the publisher says the dataset *is*, as opposed to prose that merely mentions things. */
+function labelText(dataset: DatasetRecord): string {
+  return `${dataset.title} ${dataset.themes.join(' ')} ${dataset.keywords.join(' ')} ${dataset.semantic.topics.join(' ')}`.toLocaleLowerCase();
+}
+
 function topicPath(dataset: DatasetRecord): AtlasPath {
-  const haystack = text(dataset);
-  for (const [category, subcategories] of TOPIC_RULES) {
-    for (const [subcategory, pattern] of subcategories) if (pattern.test(haystack)) return { category, subcategory, detail: topicDetail(subcategory, haystack) };
+  // Descriptions mention neighbouring topics ("near the park", "air quality
+  // along the tram"), so they only decide when title and keywords are silent.
+  for (const haystack of [labelText(dataset), text(dataset)]) {
+    for (const [category, subcategories] of TOPIC_RULES) {
+      for (const [subcategory, pattern] of subcategories) if (pattern.test(haystack)) return { category, subcategory, detail: topicDetail(subcategory, haystack) };
+    }
   }
   return { category: 'Other / review needed', subcategory: 'Unclassified' };
 }
@@ -145,11 +153,25 @@ function spacePath(dataset: DatasetRecord): AtlasPath {
   return { category: 'Unknown', subcategory: type };
 }
 
+/** DCAT/opendata.swiss frequency codes as people read them. */
+const FREQUENCY_LABEL: Record<string, string> = {
+  cont: 'Continuous', daily: 'Daily', weekly: 'Weekly', monthly: 'Monthly', quarterly: 'Quarterly',
+  annual: 'Annual', annual_2: 'Every 2 years', annual_3: 'Every 3 years', irreg: 'Irregular',
+  never: 'No updates planned', update: 'Updated as needed', 'as needed': 'Updated as needed', unknown: 'Cadence not declared',
+};
+
+function frequencyLabel(frequency: string): string {
+  const key = frequency.trim().replace(/\s+/g, '_');
+  const label = FREQUENCY_LABEL[frequency] ?? FREQUENCY_LABEL[key] ?? frequency.replace(/_/g, ' ');
+  return label.charAt(0).toLocaleUpperCase() + label.slice(1);
+}
+
 function timePath(dataset: DatasetRecord): AtlasPath {
-  const frequency = dataset.characteristics.updateFrequency?.toLocaleLowerCase() ?? '';
-  if (dataset.characteristics.realtime || /cont|hour|minute|daily/.test(frequency)) return { category: 'Near-live / frequent', subcategory: frequency || 'Frequent feed' };
+  const raw = dataset.characteristics.updateFrequency?.toLocaleLowerCase() ?? '';
+  const frequency = raw ? frequencyLabel(raw) : '';
+  if (dataset.characteristics.realtime || /cont|hour|minute|daily/.test(raw)) return { category: 'Near-live / frequent', subcategory: frequency || 'Frequent feed' };
   if (dataset.characteristics.timeSeries) return { category: 'Time series', subcategory: frequency || 'Cadence not declared' };
-  if (/week|month|quarter|annual|year|period/.test(frequency)) return { category: 'Periodic snapshot', subcategory: frequency };
+  if (/week|month|quarter|annual|year|period/.test(raw)) return { category: 'Periodic snapshot', subcategory: frequency };
   if (/histor|archive/.test(text(dataset))) return { category: 'Historical', subcategory: frequency || 'Historical collection' };
   if (dataset.characteristics.temporalCoverage.length) return { category: 'Current/reference', subcategory: 'Declared temporal coverage' };
   if (frequency) return { category: 'Current/reference', subcategory: frequency };
@@ -159,12 +181,20 @@ function timePath(dataset: DatasetRecord): AtlasPath {
 function readinessPath(dataset: DatasetRecord): AtlasPath {
   const types = normalizedGeometry(dataset);
   if (!dataset.hasRecords) return { category: 'Empty / external', subcategory: dataset.formats.includes('other') ? 'External asset' : 'No queryable records' };
-  if (dataset.recordsCount !== undefined && dataset.recordsCount < 10) return { category: 'Sparse', subcategory: `${dataset.recordsCount} records` };
+  if (dataset.recordsCount !== undefined && dataset.recordsCount < 10) return { category: 'Sparse', subcategory: dataset.recordsCount < 3 ? '1–2 records' : '3–9 records' };
   if (types.length > 1) return { category: 'Mixed geometry', subcategory: types.join(' + ') };
   if (dataset.characteristics.geospatial && types.length) return { category: 'Ready spatial', subcategory: types[0] };
-  if (!dataset.characteristics.geospatial && dataset.fieldCount) return { category: 'Ready tabular', subcategory: `${dataset.fieldCount} fields` };
+  if (!dataset.characteristics.geospatial && dataset.fieldCount) return { category: 'Ready tabular', subcategory: fieldBand(dataset.fieldCount) };
   if (dataset.characteristics.geospatial) return { category: 'Needs transformation', subcategory: 'Geometry not declared' };
   return { category: 'Unknown', subcategory: 'Structure not available' };
+}
+
+/** Exact field counts fragment the Atlas into dozens of one-off buckets; bands keep it navigable. */
+function fieldBand(count: number): string {
+  if (count <= 5) return '1–5 fields';
+  if (count <= 12) return '6–12 fields';
+  if (count <= 25) return '13–25 fields';
+  return '26+ fields';
 }
 
 export function atlasPath(dataset: DatasetRecord, lens: AtlasLens): AtlasPath {

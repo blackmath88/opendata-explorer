@@ -1,4 +1,3 @@
-import * as d3 from 'd3';
 import './styles.css';
 import { openCatalogue } from './data/catalogue';
 import { parseUseCaseIntent } from './intent';
@@ -11,7 +10,7 @@ import { planOperation } from './execution/operations';
 import type { ExecutionResult } from './execution/types';
 import { BENCHMARK_USE_CASES } from './benchmarks/useCases';
 import { canCompose, catalogueStatus, filterCatalogue, type CatalogueView } from './catalogue-ui';
-import { renderGraph, resetAtlasZoom, stopGraph, zoomAtlasIn, zoomAtlasOut, zoomAtlasTo, type AtlasGraphActions } from './ui/graph';
+import { renderGraph, resetAtlasZoom, stopGraph, zoomAtlasOut, zoomAtlasTo, type AtlasGraphActions } from './ui/graph';
 import { ATLAS_LENS_LABEL, buildAtlasHierarchy, type AtlasHierarchyDatum, type AtlasLens, type AtlasState } from './atlas';
 import { recommendRepresentations, type RepresentationSpec, type RepresentationType } from './representation';
 import { resolveTrustedEvidence } from './evidence-sources/resolver';
@@ -118,9 +117,9 @@ app.innerHTML = `
           <div class="atlas-lenses" id="atlasLenses" aria-label="Atlas lens"><button data-lens="topic" class="active">Topic</button><button data-lens="space">Space</button><button data-lens="time">Time</button><button data-lens="readiness">Readiness</button></div>
           <nav class="atlas-breadcrumb" id="atlasBreadcrumb" aria-label="Atlas breadcrumb"></nav>
           <div class="landscape-info"><b id="landscapeCount">Atlas categories</b><span id="landscapeTotal">all loaded datasets</span></div>
+          <div class="atlas-zoom-controls" aria-label="Atlas navigation"><button id="atlasZoomOut" aria-label="Up one level" title="Up one level (Esc)">↑ Up</button><button id="atlasZoomReset">Overview</button></div>
         </div>
-        <div class="atlas-zoom-controls" aria-label="Atlas zoom controls"><button id="atlasZoomIn" aria-label="Zoom in">+</button><button id="atlasZoomOut" aria-label="Zoom out">−</button><button id="atlasZoomReset">Reset</button></div>
-        <div class="viz-scroll"><svg class="viz" id="viz" aria-label="Hierarchical catalogue Atlas"></svg></div>
+        <div class="viz-scroll"><div class="atlas-canvas" id="atlasCanvas" role="group" aria-label="Hierarchical catalogue Atlas"></div></div>
       </div>
       <div class="workbench" id="workbench" hidden></div>
       <div class="prompt-dock">
@@ -152,7 +151,7 @@ const vizWrap = el<HTMLDivElement>('#vizWrap');
 const examples = el<HTMLDivElement>('#examples');
 const composeBtn = el<HTMLButtonElement>('#stageCompose');
 const discoverBtn = el<HTMLButtonElement>('#stageDiscover');
-const svg = d3.select<SVGSVGElement, unknown>('#viz');
+const atlasCanvas = el<HTMLDivElement>('#atlasCanvas');
 
 function el<T extends Element>(selector: string): T {
   return document.querySelector<T>(selector)!;
@@ -202,7 +201,7 @@ function findAtlasNode(root: AtlasHierarchyDatum | null, path: string[]): AtlasH
 }
 
 const atlasActions: AtlasGraphActions = {
-  onFocus: (path, id) => { atlas = { lens: atlas.lens, path }; atlasFocusId = id; renderAtlasBreadcrumb(); },
+  onFocus: (path, id) => { atlas = { lens: atlas.lens, path }; atlasFocusId = id; renderAtlasBreadcrumb(); el<HTMLButtonElement>('#atlasZoomOut').disabled = !path.length; },
   onSelect: selectDataset,
   onWorkspace: toggleWorkspace,
 };
@@ -214,7 +213,7 @@ function renderAtlas(): void {
   datasetCount.textContent = `${catalog.datasets.length} datasets in Atlas`;
   el<HTMLElement>('#landscapeCount').textContent = `${atlasRoot.children?.length ?? 0} ${ATLAS_LENS_LABEL[atlas.lens]} categories`;
   el<HTMLElement>('#landscapeTotal').textContent = catalogueQuery.trim() ? `${searchMatches.size} catalogue matches highlighted` : `${atlasRoot.total} datasets represented`;
-  renderGraph(vizWrap, svg, { root: atlasRoot, matches, searchActive: Boolean(catalogueQuery.trim()) }, selectedId, workspace, atlasActions, atlasFocusId);
+  renderGraph(atlasCanvas, { root: atlasRoot, matches, searchActive: Boolean(catalogueQuery.trim()) }, selectedId, workspace, atlasActions, atlasFocusId);
 }
 
 function renderFilters(): void {
@@ -612,7 +611,6 @@ el<HTMLElement>('#atlasLenses').querySelectorAll<HTMLButtonElement>('button').fo
   el<HTMLElement>('#atlasLenses').querySelectorAll('button').forEach(item => item.classList.toggle('active', item === button));
   render();
 }));
-el<HTMLButtonElement>('#atlasZoomIn').addEventListener('click', zoomAtlasIn);
 el<HTMLButtonElement>('#atlasZoomOut').addEventListener('click', () => zoomAtlasOut(atlasActions));
 el<HTMLButtonElement>('#atlasZoomReset').addEventListener('click', () => resetAtlasZoom(atlasActions));
 discoverBtn.addEventListener('click', () => setStage('discover'));
