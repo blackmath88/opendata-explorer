@@ -143,6 +143,7 @@ Avoid heavy shadows. Use tonal layering, subtle blur and 1px borders (`#d9d5cc`)
 
 - Source: Phosphor (MIT), adapted by pikto to a 24 grid. Module: `src/ui/icons.ts`, `icon(name, size)` returns an SVG string; colour is `currentColor`.
 - Rail icons render at 18px in the 48×48 hit target; status icons at 12–14px; Phosphor Regular measures ≈1.1px stroke at 18px, inside the 1–1.5px rule.
+- Topic categories: 18px badge on the top of each top-level Atlas circle, counter-scaled with zoom; only the ten top-level topics, never subcategories or other lenses.
 - Evidence status is one family: every state shares the circle frame and differs only in its inner mark (check, half, dashed, cross, question, plus). Tone comes from the state class, never from the icon.
 - No Unicode glyphs as icons. Add icons with `pikto add`/`pikto apply`; `pikto audit --check` fails on new glyphs. Provenance: `.pikto/provenance.json`.
 
@@ -159,3 +160,13 @@ Avoid heavy shadows. Use tonal layering, subtle blur and 1px borders (`#d9d5cc`)
 | `unresolved` | unresolved claim | `ph:question` |
 | `proposed` | proposed claim / candidate source | `ph:plus-circle` |
 | `external` | opens an external source | `ph:arrow-up-right` |
+| `topic-environment` | Topic: Environment & Climate | `ph:leaf` |
+| `topic-mobility` | Topic: Mobility & Transport | `ph:tram` |
+| `topic-people` | Topic: People & Society | `ph:users-three` |
+| `topic-built` | Topic: Built City & Infrastructure | `ph:buildings` |
+| `topic-public-space` | Topic: Public Space & Leisure | `ph:park` |
+| `topic-health` | Topic: Health | `ph:heartbeat` |
+| `topic-education` | Topic: Education | `ph:graduation-cap` |
+| `topic-culture` | Topic: Culture | `ph:mask-happy` |
+| `topic-government` | Topic: Government & Economy | `ph:bank` |
+| `topic-other` | Topic: Other / review needed | `ph:dots-three-circle` |
