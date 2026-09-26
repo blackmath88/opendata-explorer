@@ -1,0 +1,10 @@
+{
+  "module": "src/ui/icons.ts",
+  "allow": [
+    {
+      "file": "src/ui/graph.ts",
+      "glyph": "✓",
+      "reason": "SVG <text> inside the D3 zoom-add circle; not HTML, set with .text()"
+    }
+  ]
+}

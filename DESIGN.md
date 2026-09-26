@@ -138,3 +138,24 @@ Avoid heavy shadows. Use tonal layering, subtle blur and 1px borders (`#d9d5cc`)
 - Side rail: 18px stroke glyphs in 48×48px hit targets.
 - Status badges: `accent-wash` for positive states; warn/danger tints when semantic.
 - Iconography: geometric, minimalist, consistent 1–1.5px stroke.
+
+## Iconography
+
+- Source: Phosphor (MIT), adapted by pikto to a 24 grid. Module: `src/ui/icons.ts`, `icon(name, size)` returns an SVG string; colour is `currentColor`.
+- Rail icons render at 18px in the 48×48 hit target; status icons at 12–14px; Phosphor Regular measures ≈1.1px stroke at 18px, inside the 1–1.5px rule.
+- Evidence status is one family: every state shares the circle frame and differs only in its inner mark (check, half, dashed, cross, question, plus). Tone comes from the state class, never from the icon.
+- No Unicode glyphs as icons. Add icons with `pikto add`/`pikto apply`; `pikto audit --check` fails on new glyphs. Provenance: `.pikto/provenance.json`.
+
+| Name | Meaning | Source |
+|---|---|---|
+| `discover` | Discover stage | `ph:magnifying-glass` |
+| `build` | Build stage | `ph:stack` |
+| `materialize` | Materialize stage | `ph:cube` |
+| `legend` | Provenance legend | `ph:info` |
+| `confirmed` | confirmed / covered / selected / locally available | `ph:check-circle` |
+| `partial` | partial claim / locally weak source | `ph:circle-half` |
+| `available` | available, not taken up | `ph:circle-dashed` |
+| `rejected` | rejected / missing | `ph:x-circle` |
+| `unresolved` | unresolved claim | `ph:question` |
+| `proposed` | proposed claim / candidate source | `ph:plus-circle` |
+| `external` | opens an external source | `ph:arrow-up-right` |

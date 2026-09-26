@@ -1,0 +1,290 @@
+{
+  "icons": [
+    {
+      "name": "discover",
+      "source": "ph:magnifying-glass",
+      "set": "Phosphor",
+      "license": {
+        "title": "MIT",
+        "spdx": "MIT",
+        "url": "https://github.com/phosphor-icons/core/blob/main/LICENSE"
+      },
+      "author": {
+        "name": "Phosphor Icons",
+        "url": "https://github.com/phosphor-icons/core"
+      },
+      "meaning": "Discover stage",
+      "reading": "Search is the literal action of this stage.",
+      "permission": "DESIGN.md: side rail, 18px stroke glyphs; ⌕ was a font-dependent approximation.",
+      "added": "2026-09-26",
+      "version": "2.1.1",
+      "via": "@iconify-json/ph@1.2.2",
+      "operations": [
+        "scale 256→24 grid (×0.0938)",
+        "fill shapes: drop hard-coded colour, add stroke=\"none\" (repo convention)",
+        "remove colour attributes (colour inherited from <Icon>)",
+        "svgo (preset-default; keep primitives, keep per-shape attributes)"
+      ]
+    },
+    {
+      "name": "build",
+      "source": "ph:stack",
+      "set": "Phosphor",
+      "license": {
+        "title": "MIT",
+        "spdx": "MIT",
+        "url": "https://github.com/phosphor-icons/core/blob/main/LICENSE"
+      },
+      "author": {
+        "name": "Phosphor Icons",
+        "url": "https://github.com/phosphor-icons/core"
+      },
+      "meaning": "Build stage",
+      "reading": "Composing layers of evidence into a plan; blueprint is too busy at 18px.",
+      "permission": "⌘ is the Mac Command key, not Build.",
+      "added": "2026-09-26",
+      "version": "2.1.1",
+      "via": "@iconify-json/ph@1.2.2",
+      "operations": [
+        "scale 256→24 grid (×0.0938)",
+        "fill shapes: drop hard-coded colour, add stroke=\"none\" (repo convention)",
+        "remove colour attributes (colour inherited from <Icon>)",
+        "svgo (preset-default; keep primitives, keep per-shape attributes)"
+      ]
+    },
+    {
+      "name": "materialize",
+      "source": "ph:cube",
+      "set": "Phosphor",
+      "license": {
+        "title": "MIT",
+        "spdx": "MIT",
+        "url": "https://github.com/phosphor-icons/core/blob/main/LICENSE"
+      },
+      "author": {
+        "name": "Phosphor Icons",
+        "url": "https://github.com/phosphor-icons/core"
+      },
+      "meaning": "Materialize stage",
+      "reading": "The plan becomes a concrete object.",
+      "permission": "▣ in the rail; DESIGN.md 1–1.5px stroke.",
+      "added": "2026-09-26",
+      "version": "2.1.1",
+      "via": "@iconify-json/ph@1.2.2",
+      "operations": [
+        "scale 256→24 grid (×0.0938)",
+        "fill shapes: drop hard-coded colour, add stroke=\"none\" (repo convention)",
+        "remove colour attributes (colour inherited from <Icon>)",
+        "svgo (preset-default; keep primitives, keep per-shape attributes)"
+      ]
+    },
+    {
+      "name": "legend",
+      "source": "ph:info",
+      "set": "Phosphor",
+      "license": {
+        "title": "MIT",
+        "spdx": "MIT",
+        "url": "https://github.com/phosphor-icons/core/blob/main/LICENSE"
+      },
+      "author": {
+        "name": "Phosphor Icons",
+        "url": "https://github.com/phosphor-icons/core"
+      },
+      "meaning": "Provenance legend",
+      "reading": "Opens an explanation, not a question.",
+      "permission": "legendBtn title: What the provenance tags mean.",
+      "added": "2026-09-26",
+      "version": "2.1.1",
+      "via": "@iconify-json/ph@1.2.2",
+      "operations": [
+        "scale 256→24 grid (×0.0938)",
+        "fill shapes: drop hard-coded colour, add stroke=\"none\" (repo convention)",
+        "remove colour attributes (colour inherited from <Icon>)",
+        "svgo (preset-default; keep primitives, keep per-shape attributes)"
+      ]
+    },
+    {
+      "name": "confirmed",
+      "source": "ph:check-circle",
+      "set": "Phosphor",
+      "license": {
+        "title": "MIT",
+        "spdx": "MIT",
+        "url": "https://github.com/phosphor-icons/core/blob/main/LICENSE"
+      },
+      "author": {
+        "name": "Phosphor Icons",
+        "url": "https://github.com/phosphor-icons/core"
+      },
+      "meaning": "confirmed / covered / selected / locally available",
+      "reading": "Circle family: frame = evidence state, mark = verdict.",
+      "permission": "✓ covered five positive states in three files.",
+      "added": "2026-09-26",
+      "version": "2.1.1",
+      "via": "@iconify-json/ph@1.2.2",
+      "operations": [
+        "scale 256→24 grid (×0.0938)",
+        "fill shapes: drop hard-coded colour, add stroke=\"none\" (repo convention)",
+        "remove colour attributes (colour inherited from <Icon>)",
+        "svgo (preset-default; keep primitives, keep per-shape attributes)"
+      ]
+    },
+    {
+      "name": "partial",
+      "source": "ph:circle-half",
+      "set": "Phosphor",
+      "license": {
+        "title": "MIT",
+        "spdx": "MIT",
+        "url": "https://github.com/phosphor-icons/core/blob/main/LICENSE"
+      },
+      "author": {
+        "name": "Phosphor Icons",
+        "url": "https://github.com/phosphor-icons/core"
+      },
+      "meaning": "partial claim / locally weak source",
+      "reading": "Half-covered.",
+      "permission": "△ meant both partial and available; split per audit.",
+      "added": "2026-09-26",
+      "version": "2.1.1",
+      "via": "@iconify-json/ph@1.2.2",
+      "operations": [
+        "scale 256→24 grid (×0.0938)",
+        "fill shapes: drop hard-coded colour, add stroke=\"none\" (repo convention)",
+        "remove colour attributes (colour inherited from <Icon>)",
+        "svgo (preset-default; keep primitives, keep per-shape attributes)"
+      ]
+    },
+    {
+      "name": "available",
+      "source": "ph:circle-dashed",
+      "set": "Phosphor",
+      "license": {
+        "title": "MIT",
+        "spdx": "MIT",
+        "url": "https://github.com/phosphor-icons/core/blob/main/LICENSE"
+      },
+      "author": {
+        "name": "Phosphor Icons",
+        "url": "https://github.com/phosphor-icons/core"
+      },
+      "meaning": "available, not taken up",
+      "reading": "There but not yet in use; the dashed frame is lighter on purpose.",
+      "permission": "○ and △ both drew available.",
+      "added": "2026-09-26",
+      "version": "2.1.1",
+      "via": "@iconify-json/ph@1.2.2",
+      "operations": [
+        "scale 256→24 grid (×0.0938)",
+        "fill shapes: drop hard-coded colour, add stroke=\"none\" (repo convention)",
+        "remove colour attributes (colour inherited from <Icon>)",
+        "svgo (preset-default; keep primitives, keep per-shape attributes)"
+      ]
+    },
+    {
+      "name": "rejected",
+      "source": "ph:x-circle",
+      "set": "Phosphor",
+      "license": {
+        "title": "MIT",
+        "spdx": "MIT",
+        "url": "https://github.com/phosphor-icons/core/blob/main/LICENSE"
+      },
+      "author": {
+        "name": "Phosphor Icons",
+        "url": "https://github.com/phosphor-icons/core"
+      },
+      "meaning": "rejected / missing",
+      "reading": "Same frame, crossing mark.",
+      "permission": "✕ and × both drew missing.",
+      "added": "2026-09-26",
+      "version": "2.1.1",
+      "via": "@iconify-json/ph@1.2.2",
+      "operations": [
+        "scale 256→24 grid (×0.0938)",
+        "fill shapes: drop hard-coded colour, add stroke=\"none\" (repo convention)",
+        "remove colour attributes (colour inherited from <Icon>)",
+        "svgo (preset-default; keep primitives, keep per-shape attributes)"
+      ]
+    },
+    {
+      "name": "unresolved",
+      "source": "ph:question",
+      "set": "Phosphor",
+      "license": {
+        "title": "MIT",
+        "spdx": "MIT",
+        "url": "https://github.com/phosphor-icons/core/blob/main/LICENSE"
+      },
+      "author": {
+        "name": "Phosphor Icons",
+        "url": "https://github.com/phosphor-icons/core"
+      },
+      "meaning": "unresolved claim",
+      "reading": "Phosphor's question sits in the same circle frame.",
+      "permission": "result.ts '?' for unresolved.",
+      "added": "2026-09-26",
+      "version": "2.1.1",
+      "via": "@iconify-json/ph@1.2.2",
+      "operations": [
+        "scale 256→24 grid (×0.0938)",
+        "fill shapes: drop hard-coded colour, add stroke=\"none\" (repo convention)",
+        "remove colour attributes (colour inherited from <Icon>)",
+        "svgo (preset-default; keep primitives, keep per-shape attributes)"
+      ]
+    },
+    {
+      "name": "proposed",
+      "source": "ph:plus-circle",
+      "set": "Phosphor",
+      "license": {
+        "title": "MIT",
+        "spdx": "MIT",
+        "url": "https://github.com/phosphor-icons/core/blob/main/LICENSE"
+      },
+      "author": {
+        "name": "Phosphor Icons",
+        "url": "https://github.com/phosphor-icons/core"
+      },
+      "meaning": "proposed claim / candidate source",
+      "reading": "Something to add; joins the circle family.",
+      "permission": "'+' for proposed claims and national candidates.",
+      "added": "2026-09-26",
+      "version": "2.1.1",
+      "via": "@iconify-json/ph@1.2.2",
+      "operations": [
+        "scale 256→24 grid (×0.0938)",
+        "fill shapes: drop hard-coded colour, add stroke=\"none\" (repo convention)",
+        "remove colour attributes (colour inherited from <Icon>)",
+        "svgo (preset-default; keep primitives, keep per-shape attributes)"
+      ]
+    },
+    {
+      "name": "external",
+      "source": "ph:arrow-up-right",
+      "set": "Phosphor",
+      "license": {
+        "title": "MIT",
+        "spdx": "MIT",
+        "url": "https://github.com/phosphor-icons/core/blob/main/LICENSE"
+      },
+      "author": {
+        "name": "Phosphor Icons",
+        "url": "https://github.com/phosphor-icons/core"
+      },
+      "meaning": "opens an external source",
+      "reading": "Leaves the app.",
+      "permission": "↗ after link text.",
+      "added": "2026-09-26",
+      "version": "2.1.1",
+      "via": "@iconify-json/ph@1.2.2",
+      "operations": [
+        "scale 256→24 grid (×0.0938)",
+        "fill shapes: drop hard-coded colour, add stroke=\"none\" (repo convention)",
+        "remove colour attributes (colour inherited from <Icon>)",
+        "svgo (preset-default; keep primitives, keep per-shape attributes)"
+      ]
+    }
+  ]
+}

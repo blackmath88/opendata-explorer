@@ -41,6 +41,7 @@ import type {
   EvidencePlan,
   UseCaseIntent,
 } from './types';
+import { icon } from './ui/icons';
 
 const DEFAULT_QUERY = BENCHMARK_USE_CASES[0].prompt;
 
@@ -95,11 +96,11 @@ app.innerHTML = `
   </header>
   <div class="shell">
     <nav class="rail">
-      <button class="rail-btn active" id="stageDiscover"><span class="rail-icon">⌕</span><span>Discover</span></button>
-      <button class="rail-btn" id="stageCompose" title="Build from the evidence plan"><span class="rail-icon">⌘</span><span>Build</span></button>
-      <button class="rail-btn" disabled title="Milestone 5"><span class="rail-icon">▣</span><span>Materialize</span></button>
+      <button class="rail-btn active" id="stageDiscover"><span class="rail-icon">${icon('discover', 18)}</span><span>Discover</span></button>
+      <button class="rail-btn" id="stageCompose" title="Build from the evidence plan"><span class="rail-icon">${icon('build', 18)}</span><span>Build</span></button>
+      <button class="rail-btn" disabled title="Milestone 5"><span class="rail-icon">${icon('materialize', 18)}</span><span>Materialize</span></button>
       <div class="rail-spacer"></div>
-      <button class="rail-btn" id="legendBtn" title="What the provenance tags mean"><span class="rail-icon">?</span></button>
+      <button class="rail-btn" id="legendBtn" title="What the provenance tags mean"><span class="rail-icon">${icon('legend', 18)}</span></button>
     </nav>
     <main class="main">
       <div class="canvas-toolbar">
@@ -361,22 +362,22 @@ function renderTrustedEvidence(resolution: EvidenceResolution): string {
     .filter((item, index, all) => all.findIndex(other => other.resourceId === item.resourceId && other.roleId === item.roleId) === index);
   const localRows = local.length ? local.map(role => {
     const dataset = catalog.datasets.find(item => item.id === role.localDatasetId);
-    return `<li><span class="source-state ${role.localStatus === 'locally_available' ? 'ready' : 'weak'}">${role.localStatus === 'locally_available' ? '✓' : '△'}</span><b>${escapeHtml(role.label)}</b><span>${escapeHtml(dataset?.title ?? role.localReason)}</span></li>`;
+    return `<li><span class="source-state ${role.localStatus === 'locally_available' ? 'ready' : 'weak'}">${role.localStatus === 'locally_available' ? icon('confirmed', 14) : icon('partial', 14)}</span><b>${escapeHtml(role.label)}</b><span>${escapeHtml(dataset?.title ?? role.localReason)}</span></li>`;
   }).join('') : '<li><span class="source-state">—</span><span>No local role is resolved yet.</span></li>';
   const externalRows = external.length ? external.map(candidate => {
     const resource = resourceById(candidate.resourceId)!;
     const provider = providerById(candidate.providerId)!;
     const status = candidate.status.replace('_', ' ');
-    return `<li><span class="source-state candidate">+</span><div><b>${escapeHtml(resource.label)}</b><span>${escapeHtml(provider.label)} · national · ${escapeHtml(status)} · not validated</span><small>Fills: ${escapeHtml(candidate.roleId.replaceAll('_', ' '))}</small><p>${escapeHtml(candidate.reason)}</p><details><summary>Technical source details</summary><p>Access: ${escapeHtml(resource.accessType)} · ${escapeHtml(resource.formats.join(', '))}</p><p>${escapeHtml(resource.notes.join(' '))}</p><a href="${escapeHtml(resource.catalogueUrl)}" target="_blank" rel="noreferrer">Official source</a></details></div></li>`;
+    return `<li><span class="source-state candidate">${icon('proposed', 14)}</span><div><b>${escapeHtml(resource.label)}</b><span>${escapeHtml(provider.label)} · national · ${escapeHtml(status)} · not validated</span><small>Fills: ${escapeHtml(candidate.roleId.replaceAll('_', ' '))}</small><p>${escapeHtml(candidate.reason)}</p><details><summary>Technical source details</summary><p>Access: ${escapeHtml(resource.accessType)} · ${escapeHtml(resource.formats.join(', '))}</p><p>${escapeHtml(resource.notes.join(' '))}</p><a href="${escapeHtml(resource.catalogueUrl)}" target="_blank" rel="noreferrer">Official source</a></details></div></li>`;
   }).join('') : '<li><span class="source-state">—</span><span>No national gap-fill is needed.</span></li>';
   const missingRows = resolution.unresolved.length
-    ? resolution.unresolved.map(role => `<li><span class="source-state missing">×</span><b>${escapeHtml(role.label)}</b><span>${escapeHtml(role.localReason)}</span></li>`).join('')
-    : '<li><span class="source-state ready">✓</span><span>No unresolved roles without a known source.</span></li>';
+    ? resolution.unresolved.map(role => `<li><span class="source-state missing">${icon('rejected', 14)}</span><b>${escapeHtml(role.label)}</b><span>${escapeHtml(role.localReason)}</span></li>`).join('')
+    : '<li><span class="source-state ready">' + icon('confirmed', 14) + '</span><span>No unresolved roles without a known source.</span></li>';
   return `<section class="trusted-evidence"><div><span class="eyebrow">Local Basel evidence</span><ul>${localRows}</ul></div><div><span class="eyebrow">Swiss public data · proposed gap-fill</span><ul>${externalRows}</ul></div><div><span class="eyebrow">Still missing</span><ul>${missingRows}</ul></div></section>`;
 }
 
 function renderBuildProposal(spec: RepresentationSpec, recommendations: RepresentationSpec[], covered: number, totalRoles: number, missing: number, next: string, currentAnalysis: WorkspaceAnalysis | null, executable: Set<string>): string {
-  const useRows = spec.inputs.map(input => `<li class="input-${input.status}"><span>${input.status === 'selected' ? '✓' : input.status === 'available' ? '△' : '✕'}</span>${escapeHtml(input.label)}${input.status === 'available' ? ' · available, not selected' : input.status === 'external' ? ' · external' : ''}</li>`).join('');
+  const useRows = spec.inputs.map(input => `<li class="input-${input.status}"><span>${input.status === 'selected' ? icon('confirmed', 12) : input.status === 'available' ? icon('available', 12) : icon('rejected', 12)}</span>${escapeHtml(input.label)}${input.status === 'available' ? ' · available, not selected' : input.status === 'external' ? ' · external' : ''}</li>`).join('');
   const needsValidation = spec.requiredAssessmentIds.filter(id => !executions.has(id));
   return `<section class="build-proposal">
     <div class="build-kicker">Build · proposed view</div><div class="build-question">${escapeHtml(query)}</div>

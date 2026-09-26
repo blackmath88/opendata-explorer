@@ -25,6 +25,7 @@ import {
   provenanceTag,
   truncate,
 } from './dom';
+import { icon } from './icons';
 
 const EVIDENCE_CLASS_LABEL: Record<string, string> = {
   direct: 'direct evidence',
@@ -188,7 +189,7 @@ export function renderDatasetDetail(dataset: DatasetRecord, structure?: DatasetS
     'Dataset detail',
     `<div class="dataset-detail"><div class="detail-group"><span class="eyebrow">Overview</span><h3>${escapeHtml(dataset.title)}</h3>
        <p>${escapeHtml(dataset.description || 'No catalogue description published.')}</p>
-       <a href="${escapeHtml(dataset.sourceUrl)}" target="_blank" rel="noreferrer">Open source dataset ↗</a></div>
+       <a href="${escapeHtml(dataset.sourceUrl)}" target="_blank" rel="noreferrer">Open source dataset ${icon('external', 12)}</a></div>
        <div class="detail-group"><span class="eyebrow">Catalogue</span>
        <table class="kv">${rows
          .map(([key, value]) => `<tr><th>${escapeHtml(key)}</th><td>${escapeHtml(value)}</td></tr>`)
@@ -199,7 +200,7 @@ export function renderDatasetDetail(dataset: DatasetRecord, structure?: DatasetS
          <tr><th>Fields</th><td>${escapeHtml(formatCount(dataset.fieldCount))}</td></tr>
        </table>
        <div class="prov-row">${provenanceTag('source', 'catalogue metadata')}</div>
-       <div class="detail-links"><a href="${escapeHtml(dataset.sourceUrl)}" target="_blank" rel="noreferrer">Open source dataset ↗</a>${dataset.licenseUrl ? ` <a href="${escapeHtml(dataset.licenseUrl)}" target="_blank" rel="noreferrer">Licence ↗</a>` : ''}</div></div>
+       <div class="detail-links"><a href="${escapeHtml(dataset.sourceUrl)}" target="_blank" rel="noreferrer">Open source dataset ${icon('external', 12)}</a>${dataset.licenseUrl ? ` <a href="${escapeHtml(dataset.licenseUrl)}" target="_blank" rel="noreferrer">Licence ${icon('external', 12)}</a>` : ''}</div></div>
        ${match ? `<div class="detail-group relevance-detail"><span class="eyebrow">Relevance · system inferred</span><div class="badges"><span class="badge badge-${escapeHtml(match.evidenceClass)}">${escapeHtml(EVIDENCE_CLASS_LABEL[match.evidenceClass])}</span>${match.roleIds.map(id => `<span class="badge badge-role">${escapeHtml(plan?.roles.find(role => role.id === id)?.label ?? id)}</span>`).join('')}</div><p>${escapeHtml(match.relevance.explanation)}</p>${provenanceTag('system', 'deterministic ranking')}</div>` : ''}
      </div>
      ${structure ? renderStructure(structure) : ''}`,
@@ -342,8 +343,8 @@ export function renderEvidencePlan(plan: EvidencePlan, datasets: DatasetRecord[]
   const summaryRows = plan.roles.map(role => {
     const dataset = role.datasetId ? byId.get(role.datasetId) : undefined;
     const covered = Boolean(dataset && workspace.has(dataset.id));
-    const status = covered ? '✓ Covered' : dataset ? '○ Available' : role.gap?.kind === 'not_in_catalogue' ? '✕ External' : '✕ Missing';
-    return `<tr class="role-dataset" ${dataset ? `data-id="${escapeHtml(dataset.id)}"` : ''}><td>${escapeHtml(role.label)}</td><td class="${covered ? 'role-covered' : 'role-uncovered'}">${escapeHtml(status)}</td><td>${escapeHtml(dataset?.title ?? role.gap?.suggestion ?? 'No dataset')}</td>${dataset ? `<td><button class="small-btn ${covered ? 'added' : ''} role-add">${covered ? 'Selected' : 'Add'}</button></td>` : '<td></td>'}</tr>`;
+    const [mark, status] = covered ? ['confirmed', 'Covered'] as const : dataset ? ['available', 'Available'] as const : ['rejected', role.gap?.kind === 'not_in_catalogue' ? 'External' : 'Missing'] as const;
+    return `<tr class="role-dataset" ${dataset ? `data-id="${escapeHtml(dataset.id)}"` : ''}><td>${escapeHtml(role.label)}</td><td class="${covered ? 'role-covered' : 'role-uncovered'}">${icon(mark, 12)} ${escapeHtml(status)}</td><td>${escapeHtml(dataset?.title ?? role.gap?.suggestion ?? 'No dataset')}</td>${dataset ? `<td><button class="small-btn ${covered ? 'added' : ''} role-add">${covered ? 'Selected' : 'Add'}</button></td>` : '<td></td>'}</tr>`;
   }).join('');
   return `
     <section class="workbench-section">
