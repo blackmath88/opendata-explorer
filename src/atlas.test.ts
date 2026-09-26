@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { atlasPath, atlasSegments, atlasSummaries, buildAtlasHierarchy, datasetsAtPath, shouldSubdivide, type AtlasHierarchyDatum, type AtlasLens } from './atlas';
+import { TOPIC_CATEGORIES, TOPIC_ICON, atlasPath, atlasSegments, atlasSummaries, buildAtlasHierarchy, categoryIcon, datasetsAtPath, shouldSubdivide, type AtlasHierarchyDatum, type AtlasLens } from './atlas';
 import { fallbackDatasets } from './data/fallback';
 import type { DatasetMatch } from './types';
 
@@ -56,5 +56,22 @@ describe('hierarchical Atlas', () => {
     expect(collect(first).sort()).toEqual(fallbackDatasets.map(dataset => dataset.id).sort());
     expect(first).toEqual(second);
     expect(first.total).toBe(fallbackDatasets.length);
+  });
+});
+
+describe('Topic category icons', () => {
+  it('gives every top-level Topic category an icon and no two the same', () => {
+    for (const category of TOPIC_CATEGORIES) expect(TOPIC_ICON[category], category).toBeDefined();
+    expect(new Set(TOPIC_CATEGORIES.map(category => TOPIC_ICON[category])).size).toBe(TOPIC_CATEGORIES.length);
+  });
+
+  it('marks only depth-1 Topic categories, not subcategories or other lenses', () => {
+    const topic = buildAtlasHierarchy(fallbackDatasets, matches, 'topic', new Set());
+    const top = topic.children!.filter(node => node.kind === 'category');
+    expect(top.length).toBeGreaterThan(0);
+    for (const node of top) expect(categoryIcon(node)).toBe(TOPIC_ICON[node.label]);
+    for (const node of top.flatMap(node => node.children ?? [])) expect(categoryIcon(node)).toBeUndefined();
+    const space = buildAtlasHierarchy(fallbackDatasets, matches, 'space', new Set());
+    for (const node of space.children!) expect(categoryIcon(node)).toBeUndefined();
   });
 });

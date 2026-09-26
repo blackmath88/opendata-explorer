@@ -285,6 +285,266 @@
         "remove colour attributes (colour inherited from <Icon>)",
         "svgo (preset-default; keep primitives, keep per-shape attributes)"
       ]
+    },
+    {
+      "name": "topic-environment",
+      "source": "ph:leaf",
+      "set": "Phosphor",
+      "version": "2.1.1",
+      "license": {
+        "title": "MIT",
+        "spdx": "MIT",
+        "url": "https://github.com/phosphor-icons/core/blob/main/LICENSE"
+      },
+      "author": {
+        "name": "Phosphor Icons",
+        "url": "https://github.com/phosphor-icons/core"
+      },
+      "source_url": "https://api.iconify.design/ph/leaf.svg",
+      "operations": [
+        "scale 256→24 grid (×0.0938)",
+        "fill shapes: drop hard-coded colour, add stroke=\"none\" (repo convention)",
+        "remove colour attributes (colour inherited from <Icon>)",
+        "svgo (preset-default; keep primitives, keep per-shape attributes)"
+      ],
+      "meaning": "Environment & Climate",
+      "reading": "The organic part, not a place: a leaf, so Public Space keeps the park.",
+      "permission": "Discover atlas: Topic lens category, drawn on the category circle's rim; chosen on docs/sheet-opendata-categories.html in pikto",
+      "added": "2026-09-26"
+    },
+    {
+      "name": "topic-mobility",
+      "source": "ph:tram",
+      "set": "Phosphor",
+      "version": "2.1.1",
+      "license": {
+        "title": "MIT",
+        "spdx": "MIT",
+        "url": "https://github.com/phosphor-icons/core/blob/main/LICENSE"
+      },
+      "author": {
+        "name": "Phosphor Icons",
+        "url": "https://github.com/phosphor-icons/core"
+      },
+      "source_url": "https://api.iconify.design/ph/tram.svg",
+      "operations": [
+        "scale 256→24 grid (×0.0938)",
+        "fill shapes: drop hard-coded colour, add stroke=\"none\" (repo convention)",
+        "remove colour attributes (colour inherited from <Icon>)",
+        "svgo (preset-default; keep primitives, keep per-shape attributes)"
+      ],
+      "meaning": "Mobility & Transport",
+      "reading": "Metonymy for Basel: the BVB tram, not a generic car; Phosphor's bicycle failed the grid check.",
+      "permission": "Discover atlas: Topic lens category, drawn on the category circle's rim; chosen on docs/sheet-opendata-categories.html in pikto",
+      "added": "2026-09-26"
+    },
+    {
+      "name": "topic-people",
+      "source": "ph:users-three",
+      "set": "Phosphor",
+      "version": "2.1.1",
+      "license": {
+        "title": "MIT",
+        "spdx": "MIT",
+        "url": "https://github.com/phosphor-icons/core/blob/main/LICENSE"
+      },
+      "author": {
+        "name": "Phosphor Icons",
+        "url": "https://github.com/phosphor-icons/core"
+      },
+      "source_url": "https://api.iconify.design/ph/users-three.svg",
+      "operations": [
+        "scale 256→24 grid (×0.0938)",
+        "fill shapes: drop hard-coded colour, add stroke=\"none\" (repo convention)",
+        "remove colour attributes (colour inherited from <Icon>)",
+        "svgo (preset-default; keep primitives, keep per-shape attributes)"
+      ],
+      "meaning": "People & Society",
+      "reading": "A group, not one person.",
+      "permission": "Discover atlas: Topic lens category, drawn on the category circle's rim; chosen on docs/sheet-opendata-categories.html in pikto",
+      "added": "2026-09-26"
+    },
+    {
+      "name": "topic-built",
+      "source": "ph:buildings",
+      "set": "Phosphor",
+      "version": "2.1.1",
+      "license": {
+        "title": "MIT",
+        "spdx": "MIT",
+        "url": "https://github.com/phosphor-icons/core/blob/main/LICENSE"
+      },
+      "author": {
+        "name": "Phosphor Icons",
+        "url": "https://github.com/phosphor-icons/core"
+      },
+      "source_url": "https://api.iconify.design/ph/buildings.svg",
+      "operations": [
+        "scale 256→24 grid (×0.0938)",
+        "fill shapes: drop hard-coded colour, add stroke=\"none\" (repo convention)",
+        "remove colour attributes (colour inherited from <Icon>)",
+        "svgo (preset-default; keep primitives, keep per-shape attributes)"
+      ],
+      "meaning": "Built City & Infrastructure",
+      "reading": "The built fabric; the crane would only say construction.",
+      "permission": "Discover atlas: Topic lens category, drawn on the category circle's rim; chosen on docs/sheet-opendata-categories.html in pikto",
+      "added": "2026-09-26"
+    },
+    {
+      "name": "topic-public-space",
+      "source": "ph:park",
+      "set": "Phosphor",
+      "version": "2.1.1",
+      "license": {
+        "title": "MIT",
+        "spdx": "MIT",
+        "url": "https://github.com/phosphor-icons/core/blob/main/LICENSE"
+      },
+      "author": {
+        "name": "Phosphor Icons",
+        "url": "https://github.com/phosphor-icons/core"
+      },
+      "source_url": "https://api.iconify.design/ph/park.svg",
+      "operations": [
+        "scale 256→24 grid (×0.0938)",
+        "fill shapes: drop hard-coded colour, add stroke=\"none\" (repo convention)",
+        "remove colour attributes (colour inherited from <Icon>)",
+        "svgo (preset-default; keep primitives, keep per-shape attributes)"
+      ],
+      "meaning": "Public Space & Leisure",
+      "reading": "A place you go to, distinct from Environment's leaf.",
+      "permission": "Discover atlas: Topic lens category, drawn on the category circle's rim; chosen on docs/sheet-opendata-categories.html in pikto",
+      "added": "2026-09-26"
+    },
+    {
+      "name": "topic-health",
+      "source": "ph:heartbeat",
+      "set": "Phosphor",
+      "version": "2.1.1",
+      "license": {
+        "title": "MIT",
+        "spdx": "MIT",
+        "url": "https://github.com/phosphor-icons/core/blob/main/LICENSE"
+      },
+      "author": {
+        "name": "Phosphor Icons",
+        "url": "https://github.com/phosphor-icons/core"
+      },
+      "source_url": "https://api.iconify.design/ph/heartbeat.svg",
+      "operations": [
+        "scale 256→24 grid (×0.0938)",
+        "fill shapes: drop hard-coded colour, add stroke=\"none\" (repo convention)",
+        "remove colour attributes (colour inherited from <Icon>)",
+        "svgo (preset-default; keep primitives, keep per-shape attributes)"
+      ],
+      "meaning": "Health",
+      "reading": "A vital sign; first-aid reads as emergency.",
+      "permission": "Discover atlas: Topic lens category, drawn on the category circle's rim; chosen on docs/sheet-opendata-categories.html in pikto",
+      "added": "2026-09-26"
+    },
+    {
+      "name": "topic-education",
+      "source": "ph:graduation-cap",
+      "set": "Phosphor",
+      "version": "2.1.1",
+      "license": {
+        "title": "MIT",
+        "spdx": "MIT",
+        "url": "https://github.com/phosphor-icons/core/blob/main/LICENSE"
+      },
+      "author": {
+        "name": "Phosphor Icons",
+        "url": "https://github.com/phosphor-icons/core"
+      },
+      "source_url": "https://api.iconify.design/ph/graduation-cap.svg",
+      "operations": [
+        "scale 256→24 grid (×0.0938)",
+        "fill shapes: drop hard-coded colour, add stroke=\"none\" (repo convention)",
+        "remove colour attributes (colour inherited from <Icon>)",
+        "svgo (preset-default; keep primitives, keep per-shape attributes)"
+      ],
+      "meaning": "Education",
+      "reading": "The institution; a book would overlap with libraries under Culture.",
+      "permission": "Discover atlas: Topic lens category, drawn on the category circle's rim; chosen on docs/sheet-opendata-categories.html in pikto",
+      "added": "2026-09-26"
+    },
+    {
+      "name": "topic-culture",
+      "source": "ph:mask-happy",
+      "set": "Phosphor",
+      "version": "2.1.1",
+      "license": {
+        "title": "MIT",
+        "spdx": "MIT",
+        "url": "https://github.com/phosphor-icons/core/blob/main/LICENSE"
+      },
+      "author": {
+        "name": "Phosphor Icons",
+        "url": "https://github.com/phosphor-icons/core"
+      },
+      "source_url": "https://api.iconify.design/ph/mask-happy.svg",
+      "operations": [
+        "scale 256→24 grid (×0.0938)",
+        "fill shapes: drop hard-coded colour, add stroke=\"none\" (repo convention)",
+        "remove colour attributes (colour inherited from <Icon>)",
+        "svgo (preset-default; keep primitives, keep per-shape attributes)"
+      ],
+      "meaning": "Culture",
+      "reading": "Theatre and events; a museum column would collide with Government's bank.",
+      "permission": "Discover atlas: Topic lens category, drawn on the category circle's rim; chosen on docs/sheet-opendata-categories.html in pikto",
+      "added": "2026-09-26"
+    },
+    {
+      "name": "topic-government",
+      "source": "ph:bank",
+      "set": "Phosphor",
+      "version": "2.1.1",
+      "license": {
+        "title": "MIT",
+        "spdx": "MIT",
+        "url": "https://github.com/phosphor-icons/core/blob/main/LICENSE"
+      },
+      "author": {
+        "name": "Phosphor Icons",
+        "url": "https://github.com/phosphor-icons/core"
+      },
+      "source_url": "https://api.iconify.design/ph/bank.svg",
+      "operations": [
+        "scale 256→24 grid (×0.0938)",
+        "fill shapes: drop hard-coded colour, add stroke=\"none\" (repo convention)",
+        "remove colour attributes (colour inherited from <Icon>)",
+        "svgo (preset-default; keep primitives, keep per-shape attributes)"
+      ],
+      "meaning": "Government & Economy",
+      "reading": "The public institution; scales would say justice only.",
+      "permission": "Discover atlas: Topic lens category, drawn on the category circle's rim; chosen on docs/sheet-opendata-categories.html in pikto",
+      "added": "2026-09-26"
+    },
+    {
+      "name": "topic-other",
+      "source": "ph:dots-three-circle",
+      "set": "Phosphor",
+      "version": "2.1.1",
+      "license": {
+        "title": "MIT",
+        "spdx": "MIT",
+        "url": "https://github.com/phosphor-icons/core/blob/main/LICENSE"
+      },
+      "author": {
+        "name": "Phosphor Icons",
+        "url": "https://github.com/phosphor-icons/core"
+      },
+      "source_url": "https://api.iconify.design/ph/dots-three-circle.svg",
+      "operations": [
+        "scale 256→24 grid (×0.0938)",
+        "fill shapes: drop hard-coded colour, add stroke=\"none\" (repo convention)",
+        "remove colour attributes (colour inherited from <Icon>)",
+        "svgo (preset-default; keep primitives, keep per-shape attributes)"
+      ],
+      "meaning": "Other / review needed",
+      "reading": "Not yet sorted; avoids ?, which already means unresolved.",
+      "permission": "Discover atlas: Topic lens category, drawn on the category circle's rim; chosen on docs/sheet-opendata-categories.html in pikto",
+      "added": "2026-09-26"
     }
   ]
 }

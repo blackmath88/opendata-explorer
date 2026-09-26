@@ -1,4 +1,5 @@
 import type { DatasetMatch, DatasetRecord, EvidenceClass } from './types';
+import type { IconName } from './ui/icons';
 
 export type AtlasLens = 'topic' | 'space' | 'time' | 'readiness';
 
@@ -96,6 +97,30 @@ const TOPIC_RULES: ReadonlyArray<readonly [string, ReadonlyArray<Rule>]> = [
     ['Safety & justice', /polizei|kriminal|straftat|unfall|accident|feuerwehr|sicherheit|safety/],
   ]],
 ];
+
+/** Top-level Topic categories, in rule order, plus the fallback bucket. */
+export const TOPIC_CATEGORIES: readonly string[] = [...TOPIC_RULES.map(([category]) => category), 'Other / review needed'];
+
+/**
+ * Topic-lens category → icon (added with pikto; source, license and reasoning in .pikto/provenance.json).
+ * Only the ten top-level topics get one: subcategories and the Space/Time/Readiness lenses stay text.
+ */
+export const TOPIC_ICON: Readonly<Record<string, IconName>> = {
+  'Environment & Climate': 'topic-environment',
+  'Mobility & Transport': 'topic-mobility',
+  'People & Society': 'topic-people',
+  'Built City & Infrastructure': 'topic-built',
+  'Public Space & Leisure': 'topic-public-space',
+  Health: 'topic-health',
+  Education: 'topic-education',
+  Culture: 'topic-culture',
+  'Government & Economy': 'topic-government',
+  'Other / review needed': 'topic-other',
+};
+
+export function categoryIcon(node: AtlasHierarchyDatum): IconName | undefined {
+  return node.kind === 'category' && node.depth === 1 && node.id.startsWith('lens:topic/') ? TOPIC_ICON[node.label] : undefined;
+}
 
 function text(dataset: DatasetRecord): string {
   return `${dataset.title} ${dataset.description} ${dataset.themes.join(' ')} ${dataset.keywords.join(' ')} ${dataset.semantic.topics.join(' ')}`.toLocaleLowerCase();

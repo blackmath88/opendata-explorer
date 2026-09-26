@@ -1,7 +1,8 @@
 import * as d3 from 'd3';
-import type { AtlasHierarchyDatum } from '../atlas';
+import { categoryIcon, type AtlasHierarchyDatum } from '../atlas';
 import type { DatasetMatch } from '../types';
 import { truncate } from './dom';
+import { icon } from './icons';
 
 export interface AtlasGraphData { root: AtlasHierarchyDatum; matches: DatasetMatch[]; searchActive: boolean; }
 export interface AtlasGraphActions { onFocus: (path: string[], id: string) => void; onSelect: (id: string) => void; onWorkspace: (id: string) => void; }
@@ -44,6 +45,10 @@ export function renderGraph(container: HTMLElement, svg: d3.Selection<SVGSVGElem
   node.append('title').text(item => tooltip(item.data, matchById));
   node.filter(item => item.data.kind === 'dataset').append('circle').attr('class', item => `zoom-add ${workspace.has(item.data.dataset!.id) ? 'added' : ''}`).attr('cx', item => item.r * .58).attr('cy', item => item.r * .58).attr('r', item => Math.min(10, item.r * .18)).on('click', (event, item) => { event.stopPropagation(); actions.onWorkspace(item.data.dataset!.id); });
   node.filter(item => item.data.kind === 'dataset').append('text').attr('class', 'zoom-add-label').attr('x', item => item.r * .58).attr('y', item => item.r * .58 + 3).text(item => workspace.has(item.data.dataset!.id) ? '✓' : '+');
+  // Topic categories carry an icon on the top of their rim, where dataset circles never cover it.
+  const badge = node.filter(item => Boolean(categoryIcon(item.data))).append('g').attr('class', 'zoom-icon');
+  badge.append('circle').attr('class', 'zoom-icon-disc').attr('r', 14);
+  badge.append('g').attr('transform', 'translate(-9,-9)').html(item => icon(categoryIcon(item.data)!, 18));
   node.append('text').attr('class', 'zoom-label').each(function(item) {
     const text = d3.select(this);
     text.append('tspan').attr('class', 'zoom-label-title').text(truncate(item.data.label, 34));
@@ -66,6 +71,10 @@ function updateLabels(nodes: d3.Selection<SVGGElement, Packed, SVGGElement, unkn
     if (item.data.kind === 'dataset') return screenRadius >= 30 ? null : 'none';
     return item.depth <= categoryDepth && screenRadius >= 25 && screenRadius <= 420 ? null : 'none';
   });
+  // icons keep their screen size: counter-scale against the zoom, visible whenever the category's label is
+  nodes.select<SVGGElement>('.zoom-icon')
+    .attr('transform', item => `translate(0,${-item.r}) scale(${1 / scale})`)
+    .style('display', item => item.depth <= categoryDepth && item.r * scale >= 25 && item.r * scale <= 420 ? null : 'none');
   nodes.selectAll<SVGTSpanElement, Packed>('.zoom-label-meta').style('display', item => item.data.kind === 'dataset' ? (item.r * scale >= 46 ? null : 'none') : null);
   nodes.selectAll<SVGTSpanElement, Packed>('.zoom-label-detail').style('display', item => item.r * scale >= 68 ? null : 'none');
   nodes.selectAll<SVGCircleElement, Packed>('.zoom-add').style('display', item => item.r * scale >= 45 ? null : 'none');
