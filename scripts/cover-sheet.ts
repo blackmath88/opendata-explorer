@@ -33,11 +33,13 @@ for (const dataset of inCategory) {
 }
 const subs = [...bySub].sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0]));
 const spec = ATLAS_SPECS[category];
+const outlineFile = `src/data/portals/${portal.id}/outline.json`;
+const frame = existsSync(outlineFile) ? JSON.parse(readFileSync(outlineFile, 'utf8')).outline : undefined;
 
 const inputFor = (dataset: (typeof inCategory)[number], sub: string, doorwayId?: string): CoverInput => {
   const late = overdue(dataset, now);
   return {
-    dataset, category, subcategory: sub, sample: samples[dataset.id],
+    dataset, category, subcategory: sub, sample: samples[dataset.id], frame,
     signals: { reuses: usage?.get(dataset.id)?.reuses ?? 0, overdue: late.level, overdueNote: late.note, doorway: dataset.id === doorwayId },
   };
 };
@@ -55,7 +57,7 @@ const cloth = CATEGORY_CLOTH[category];
 const legend = `<table class="legend"><tr><th>Channel</th><th>Encodes</th></tr>
   <tr><td>Cloth colour</td><td>category (${category})</td></tr>
   <tr><td>Motif, top left</td><td>subcategory glyph</td></tr>
-  <tr><td>Cover art</td><td>the dataset's own sample: real positions, records per month, or the column types (text = lines, numbers = dots, dates = ticks, geometry = rings)</td></tr>
+  <tr><td>Cover art</td><td>the dataset's own sample: real positions on the canton outline (one shared frame for every map), records per month on a time axis of at least two years, or the table's own column names with their type (line = text, dot = number, tick = date, ring = geometry)</td></tr>
   <tr><td>Spine width</td><td>record count: ${SPINE_WIDTH.map((w, i) => `<span class="band" style="width:${w}px;background:${cloth}"></span> ${BAND_LABEL[i]}`).join(' &nbsp; ')}</td></tr>
   <tr><td>Bookmark with notches</td><td>documented reuses (portal figures)</td></tr>
   <tr><td>Patina</td><td>overdue against its own declared rhythm (static or irregular datasets never age)</td></tr>

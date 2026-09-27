@@ -10,6 +10,7 @@
  */
 import { ATLAS_SPECS, dataForm, FORM_LABEL, FORM_MARK, subcategoryGlyph, type DataForm } from './atlas-spec';
 import type { Geometry } from './portrait';
+import { TOPIC_ICON } from './topic-icons';
 import type { DatasetRecord } from './types';
 import { ICONS, type IconName } from './ui/icons';
 
@@ -38,6 +39,8 @@ export interface CoverInput {
   subcategory: string;
   sample?: CoverSample;
   signals: CoverSignals;
+  /** The portal's outline (scripts/portal-outline.ts): every map cover shares this frame. */
+  frame?: Geometry[];
 }
 
 // ---------------------------------------------------------------------------
@@ -148,21 +151,44 @@ function positions(geometry: Geometry): number[][] {
   }
 }
 
-function mapArt(geometries: Geometry[], box: Box): string {
+const bounds = (points: number[][]) => {
+  const lons = points.map(p => p[0]), lats = points.map(p => p[1]);
+  return { minLon: Math.min(...lons), maxLon: Math.max(...lons), minLat: Math.min(...lats), maxLat: Math.max(...lats) };
+};
+
+/**
+ * Positions on a shared frame: the portal's outline, so every map cover is drawn at the same scale
+ * and a point reads as "here in the canton", not as a scatter of its own extent. Data reaching well
+ * beyond the outline (the Rhine, the airport) widens the frame rather than being cut.
+ */
+function mapArt(geometries: Geometry[], box: Box, frame: Geometry[] = []): string {
   const all = geometries.flatMap(positions).filter(point => Number.isFinite(point[0]) && Number.isFinite(point[1]));
   if (!all.length) return '';
-  const lons = all.map(p => p[0]), lats = all.map(p => p[1]);
-  const [minLon, maxLon, minLat, maxLat] = [Math.min(...lons), Math.max(...lons), Math.min(...lats), Math.max(...lats)];
+  const data = bounds(all);
+  const outline = frame.flatMap(positions);
+  let b = data;
+  if (outline.length) {
+    const f = bounds(outline);
+    const padLon = (f.maxLon - f.minLon) * 0.25, padLat = (f.maxLat - f.minLat) * 0.25;
+    const inside = data.minLon >= f.minLon - padLon && data.maxLon <= f.maxLon + padLon && data.minLat >= f.minLat - padLat && data.maxLat <= f.maxLat + padLat;
+    b = inside ? f : { minLon: Math.min(f.minLon, data.minLon), maxLon: Math.max(f.maxLon, data.maxLon), minLat: Math.min(f.minLat, data.minLat), maxLat: Math.max(f.maxLat, data.maxLat) };
+  }
+  const { minLon, maxLon, minLat, maxLat } = b;
   const k = Math.cos(((minLat + maxLat) / 2) * Math.PI / 180);
   const spanX = Math.max((maxLon - minLon) * k, 1e-9), spanY = Math.max(maxLat - minLat, 1e-9);
   const scale = Math.min(box.w / spanX, box.h / spanY);
   const ox = box.x + (box.w - spanX * scale) / 2, oy = box.y + (box.h - spanY * scale) / 2;
-  const p = (lon: number, lat: number) => `${(ox + (lon - minLon) * k * scale).toFixed(1)} ${(oy + (maxLat - lat) * scale).toFixed(1)}`;
+  const xy = (lon: number, lat: number): [string, string] => [(ox + (lon - minLon) * k * scale).toFixed(1), (oy + (maxLat - lat) * scale).toFixed(1)];
+  const p = (lon: number, lat: number) => xy(lon, lat).join(' ');
   const path = (ring: number[][]) => ring.map(([lon, lat], i) => `${i ? 'L' : 'M'}${p(lon, lat)}`).join('');
-  return geometries.map(g => {
+  const base = frame.length
+    ? `<path d="${frame.map(g => (g.type === 'Polygon' ? g.coordinates : g.type === 'MultiPolygon' ? g.coordinates.flat() : []).map(r => `${path(r)}Z`).join('')).join('')}" fill="${PAPER}" fill-opacity=".07" stroke="${PAPER}" stroke-opacity=".38" stroke-width=".6" stroke-dasharray="1.6 1.2"/>`
+    : '';
+  const dot = (lon: number, lat: number) => { const [x, y] = xy(lon, lat); return `<circle cx="${x}" cy="${y}" r="1.6" fill="${PAPER}"/>`; };
+  return base + geometries.map(g => {
     switch (g.type) {
-      case 'Point': return `<circle cx="${p(g.coordinates[0], g.coordinates[1]).split(' ')[0]}" cy="${p(g.coordinates[0], g.coordinates[1]).split(' ')[1]}" r="1.6" fill="${PAPER}"/>`;
-      case 'MultiPoint': return g.coordinates.map(([lon, lat]) => { const [x, y] = p(lon, lat).split(' '); return `<circle cx="${x}" cy="${y}" r="1.6" fill="${PAPER}"/>`; }).join('');
+      case 'Point': return dot(g.coordinates[0], g.coordinates[1]);
+      case 'MultiPoint': return g.coordinates.map(([lon, lat]) => dot(lon, lat)).join('');
       case 'LineString': return `<path d="${path(g.coordinates)}" fill="none" stroke="${PAPER}" stroke-width="1" stroke-linejoin="round"/>`;
       case 'MultiLineString': return `<path d="${g.coordinates.map(path).join('')}" fill="none" stroke="${PAPER}" stroke-width="1" stroke-linejoin="round"/>`;
       case 'Polygon': return `<path d="${g.coordinates.map(r => `${path(r)}Z`).join('')}" fill="${PAPER}" fill-opacity=".22" stroke="${PAPER}" stroke-width=".7"/>`;
@@ -171,36 +197,53 @@ function mapArt(geometries: Geometry[], box: Box): string {
   }).join('');
 }
 
-function seriesArt(periods: Array<{ n: number }>, box: Box): string {
+/** Records per month on a time axis: a tick at each January, the first and last year written out. */
+function seriesArt(periods: Array<{ period: string; n: number }>, box: Box): string {
   if (!periods.length) return '';
+  const axis = box.y + box.h - 8;
+  const plot = { ...box, h: box.h - 10 };
   const max = Math.max(...periods.map(period => period.n), 1);
-  const step = box.w / periods.length;
-  return periods.map((period, i) => {
+  // At least two years of axis: a series of three months stays three thin bars at the recent end, not three blocks.
+  const slots = Math.max(periods.length, 24);
+  const step = box.w / slots;
+  const x0 = box.x + (slots - periods.length) * step;
+  const bars = periods.map((period, i) => {
     if (!period.n) return '';
-    const h = Math.max(0.8, (period.n / max) * box.h);
-    return `<rect x="${(box.x + i * step).toFixed(2)}" y="${(box.y + box.h - h).toFixed(2)}" width="${Math.max(0.6, step * 0.72).toFixed(2)}" height="${h.toFixed(2)}" fill="${PAPER}"/>`;
-  }).join('') + `<path d="M${box.x} ${box.y + box.h + 1.5}h${box.w}" stroke="${PAPER}" stroke-width=".6" opacity=".6"/>`;
+    const h = Math.max(0.8, (period.n / max) * plot.h);
+    return `<rect x="${(x0 + i * step).toFixed(2)}" y="${(plot.y + plot.h - h).toFixed(2)}" width="${Math.max(0.6, step * 0.72).toFixed(2)}" height="${h.toFixed(2)}" fill="${PAPER}"/>`;
+  }).join('');
+  const years = periods.map((period, i) => ({ year: period.period.slice(0, 4), month: period.period.slice(5, 7), x: x0 + i * step }));
+  const ticks = years.filter(y => y.month === '01').map(y => `<path d="M${y.x.toFixed(1)} ${axis}v2.4" stroke="${PAPER}" stroke-width=".6"/>`).join('');
+  const label = (text: string, x: number, anchor: string) => `<text x="${x.toFixed(1)}" y="${axis + 8}" font-size="5.6" text-anchor="${anchor}" fill="${PAPER}" fill-opacity=".85" font-family="Inter,system-ui,sans-serif">${text}</text>`;
+  const first = years[0].year, last = years[years.length - 1].year;
+  return bars + `<path d="M${box.x} ${axis}h${box.w}" stroke="${PAPER}" stroke-width=".6" opacity=".7"/>` + ticks
+    + label(first, x0, x0 > box.x + box.w * 0.7 ? 'end' : 'start') + (last !== first ? label(last, box.x + box.w, 'end') : '');
 }
 
-/** Column types as a weave: text = hairlines, numbers = dots, dates = ticks, geometry = rings. */
-function tableArt(fields: Array<{ type: string }>, box: Box): string {
-  const shown = fields.slice(0, 12);
+const FIELD_KIND = (type: string): 'text' | 'number' | 'date' | 'geo' | 'other' =>
+  /text|string/.test(type) ? 'text' : /int|double|decimal|float|number/.test(type) ? 'number' : /date/.test(type) ? 'date' : /geo/.test(type) ? 'geo' : 'other';
+
+/** The table's own columns, named: a type mark (text = line, number = dot, date = tick, geometry = ring) and the column name. */
+function tableArt(fields: Array<{ name?: string; type: string }>, box: Box): string {
+  const rows = 7;
+  const shown = fields.slice(0, fields.length > rows ? rows - 1 : rows);
   if (!shown.length) return '';
-  const col = box.w / shown.length;
-  return shown.map((field, i) => {
-    const x = box.x + i * col + col / 2;
-    const rows = 9;
-    const parts: string[] = [];
-    for (let r = 0; r < rows; r++) {
-      const y = box.y + (r + 0.5) * (box.h / rows);
-      if (/text|string/.test(field.type)) parts.push(`<path d="M${(x - col * 0.34).toFixed(1)} ${y.toFixed(1)}h${(col * 0.68).toFixed(1)}" stroke="${PAPER}" stroke-width=".9"/>`);
-      else if (/int|double|decimal|float|number/.test(field.type)) parts.push(`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="1.1" fill="${PAPER}"/>`);
-      else if (/date/.test(field.type)) parts.push(`<path d="M${x.toFixed(1)} ${(y - 2.2).toFixed(1)}v4.4" stroke="${PAPER}" stroke-width=".9"/>`);
-      else if (/geo/.test(field.type)) parts.push(`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="1.9" fill="none" stroke="${PAPER}" stroke-width=".7"/>`);
-      else parts.push(`<rect x="${(x - 1).toFixed(1)}" y="${(y - 1).toFixed(1)}" width="2" height="2" fill="${PAPER}" opacity=".6"/>`);
-    }
-    return parts.join('');
-  }).join('');
+  const pitch = box.h / rows;
+  const lines = shown.map((field, i) => {
+    const y = box.y + (i + 0.5) * pitch;
+    const x = box.x + 3;
+    const kind = FIELD_KIND(field.type);
+    const mark = kind === 'text' ? `<path d="M${x - 2.5} ${y.toFixed(1)}h5" stroke="${PAPER}" stroke-width="1"/>`
+      : kind === 'number' ? `<circle cx="${x}" cy="${y.toFixed(1)}" r="1.3" fill="${PAPER}"/>`
+      : kind === 'date' ? `<path d="M${x} ${(y - 2.4).toFixed(1)}v4.8" stroke="${PAPER}" stroke-width="1"/>`
+      : kind === 'geo' ? `<circle cx="${x}" cy="${y.toFixed(1)}" r="2" fill="none" stroke="${PAPER}" stroke-width=".8"/>`
+      : `<rect x="${x - 1.2}" y="${(y - 1.2).toFixed(1)}" width="2.4" height="2.4" fill="${PAPER}" opacity=".6"/>`;
+    const name = (field.name ?? '').replace(/_/g, ' ');
+    const text = name.length > 24 ? `${name.slice(0, 23)}…` : name;
+    return `${mark}<text x="${x + 6}" y="${(y + 2).toFixed(1)}" font-size="5.8" fill="${PAPER}" fill-opacity=".9" font-family="ui-monospace,Menlo,monospace">${esc(text)}</text>`;
+  });
+  if (fields.length > shown.length) lines.push(`<text x="${box.x + 9}" y="${(box.y + (rows - 0.5) * pitch + 2).toFixed(1)}" font-size="5.6" fill="${PAPER}" fill-opacity=".7" font-family="Inter,system-ui,sans-serif">+${fields.length - shown.length} more columns</text>`);
+  return lines.join('');
 }
 
 function formFallbackArt(form: DataForm, box: Box): string {
@@ -217,7 +260,7 @@ function formFallbackArt(form: DataForm, box: Box): string {
 function coverArt(input: CoverInput, box: Box): string {
   const form = dataForm(input.dataset);
   const sample = input.sample;
-  if (sample?.geometries?.length && ['point', 'line', 'area', 'mixed'].includes(form)) return mapArt(sample.geometries, box);
+  if (sample?.geometries?.length && ['point', 'line', 'area', 'mixed'].includes(form)) return mapArt(sample.geometries, box, input.frame);
   if (sample?.periods?.length && form === 'series') return seriesArt(sample.periods, box);
   if (sample?.fields?.length && (form === 'table' || form === 'series')) return tableArt(sample.fields, box);
   return formFallbackArt(form, box);
@@ -231,7 +274,8 @@ export const COVER_W = 120, COVER_H = 168;
 
 function motif(input: CoverInput): IconName {
   const spec = ATLAS_SPECS[input.category];
-  return spec ? subcategoryGlyph(spec, input.subcategory) : 'topic';
+  // Categories without a checked subcategory family carry their topic icon, not a guessed glyph.
+  return spec ? subcategoryGlyph(spec, input.subcategory) : TOPIC_ICON[input.category] ?? 'topic';
 }
 
 function patina(level: number, w: number, h: number, id: string): string {
@@ -263,7 +307,7 @@ export function coverSvg(input: CoverInput): string {
     ${glyph(motif(input), 9, 9, 22)}
     <text x="${COVER_W - 10}" y="16" text-anchor="end" font-size="6" fill="${PAPER}" fill-opacity=".75" font-family="ui-monospace,Menlo,monospace">${esc(dataset.id)}</text>
     <g opacity=".92">${coverArt(input, { x: 12, y: 40, w: COVER_W - 24, h: 70 })}</g>
-    <text x="10" y="128" font-size="9.2" font-weight="650" fill="${PAPER}" font-family="Inter,system-ui,sans-serif">${title}</text>
+    <text x="10" y="128" font-size="${Math.max(...lines.map(line => line.length)) > 15 ? 8.2 : 9.2}" font-weight="650" fill="${PAPER}" font-family="Inter,system-ui,sans-serif">${title}</text>
     <g transform="translate(10 ${COVER_H - 15})">${glyph(FORM_MARK[form], 0, 0, 9, PAPER, 1.6)}<text x="12" y="7" font-size="6" fill="${PAPER}" fill-opacity=".85" font-family="Inter,system-ui,sans-serif">${esc(FORM_LABEL[form])} · ${esc(BAND_SHORT[recordBand(dataset.recordsCount)])} records</text></g>
     ${patina(signals.overdue, COVER_W, COVER_H, id)}
     ${ribbon(signals.reuses, COVER_W - 44)}

@@ -96,7 +96,7 @@ export function rankDatasets(
 }
 
 /** Residual keywords the vocabulary does not cover, so novel terms still match. */
-function literalTerms(statement: string): string[] {
+export function literalTerms(statement: string): string[] {
   return [
     ...new Set(
       normalizeText(statement)

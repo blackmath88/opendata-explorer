@@ -29,6 +29,8 @@ const samples: Record<string, CoverSample> = existsSync(samplesFile) ? JSON.pars
 const usageFile = `docs/audit-data/${portal.id}-usage-100057.json`;
 const usage = existsSync(usageFile) ? parseUsageRows(JSON.parse(readFileSync(usageFile, 'utf8')).rows) : null;
 const spec = ATLAS_SPECS[category];
+const outlineFile = `src/data/portals/${portal.id}/outline.json`;
+const frame = existsSync(outlineFile) ? JSON.parse(readFileSync(outlineFile, 'utf8')).outline : undefined;
 
 const inCategory = datasets.filter(dataset => atlasPath(dataset, 'topic').category === category);
 const bySub = new Map<string, typeof inCategory>();
@@ -51,7 +53,7 @@ for (const [name, list] of groups) {
     glyph: spec ? icon(subcategoryGlyph(spec, name), { size: 18 }) : '',
     doorway,
     form: dataForm(dataset),
-    cover: coverSvg({ dataset, category, subcategory: name, sample: samples[dataset.id], signals: { reuses: usage?.get(dataset.id)?.reuses ?? 0, overdue: late.level, overdueNote: late.note, doorway: true } }),
+    cover: coverSvg({ dataset, category, subcategory: name, sample: samples[dataset.id], frame, signals: { reuses: usage?.get(dataset.id)?.reuses ?? 0, overdue: late.level, overdueNote: late.note, doorway: true } }),
     catalogueUrl: `/catalogue/?portal=${encodeURIComponent(portal.id)}#dataset=${encodeURIComponent(dataset.id)}`,
   });
 }

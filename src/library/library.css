@@ -35,3 +35,22 @@ body.mode-2d .stage{height:auto}
 @media(max-width:700px){.panel{grid-template-columns:1fr;left:8px;right:8px;width:auto}.panel .left svg{width:120px}.stage{height:46vh}.glabel span{display:none}.glabel{font-size:11px}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 .panel[hidden],.tip[hidden]{display:none}
+
+/* Question shelves */
+.ask{margin:0 0 18px;padding:14px 16px;background:#fff;border:1px solid var(--line);border-radius:8px}
+.ask label{display:block;font-weight:600;color:var(--navy);margin:0 0 8px}
+.ask-row{display:flex;gap:8px}
+.ask-row input[type=search]{flex:1;min-width:0;font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius:6px}
+.ask-row button{font:inherit;font-weight:600;padding:10px 16px;border:0;border-radius:6px;background:var(--navy);color:#fff;cursor:pointer}
+.ask-row button:hover{background:#2b6178}
+.examples{margin:8px 0 0;font-size:13px;color:var(--muted)}
+.understood{margin-top:8px;font-size:13px}.understood p{margin:4px 0}
+.understood .chip{display:inline-block;padding:1px 8px;border-radius:999px;background:#ddecde;color:#2f5d3a;margin:0 2px 2px 0}
+.understood .words .chip{background:#e8eef3;color:var(--navy)}
+.understood .miss .chip{background:#fbf3e6;color:#7a5320}
+.understood .how{color:var(--muted);max-width:80ch}
+.panel .why{background:#f3f8f4;border-radius:6px;padding:8px 10px;font-size:13px}
+.list li.gap{color:#7a5320;font-size:14px;padding:4px 0}
+.list li.folded a{display:block;padding:4px 6px;color:var(--muted);font-size:14px}
+.empty{display:grid;place-content:center;height:100%;padding:24px;text-align:center;color:var(--muted);max-width:60ch;margin:0 auto}
+@media (max-width:700px){.ask-row{flex-direction:column}}

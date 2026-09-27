@@ -54,3 +54,19 @@ Samples are static (`src/data/portals/bs/cover-samples.json`, ~330 KB for 58 dat
     It is not a translation of the English sentence.
   - The heading says "least used in its group", not "rarely used": the Parking pick still has
     about 169 downloads a month.
+
+## Cover art: a shared frame (update)
+
+The first covers read as random: a scatter of 60 points in its own extent, bars without a time
+axis, and a weave of column types. Each art form now has a frame:
+- **Maps** are drawn on the canton outline (dataset 100017, three communes), at one scale for
+  every map. A point reads as "here in Basel", and two covers can be compared. Data reaching
+  well beyond the canton, such as the Rhine or the airport, widens the frame instead of being
+  cut off.
+- **Time series** sit on an axis at least two years long. It has a tick at every January and
+  the first and last year written out. A series of three months shows as three thin bars at the
+  recent end, not three blocks.
+- **Tables** show their own column names, with a type mark: line = text, dot = number,
+  tick = date, ring = geometry.
+- **Titles:** lines longer than 15 characters use a slightly smaller font.
+- **Categories without a checked glyph family** carry their topic icon as the motif.

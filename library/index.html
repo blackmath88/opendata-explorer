@@ -18,10 +18,20 @@
     <a class="to-atlas" href="/catalogue/?portal=bs">Back to the catalogue</a>
   </header>
   <main>
+    <form id="ask" class="ask" action="/library/" method="get" role="search">
+      <label for="askInput">Ask a use case and the shelf fills with the datasets that fit</label>
+      <div class="ask-row">
+        <input id="askInput" name="q" type="search" placeholder="e.g. Eine Laufroute mit Schatten und guter Luft" autocomplete="off" maxlength="300" />
+        <input type="hidden" name="portal" value="bs" />
+        <button type="submit">Fill the shelf</button>
+      </div>
+      <p class="examples">Try: <a href="/library/?q=Eine+Laufroute+mit+Schatten+und+guter+Luft">Laufroute mit Schatten und guter Luft</a> · <a href="/library/?q=Ist+der+Schulweg+sicher+f%C3%BCr+Kinder%3F">Ist der Schulweg sicher?</a> · <a href="/library/?q=Wo+gibt+es+Brunnen+und+Sitzb%C3%A4nke+im+Park%3F">Brunnen und Sitzbänke</a> · <a href="/library/">Mobility shelf</a></p>
+    </form>
     <div class="intro">
       <div>
         <h1 id="shelfTitle">Library</h1>
         <p id="shelfMeta" class="meta"></p>
+        <div id="understood" class="understood" hidden></div>
       </div>
       <label class="search"><span>Light up</span><input id="search" type="search" placeholder="e.g. velo, parking, time series" autocomplete="off" /><small id="searchCount" aria-live="polite"></small></label>
     </div>
@@ -36,10 +46,11 @@
       <ul>
         <li><b>Colour</b>: category. <b>Motif</b> on spine and cover: subcategory.</li>
         <li><b>Spine width</b>: number of records, five bands (under 30 · 30–1k · 1k–30k · 30k–1M · 1M or more).</li>
-        <li><b>Cover art</b>: the dataset's own sample, real positions, records per month or column types. A sample is not coverage.</li>
+        <li><b>Cover art</b>: the dataset's own sample. Maps: real positions on the canton outline, every map at the same scale. Time series: records per month, with years. Tables: their own column names and types. A sample is not coverage.</li>
         <li><b>Bookmark</b>: documented reuses. <b>Patina</b>: overdue against its own declared rhythm; static datasets never age.</li>
         <li><b>Standing out, with a paper tab</b>: ready but rarely used, one per group. Usage figures: <span id="legendUsage"></span>.</li>
-        <li><b>Order</b>: alphabetical within each group. Position never means rank.</li>
+        <li><b>Order</b>: alphabetical within each group. Position never means rank. On a question shelf, "The plan" follows the order of the plan's roles.</li>
+        <li><b>Question shelves</b>: a dashed, empty slot is a role no dataset fills; a plain paper slot stands for more matches than fit, which the list names.</li>
       </ul>
     </details>
     <details class="list" open>
