@@ -11,7 +11,14 @@ import { dataForm, FORM_LABEL } from './atlas-spec';
 import type { DatasetRecord } from './types';
 import { downloadsPerMonth, type UsageIndex } from './usage';
 
-export interface Doorway { dataset: DatasetRecord; basis: 'usage' | 'metadata'; reason: string }
+export interface Doorway {
+  dataset: DatasetRecord;
+  basis: 'usage' | 'metadata';
+  reason: string;
+  /** With basis 'usage': the figures behind the reason, so other languages can phrase it. */
+  downloadsPerMonth?: number;
+  reuses?: number;
+}
 
 const MIN_RECORDS = 10;
 const MIN_DESCRIPTION = 80;
@@ -47,6 +54,8 @@ export function pickDoorway(datasets: readonly DatasetRecord[], usage: UsageInde
       return {
         dataset: best.dataset,
         basis: 'usage',
+        downloadsPerMonth: best.rate,
+        reuses: best.row.reuses,
         reason: `Ready: ${readiness(best.dataset)}. Rarely used: about ${count(Math.round(best.rate))} downloads a month, ${reuse}.`,
       };
     }

@@ -251,13 +251,13 @@ export function coverSvg(input: CoverInput): string {
   const cloth = CATEGORY_CLOTH[input.category] ?? FALLBACK_CLOTH;
   const form = dataForm(dataset);
   const id = dataset.id.replace(/[^\w-]/g, '_');
-  const lines = wrapTitle(dataset.title, 20, 3);
+  const lines = wrapTitle(dataset.title, 17, 3);
   const title = lines.map((line, i) => `<tspan x="10" dy="${i ? 11 : 0}">${esc(line)}</tspan>`).join('');
   const label = [dataset.title, `${FORM_LABEL[form]}, ${BAND_LABEL[recordBand(dataset.recordsCount)]}`,
     signals.reuses ? `${signals.reuses} documented reuse${signals.reuses === 1 ? '' : 's'}` : '',
     signals.overdueNote ?? '', signals.doorway ? 'Ready, rarely used' : ''].filter(Boolean).join('. ');
   return `<svg class="cover" xmlns="http://www.w3.org/2000/svg" viewBox="0 -10 ${COVER_W} ${COVER_H + 10}" width="${COVER_W}" height="${COVER_H + 10}" role="img" aria-label="${esc(label)}">
-    ${signals.doorway ? `<path d="M14 -7h34a2 2 0 0 1 2 2v7H12v-7a2 2 0 0 1 2-2z" fill="${PAPER}" stroke="${cloth}" stroke-width=".8"/><text x="31" y="-1" text-anchor="middle" font-size="5.2" font-weight="700" letter-spacing=".4" fill="${cloth}">READY · RARE</text>` : ''}
+    ${signals.doorway ? `<path d="M10 -7h48a2 2 0 0 1 2 2v7H8v-7a2 2 0 0 1 2-2z" fill="${PAPER}" stroke="${cloth}" stroke-width=".8"/><text x="34" y="-1" text-anchor="middle" font-size="5.2" font-weight="700" letter-spacing=".4" fill="${cloth}">READY · RARE</text>` : ''}
     <rect width="${COVER_W}" height="${COVER_H}" rx="3" fill="${cloth}"/>
     <rect x="3" y="3" width="${COVER_W - 6}" height="${COVER_H - 6}" rx="2" fill="none" stroke="${PAPER}" stroke-opacity=".28" stroke-width=".6"/>
     ${glyph(motif(input), 9, 9, 22)}
