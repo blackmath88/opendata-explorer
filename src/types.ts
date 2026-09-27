@@ -101,6 +101,8 @@ export interface DatasetRecord {
   hasRecords: boolean;
   /** Number of fields the catalogue exposes, when the listing includes a schema. */
   fieldCount?: number;
+  /** DCAT identifier as the source states it (opendata.swiss: `<local id>@<publisher>`). */
+  identifier?: string;
 }
 
 export interface MatchReason {

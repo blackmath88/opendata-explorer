@@ -1,3 +1,4 @@
+import { activePortal } from '../portal';
 import type { DatasetRecord, EvidencePlan, PlannedRole } from '../types';
 import { TRUSTED_EVIDENCE_RESOURCES } from './registry';
 import type { EvidenceResolution, ExternalEvidenceCandidate, LocalEvidenceStatus, TrustedEvidenceResource } from './types';
@@ -26,12 +27,12 @@ function localEvidenceStatus(role: PlannedRole, dataset?: DatasetRecord): LocalE
 }
 
 function localReason(role: PlannedRole, dataset: DatasetRecord | undefined, status: LocalEvidenceStatus): string {
-  if (!dataset) return role.gap?.suggestion ?? 'No Basel catalogue candidate was selected.';
-  if (!dataset.hasRecords || dataset.recordsCount === 0) return 'The Basel catalogue record has no queryable records.';
+  if (!dataset) return role.gap?.suggestion ?? `No ${activePortal().place} catalogue candidate was selected.`;
+  if (!dataset.hasRecords || dataset.recordsCount === 0) return `The ${activePortal().place} catalogue record has no queryable records.`;
   if (status === 'locally_weak' && role.id === 'air_exposure') return `${dataset.title} is fixed-station evidence, not continuous route-level coverage.`;
   if (status === 'locally_weak' && (role.id === 'route_geometry' || role.id === 'screened_network')) return `${dataset.title} has ${dataset.recordsCount ?? 'few'} curated features and is weak as a general network backbone.`;
   if (status === 'locally_weak') return `${dataset.title} is available but materially sparse.`;
-  return `${dataset.title} is the preferred Basel evidence for this role.`;
+  return `${dataset.title} is the preferred ${activePortal().place} evidence for this role.`;
 }
 
 function candidate(roleId: string, resource: TrustedEvidenceResource, localStatus: LocalEvidenceStatus): ExternalEvidenceCandidate {

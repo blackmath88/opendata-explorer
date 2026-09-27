@@ -1,3 +1,4 @@
+import { activePortal } from './portal';
 import type { CatalogState, DatasetRecord } from './types';
 
 export type CatalogueView = 'list' | 'landscape';
@@ -44,7 +45,7 @@ export function catalogueStatus(catalog: CatalogState): { label: string; complet
   return {
     complete,
     label: catalog.source === 'live'
-      ? `LIVE · Basel-Stadt OGD · ${catalog.datasets.length} / ${catalog.reportedTotal ?? catalog.datasets.length} datasets loaded${complete ? '' : ' · partial'}`
+      ? `LIVE · ${activePortal().shortLabel} · ${catalog.datasets.length} / ${catalog.reportedTotal ?? catalog.datasets.length} datasets loaded${complete ? '' : ' · partial'}`
       : `FALLBACK · ${catalog.datasets.length} cached datasets`,
   };
 }

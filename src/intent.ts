@@ -1,3 +1,4 @@
+import { activePortal } from './portal';
 import type { TemporalNeed, UseCaseIntent } from './types';
 import { conceptById, detectConcepts, matchesIntentTerm, normalizeText } from './vocabulary';
 
@@ -44,15 +45,6 @@ const TEMPORAL_PATTERNS: ReadonlyArray<readonly [Exclude<TemporalNeed, 'mixed'>,
   ['forecast', /\b(forecast|forecasts|predict|prediction|projected|projection|future|expected|scenario|prognose|vorhersage|zukunft|szenario)\b/],
 ];
 
-/** Place names the Basel catalogue actually distinguishes. */
-const SCOPE_PATTERNS: ReadonlyArray<readonly [string, RegExp]> = [
-  ['Riehen', /\briehen\b/],
-  ['Bettingen', /\bbettingen\b/],
-  ['Kleinbasel', /\bkleinbasel\b/],
-  ['Grossbasel', /\bgrossbasel\b/],
-  ['Basel-Stadt', /\b(basel[- ]stadt|canton of basel|kanton basel)\b/],
-  ['Basel', /\bbasel\b/],
-];
 
 /**
  * Outcome archetypes. These drive the evidence-role template, so the match has
@@ -93,7 +85,7 @@ export function parseUseCaseIntent(statement: string): UseCaseIntent {
   const temporalNeed: TemporalNeed | undefined =
     temporalMatches.length === 0 ? undefined : temporalMatches.length > 1 ? 'mixed' : temporalMatches[0];
 
-  const geographicScope = SCOPE_PATTERNS.find(([, pattern]) => pattern.test(lower))?.[0];
+  const geographicScope = activePortal().places.find(([, pattern]) => pattern.test(lower))?.[0];
   const desiredOutcome = pickOutcome(lower);
 
   return {

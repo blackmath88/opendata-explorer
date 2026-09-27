@@ -1,4 +1,17 @@
 import type { DatasetMatch, DatasetRecord, EvidenceClass } from './types';
+import type { IconName } from './ui/icons';
+import { OTHER_TOPIC, TOPIC_RULES, datasetText, labelText, type Rule } from './topic-rules';
+import { indexDecisions, resolveTopic } from './topic-decisions';
+import { topicDecisionFile } from './data/portals';
+import { activePortal } from './portal';
+
+const decisionIndexes = new Map<string, ReturnType<typeof indexDecisions>>();
+/** Stored decisions for the active portal, indexed once per portal. */
+function topicDecisions() {
+  const id = activePortal().id;
+  if (!decisionIndexes.has(id)) decisionIndexes.set(id, indexDecisions(topicDecisionFile(id)));
+  return decisionIndexes.get(id)!;
+}
 
 export type AtlasLens = 'topic' | 'space' | 'time' | 'readiness';
 
@@ -50,63 +63,51 @@ export const ATLAS_LENS_LABEL: Record<AtlasLens, string> = {
   readiness: 'Readiness',
 };
 
-type Rule = readonly [string, RegExp];
 
-const TOPIC_RULES: ReadonlyArray<readonly [string, ReadonlyArray<Rule>]> = [
-  ['Environment & Climate', [
-    ['Urban nature', /baum|tree|grün|gruen|green|natur|biodiv|wald|forest|park|vegetation|flora|fauna/],
-    ['Air & emissions', /luft|air quality|emission|co2|stickstoff|feinstaub|ozon/],
-    ['Climate / heat', /klima|climate|temperatur|temperature|hitze|heat|wetter|weather/],
-    ['Water', /wasser|water|rhein|rhine|brunnen|fountain|gewässer|gewaesser|grundwasser/],
-    ['Noise', /lärm|laerm|noise|schall/],
-    ['Energy', /energie|energy|solar|strom|photovoltaik|wärme|waerme/],
-    ['Environment (other)', /umwelt|environment|nachhalt|sustainab/],
-  ]],
-  ['Mobility & Transport', [
-    ['Cycling', /velo|bike|bicycle|radweg|cycling/],
-    ['Public transport', /tram|bus|haltestelle|öV|oev|public transport|bvb/],
-    ['Walking', /fuss|fuß|pedestrian|walking|trottoir/],
-    ['Road traffic', /verkehr|traffic|strasse|straße|street|fahrzeug|vehicle/],
-    ['Parking', /parking|parkplatz|parkhaus/],
-    ['Mobility (other)', /mobilit|transport/],
-  ]],
-  ['People & Society', [
-    ['Population', /bevölkerung|bevoelkerung|population|demograph|einwohner|wohnbevölkerung/],
-    ['Social services', /sozial|social|familie|family|jugend|youth|alter|senior|integration/],
-    ['Housing', /wohnung|wohnen|housing|haushalt/],
-  ]],
-  ['Built City & Infrastructure', [
-    ['Buildings', /gebäude|gebaeude|building|bauinventar|adresse|address/],
-    ['Construction', /baustelle|construction|bauprojekt|bewilligung/],
-    ['Utilities & networks', /infrastruktur|infrastructure|leitung|kanal|beleuchtung|lighting|netz/],
-    ['Planning & parcels', /planung|planning|parzell|kataster|zoning|nutzungsplan/],
-  ]],
-  ['Public Space & Leisure', [
-    ['Sports', /sport|schwimm|swim|running|fitness|spielplatz/],
-    ['Parks & public space', /freizeit|leisure|public space|allmend|platz|park/],
-    ['Tourism', /touris|hotel|visitor/],
-  ]],
-  ['Health', [['Health services', /gesundheit|health|spital|hospital|arzt|doctor|pflege/], ['Public health', /corona|covid|krank|disease|epidem/]]],
-  ['Education', [['Schools', /schule|school|kindergarten/], ['Higher education', /universit|hochschule|college/], ['Education (other)', /bildung|education|lern/]]],
-  ['Culture', [['Museums & heritage', /museum|denkmal|heritage|archä|archae/], ['Events & venues', /kultur|culture|theater|musik|bibliothek|library|veranstaltung|event/]]],
-  ['Government & Economy', [
-    ['Administration', /verwaltung|government|behörde|behoerde|abstimmung|wahl|election|politik/],
-    ['Economy & labour', /wirtschaft|economy|arbeit|beschäftig|beschaeftig|betrieb|handel|business/],
-    ['Finance & statistics', /steuer|tax|finanz|budget|statistik|statistic/],
-    ['Safety & justice', /polizei|kriminal|straftat|unfall|accident|feuerwehr|sicherheit|safety/],
-  ]],
-];
 
-function text(dataset: DatasetRecord): string {
-  return `${dataset.title} ${dataset.description} ${dataset.themes.join(' ')} ${dataset.keywords.join(' ')} ${dataset.semantic.topics.join(' ')}`.toLocaleLowerCase();
+/** Top-level Topic categories, in rule order, plus the fallback bucket. */
+export const TOPIC_CATEGORIES: readonly string[] = [...TOPIC_RULES.map(([category]) => category), OTHER_TOPIC];
+
+/**
+ * Icons for top-level Atlas categories. Topic icons were added with pikto (sources and reasoning in
+ * .pikto/provenance.json); Space reuses the set's own geometry glyphs. Time and Readiness buckets and all
+ * subcategories stay text: there an icon would be decoration, not recognition.
+ */
+export const CATEGORY_ICON: Readonly<Partial<Record<AtlasLens, Readonly<Record<string, IconName>>>>> = {
+  topic: {
+    'Environment & Climate': 'topic-environment',
+    'Mobility & Transport': 'topic-mobility',
+    'People & Society': 'topic-people',
+    'Built City & Infrastructure': 'topic-built',
+    'Public Space & Leisure': 'topic-public-space',
+    Health: 'topic-health',
+    Education: 'topic-education',
+    Culture: 'topic-culture',
+    'Government & Economy': 'topic-government',
+    'Other / review needed': 'topic-other',
+  },
+  space: {
+    Point: 'geo-point',
+    Line: 'geo-line',
+    Polygon: 'geo-polygon',
+    Mixed: 'geo-mixed',
+    'Raster / external asset': 'geo-raster',
+    'Non-spatial': 'geo-none',
+  },
+};
+
+export function categoryIcon(node: AtlasHierarchyDatum): IconName | undefined {
+  if (node.kind !== 'category' || node.depth !== 1) return undefined;
+  const lens = node.id.match(/^lens:(\w+)\//)?.[1] as AtlasLens | undefined;
+  return lens ? CATEGORY_ICON[lens]?.[node.label] : undefined;
 }
 
+
+/** Resolved through topic-decisions.ts: human > validated model decision > scored rules. */
 function topicPath(dataset: DatasetRecord): AtlasPath {
-  const haystack = text(dataset);
-  for (const [category, subcategories] of TOPIC_RULES) {
-    for (const [subcategory, pattern] of subcategories) if (pattern.test(haystack)) return { category, subcategory, detail: topicDetail(subcategory, haystack) };
-  }
-  return { category: 'Other / review needed', subcategory: 'Unclassified' };
+  const { category, subcategory } = resolveTopic(dataset, topicDecisions());
+  const detail = topicDetail(subcategory, labelText(dataset));
+  return { category, subcategory, detail: detail?.endsWith('(other)') ? topicDetail(subcategory, datasetText(dataset)) : detail };
 }
 
 function topicDetail(subcategory: string, haystack: string): string | undefined {
@@ -145,12 +146,26 @@ function spacePath(dataset: DatasetRecord): AtlasPath {
   return { category: 'Unknown', subcategory: type };
 }
 
+/** DCAT/opendata.swiss frequency codes as people read them. */
+const FREQUENCY_LABEL: Record<string, string> = {
+  cont: 'Continuous', daily: 'Daily', weekly: 'Weekly', monthly: 'Monthly', quarterly: 'Quarterly',
+  annual: 'Annual', annual_2: 'Every 2 years', annual_3: 'Every 3 years', irreg: 'Irregular',
+  never: 'No updates planned', update: 'Updated as needed', 'as needed': 'Updated as needed', unknown: 'Cadence not declared',
+};
+
+function frequencyLabel(frequency: string): string {
+  const key = frequency.trim().replace(/\s+/g, '_');
+  const label = FREQUENCY_LABEL[frequency] ?? FREQUENCY_LABEL[key] ?? frequency.replace(/_/g, ' ');
+  return label.charAt(0).toLocaleUpperCase() + label.slice(1);
+}
+
 function timePath(dataset: DatasetRecord): AtlasPath {
-  const frequency = dataset.characteristics.updateFrequency?.toLocaleLowerCase() ?? '';
-  if (dataset.characteristics.realtime || /cont|hour|minute|daily/.test(frequency)) return { category: 'Near-live / frequent', subcategory: frequency || 'Frequent feed' };
+  const raw = dataset.characteristics.updateFrequency?.toLocaleLowerCase() ?? '';
+  const frequency = raw ? frequencyLabel(raw) : '';
+  if (dataset.characteristics.realtime || /cont|hour|minute|daily/.test(raw)) return { category: 'Near-live / frequent', subcategory: frequency || 'Frequent feed' };
   if (dataset.characteristics.timeSeries) return { category: 'Time series', subcategory: frequency || 'Cadence not declared' };
-  if (/week|month|quarter|annual|year|period/.test(frequency)) return { category: 'Periodic snapshot', subcategory: frequency };
-  if (/histor|archive/.test(text(dataset))) return { category: 'Historical', subcategory: frequency || 'Historical collection' };
+  if (/week|month|quarter|annual|year|period/.test(raw)) return { category: 'Periodic snapshot', subcategory: frequency };
+  if (/histor|archive/.test(datasetText(dataset))) return { category: 'Historical', subcategory: frequency || 'Historical collection' };
   if (dataset.characteristics.temporalCoverage.length) return { category: 'Current/reference', subcategory: 'Declared temporal coverage' };
   if (frequency) return { category: 'Current/reference', subcategory: frequency };
   return { category: 'Unknown', subcategory: 'Temporal status not declared' };
@@ -159,12 +174,20 @@ function timePath(dataset: DatasetRecord): AtlasPath {
 function readinessPath(dataset: DatasetRecord): AtlasPath {
   const types = normalizedGeometry(dataset);
   if (!dataset.hasRecords) return { category: 'Empty / external', subcategory: dataset.formats.includes('other') ? 'External asset' : 'No queryable records' };
-  if (dataset.recordsCount !== undefined && dataset.recordsCount < 10) return { category: 'Sparse', subcategory: `${dataset.recordsCount} records` };
+  if (dataset.recordsCount !== undefined && dataset.recordsCount < 10) return { category: 'Sparse', subcategory: dataset.recordsCount < 3 ? '1–2 records' : '3–9 records' };
   if (types.length > 1) return { category: 'Mixed geometry', subcategory: types.join(' + ') };
   if (dataset.characteristics.geospatial && types.length) return { category: 'Ready spatial', subcategory: types[0] };
-  if (!dataset.characteristics.geospatial && dataset.fieldCount) return { category: 'Ready tabular', subcategory: `${dataset.fieldCount} fields` };
+  if (!dataset.characteristics.geospatial && dataset.fieldCount) return { category: 'Ready tabular', subcategory: fieldBand(dataset.fieldCount) };
   if (dataset.characteristics.geospatial) return { category: 'Needs transformation', subcategory: 'Geometry not declared' };
   return { category: 'Unknown', subcategory: 'Structure not available' };
+}
+
+/** Exact field counts fragment the Atlas into dozens of one-off buckets; bands keep it navigable. */
+function fieldBand(count: number): string {
+  if (count <= 5) return '1–5 fields';
+  if (count <= 12) return '6–12 fields';
+  if (count <= 25) return '13–25 fields';
+  return '26+ fields';
 }
 
 export function atlasPath(dataset: DatasetRecord, lens: AtlasLens): AtlasPath {

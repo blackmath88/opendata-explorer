@@ -1,6 +1,7 @@
 import type { Map as MapLibreMap } from 'maplibre-gl';
 import type { RepresentationResult } from '../renderers';
 import { escapeHtml } from './dom';
+import { icon as iconSvg } from './icons';
 
 const COLORS = ['#2d5b49', '#8a5f2d', '#334155', '#7f443a'];
 
@@ -75,4 +76,4 @@ function renderSources(result: RepresentationResult): string {
   return `<details open><summary>Sources and provenance</summary><ul class="result-sources">${result.sources.map(source => `<li><b>${escapeHtml(source.label)}</b><span>${escapeHtml(source.provider)} · ${escapeHtml(source.scope)} · ${escapeHtml(source.state)}${source.timestamp ? ` · ${escapeHtml(source.timestamp)}` : ''}</span><a href="${escapeHtml(source.sourceUrl)}" target="_blank" rel="noreferrer">Source</a></li>`).join('')}</ul></details>`;
 }
 
-const icon = (status: string): string => status === 'confirmed' ? '✓' : status === 'rejected' ? '✕' : status === 'partial' ? '△' : status === 'unresolved' ? '?' : '+';
+const icon = (status: string): string => status === 'confirmed' ? iconSvg('confirmed', { size: 12 }) : status === 'rejected' ? iconSvg('rejected', { size: 12 }) : status === 'partial' ? iconSvg('weak', { size: 12 }) : status === 'unresolved' ? iconSvg('evidence-missing', { size: 12 }) : iconSvg('unchecked', { size: 12 });

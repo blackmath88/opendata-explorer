@@ -1,23 +1,24 @@
+import { activePortal } from '../../portal';
 import { resourceById } from '../registry';
 import { FederalStacClient, type StacItem } from './federal-stac';
 
 export type MeteoSwissProduct = 'pollen' | 'weather';
 export type CsvRecord = Record<string, string>;
-const BASEL_BBOX: [number, number, number, number] = [7.5, 47.5, 7.7, 47.65];
 
 /** Minimal direct-browser integration: station discovery plus bounded current CSV retrieval. */
 export class MeteoSwissAdapter {
   constructor(private readonly stac = new FederalStacClient()) {}
 
-  async baselStations(product: MeteoSwissProduct): Promise<StacItem[]> {
+  /** Stations inside the active portal's bounding box. */
+  async localStations(product: MeteoSwissProduct): Promise<StacItem[]> {
     const resource = resourceById(product === 'pollen' ? 'meteoswiss-pollen' : 'meteoswiss-weather');
     if (!resource?.endpoint) throw new Error(`No curated MeteoSwiss endpoint for ${product}`);
-    return this.stac.items(resource.endpoint, { bbox: BASEL_BBOX, limit: 10 });
+    return this.stac.items(resource.endpoint, { bbox: activePortal().bbox, limit: 10 });
   }
 
   async currentObservations(product: MeteoSwissProduct, stationId: string): Promise<{ item: StacItem; asset: string; records: CsvRecord[] }> {
-    const item = (await this.baselStations(product)).find(station => station.id.toLocaleLowerCase() === stationId.toLocaleLowerCase());
-    if (!item) throw new Error(`Station ${stationId} is not in the curated Basel search area.`);
+    const item = (await this.localStations(product)).find(station => station.id.toLocaleLowerCase() === stationId.toLocaleLowerCase());
+    if (!item) throw new Error(`Station ${stationId} is not in the ${activePortal().place} search area.`);
     const suffix = product === 'pollen' ? '_h_now.csv' : '_t_now.csv';
     const asset = Object.entries(item.assets).find(([key]) => key.endsWith(suffix));
     if (!asset) throw new Error(`No current ${product} asset is published for station ${stationId}.`);

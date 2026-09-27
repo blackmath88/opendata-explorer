@@ -25,7 +25,7 @@ export interface TrustedEvidenceResource {
   endpoint?: string;
   formats: TrustedFormat[];
   geographicScope: string[];
-  spatial?: { geometry: string; baselFilter: 'bbox' | 'tile' | 'none' };
+  spatial?: { geometry: string; localFilter: 'bbox' | 'tile' | 'none' };
   temporal?: { mode?: string; frequency?: string; freshness?: string };
   browserAccess: 'direct' | 'metadata_only' | 'impractical';
   /** Highest access state verified during curation; never a compatibility claim. */

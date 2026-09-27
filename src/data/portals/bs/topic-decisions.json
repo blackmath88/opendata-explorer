@@ -1,0 +1,687 @@
+{
+  "version": 1,
+  "decisions": [
+    {
+      "datasetId": "100009",
+      "subcategory": "Climate / heat",
+      "confidence": "high",
+      "evidence": [
+        {
+          "field": "title",
+          "quote": "Smart Climate Luftklima"
+        },
+        {
+          "field": "keywords",
+          "quote": "Temperatur"
+        }
+      ],
+      "rationale": "Hourly air temperature and precipitation sensor readings: urban climate, not air pollution.",
+      "metadataHash": "006d15b0493b5f",
+      "taxonomyVersion": "06ea73028278c5",
+      "decidedBy": {
+        "kind": "model",
+        "source": "claude-code-session",
+        "promptVersion": "topic-decision/v1"
+      },
+      "decidedAt": "2026-09-27",
+      "rebasedFrom": [
+        {
+          "metadataHash": "0d75f7a5c12b58",
+          "on": "2026-09-27"
+        }
+      ]
+    },
+    {
+      "datasetId": "100013",
+      "subcategory": "Cycling",
+      "confidence": "low",
+      "evidence": [
+        {
+          "field": "title",
+          "quote": "Velos und Fussgänger"
+        }
+      ],
+      "rationale": "Counts of bicycles and pedestrians; cycling and walking fit equally, road traffic (motor) does not.",
+      "metadataHash": "198ddf1a1c1f23",
+      "taxonomyVersion": "06ea73028278c5",
+      "decidedBy": {
+        "kind": "model",
+        "source": "claude-code-session",
+        "promptVersion": "topic-decision/v1"
+      },
+      "decidedAt": "2026-09-27",
+      "rebasedFrom": [
+        {
+          "metadataHash": "1ab7609943ecdc",
+          "on": "2026-09-27"
+        }
+      ]
+    },
+    {
+      "datasetId": "100018",
+      "subcategory": "Parks & public space",
+      "confidence": "medium",
+      "evidence": [
+        {
+          "field": "title",
+          "quote": "Allmendbewilligungen"
+        },
+        {
+          "field": "description",
+          "quote": "im öffentlichen Raum (Allmend)"
+        }
+      ],
+      "rationale": "Permits for all uses of public space (events, posters, construction sites); construction is only one use.",
+      "metadataHash": "136502e91a38b4",
+      "taxonomyVersion": "06ea73028278c5",
+      "decidedBy": {
+        "kind": "model",
+        "source": "claude-code-session",
+        "promptVersion": "topic-decision/v1"
+      },
+      "decidedAt": "2026-09-27",
+      "rebasedFrom": [
+        {
+          "metadataHash": "0ca6d168913abb",
+          "on": "2026-09-27"
+        }
+      ]
+    },
+    {
+      "datasetId": "100029",
+      "subcategory": "Schools",
+      "confidence": "high",
+      "evidence": [
+        {
+          "field": "title",
+          "quote": "Schulstandorte"
+        },
+        {
+          "field": "keywords",
+          "quote": "Schule"
+        }
+      ],
+      "rationale": "Locations of schools and kindergartens.",
+      "metadataHash": "06bc69c77276e8",
+      "taxonomyVersion": "06ea73028278c5",
+      "decidedBy": {
+        "kind": "model",
+        "source": "claude-code-session",
+        "promptVersion": "topic-decision/v1"
+      },
+      "decidedAt": "2026-09-27",
+      "rebasedFrom": [
+        {
+          "metadataHash": "004b70e58751ba",
+          "on": "2026-09-27"
+        }
+      ]
+    },
+    {
+      "datasetId": "100030",
+      "subcategory": "Schools",
+      "confidence": "high",
+      "evidence": [
+        {
+          "field": "title",
+          "quote": "Schulstandorte"
+        },
+        {
+          "field": "description",
+          "quote": "Schulstandorte der Primarstufe"
+        }
+      ],
+      "rationale": "Locations of primary schools; population is only a portal theme.",
+      "metadataHash": "1e1aab63b53711",
+      "taxonomyVersion": "06ea73028278c5",
+      "decidedBy": {
+        "kind": "model",
+        "source": "claude-code-session",
+        "promptVersion": "topic-decision/v1"
+      },
+      "decidedAt": "2026-09-27",
+      "rebasedFrom": [
+        {
+          "metadataHash": "135d6b3fac6c33",
+          "on": "2026-09-27"
+        }
+      ]
+    },
+    {
+      "datasetId": "100033",
+      "subcategory": "Cycling",
+      "confidence": "medium",
+      "evidence": [
+        {
+          "field": "title",
+          "quote": "Touristische Velorouten"
+        },
+        {
+          "field": "keywords",
+          "quote": "Veloweg"
+        }
+      ],
+      "rationale": "Signposted bicycle routes; tourism describes their purpose, the records are cycle routes.",
+      "metadataHash": "115585681489f6",
+      "taxonomyVersion": "06ea73028278c5",
+      "decidedBy": {
+        "kind": "model",
+        "source": "claude-code-session",
+        "promptVersion": "topic-decision/v1"
+      },
+      "decidedAt": "2026-09-27",
+      "rebasedFrom": [
+        {
+          "metadataHash": "1e351e65f99977",
+          "on": "2026-09-27"
+        }
+      ]
+    },
+    {
+      "datasetId": "100038",
+      "subcategory": "Road traffic",
+      "confidence": "medium",
+      "evidence": [
+        {
+          "field": "title",
+          "quote": "Zählstellen für Verkehrszähldaten"
+        },
+        {
+          "field": "description",
+          "quote": "motorisierten Individualverkehr (MIV)"
+        }
+      ],
+      "rationale": "Locations of traffic counting stations, mainly motor traffic, plus bike and pedestrian counters.",
+      "metadataHash": "0388e7c8ff62a0",
+      "taxonomyVersion": "06ea73028278c5",
+      "decidedBy": {
+        "kind": "model",
+        "source": "claude-code-session",
+        "promptVersion": "topic-decision/v1"
+      },
+      "decidedAt": "2026-09-27",
+      "rebasedFrom": [
+        {
+          "metadataHash": "061009e4749f94",
+          "on": "2026-09-27"
+        }
+      ]
+    },
+    {
+      "datasetId": "100050",
+      "subcategory": "Air & emissions",
+      "confidence": "high",
+      "evidence": [
+        {
+          "field": "title",
+          "quote": "Luftqualität"
+        },
+        {
+          "field": "keywords",
+          "quote": "Stickstoffdioxid"
+        }
+      ],
+      "rationale": "Air quality measurements at a roadside station; the street is the location, not the subject.",
+      "metadataHash": "125da56172677a",
+      "taxonomyVersion": "06ea73028278c5",
+      "decidedBy": {
+        "kind": "model",
+        "source": "claude-code-session",
+        "promptVersion": "topic-decision/v1"
+      },
+      "decidedAt": "2026-09-27",
+      "rebasedFrom": [
+        {
+          "metadataHash": "1c3425273f75a5",
+          "on": "2026-09-27"
+        }
+      ]
+    },
+    {
+      "datasetId": "100051",
+      "subcategory": "Air & emissions",
+      "confidence": "medium",
+      "evidence": [
+        {
+          "field": "title",
+          "quote": "Luftqualität"
+        },
+        {
+          "field": "keywords",
+          "quote": "Ozon"
+        }
+      ],
+      "rationale": "Air pollutants plus weather variables at one station; the title names air quality.",
+      "metadataHash": "1d53879cbe32ab",
+      "taxonomyVersion": "06ea73028278c5",
+      "decidedBy": {
+        "kind": "model",
+        "source": "claude-code-session",
+        "promptVersion": "topic-decision/v1"
+      },
+      "decidedAt": "2026-09-27",
+      "rebasedFrom": [
+        {
+          "metadataHash": "0be98fd8d6e46e",
+          "on": "2026-09-27"
+        }
+      ]
+    },
+    {
+      "datasetId": "100052",
+      "subcategory": "Urban nature",
+      "confidence": "high",
+      "evidence": [
+        {
+          "field": "title",
+          "quote": "Baumbestand"
+        },
+        {
+          "field": "keywords",
+          "quote": "Stadtbaum"
+        }
+      ],
+      "rationale": "Inventory of city trees; 'Kataster' is the form of the register, not the subject.",
+      "metadataHash": "064b7007ca8b73",
+      "taxonomyVersion": "06ea73028278c5",
+      "decidedBy": {
+        "kind": "model",
+        "source": "claude-code-session",
+        "promptVersion": "topic-decision/v1"
+      },
+      "decidedAt": "2026-09-27",
+      "rebasedFrom": [
+        {
+          "metadataHash": "1ce36ce042527f",
+          "on": "2026-09-27"
+        }
+      ]
+    },
+    {
+      "datasetId": "100054",
+      "subcategory": "Urban nature",
+      "confidence": "high",
+      "evidence": [
+        {
+          "field": "title",
+          "quote": "Fäll- und Baumersatzliste"
+        },
+        {
+          "field": "keywords",
+          "quote": "Stadtbaum"
+        }
+      ],
+      "rationale": "List of felled and replacement trees.",
+      "metadataHash": "088c245e62850b",
+      "taxonomyVersion": "06ea73028278c5",
+      "decidedBy": {
+        "kind": "model",
+        "source": "claude-code-session",
+        "promptVersion": "topic-decision/v1"
+      },
+      "decidedAt": "2026-09-27",
+      "rebasedFrom": [
+        {
+          "metadataHash": "0648c4173e45ed",
+          "on": "2026-09-27"
+        }
+      ]
+    },
+    {
+      "datasetId": "100056",
+      "subcategory": "Walking",
+      "confidence": "medium",
+      "evidence": [
+        {
+          "field": "title",
+          "quote": "Schulwegsicherheit: Fusswege"
+        },
+        {
+          "field": "keywords",
+          "quote": "Fussgängerstreifen"
+        }
+      ],
+      "rationale": "Walking routes to school rated for crossing difficulty: pedestrian network data with a safety rating.",
+      "metadataHash": "0927a0864a779d",
+      "taxonomyVersion": "06ea73028278c5",
+      "decidedBy": {
+        "kind": "model",
+        "source": "claude-code-session",
+        "promptVersion": "topic-decision/v1"
+      },
+      "decidedAt": "2026-09-27",
+      "rebasedFrom": [
+        {
+          "metadataHash": "08f5cec346811c",
+          "on": "2026-09-27"
+        }
+      ]
+    },
+    {
+      "datasetId": "100082",
+      "subcategory": "Climate / heat",
+      "confidence": "high",
+      "evidence": [
+        {
+          "field": "title",
+          "quote": "Messstationen Smart Climate Luftklima"
+        },
+        {
+          "field": "keywords",
+          "quote": "Temperatur"
+        }
+      ],
+      "rationale": "Locations of the temperature/precipitation sensors of the Luftklima dataset.",
+      "metadataHash": "1b5a6ae6c51a8b",
+      "taxonomyVersion": "06ea73028278c5",
+      "decidedBy": {
+        "kind": "model",
+        "source": "claude-code-session",
+        "promptVersion": "topic-decision/v1"
+      },
+      "decidedAt": "2026-09-27",
+      "rebasedFrom": [
+        {
+          "metadataHash": "1d1e93b8ba9c25",
+          "on": "2026-09-27"
+        }
+      ]
+    },
+    {
+      "datasetId": "100087",
+      "subcategory": "Noise",
+      "confidence": "high",
+      "evidence": [
+        {
+          "field": "title",
+          "quote": "Schallpegelmessungen"
+        },
+        {
+          "field": "keywords",
+          "quote": "Lärm"
+        }
+      ],
+      "rationale": "Sound level measurements; Smart Climate is only the project name.",
+      "metadataHash": "059120d222999f",
+      "taxonomyVersion": "06ea73028278c5",
+      "decidedBy": {
+        "kind": "model",
+        "source": "claude-code-session",
+        "promptVersion": "topic-decision/v1"
+      },
+      "decidedAt": "2026-09-27",
+      "rebasedFrom": [
+        {
+          "metadataHash": "01b77f10a5cc27",
+          "on": "2026-09-27"
+        }
+      ]
+    },
+    {
+      "datasetId": "100120",
+      "subcategory": "Road traffic",
+      "confidence": "medium",
+      "evidence": [
+        {
+          "field": "title",
+          "quote": "Strassenverkehrsunfälle"
+        },
+        {
+          "field": "keywords",
+          "quote": "Verkehrsunfall"
+        }
+      ],
+      "rationale": "Road traffic accidents; safety fits too, road traffic is the primary frame.",
+      "metadataHash": "0051663fe47c18",
+      "taxonomyVersion": "06ea73028278c5",
+      "decidedBy": {
+        "kind": "model",
+        "source": "claude-code-session",
+        "promptVersion": "topic-decision/v1"
+      },
+      "decidedAt": "2026-09-27",
+      "rebasedFrom": [
+        {
+          "metadataHash": "177e5cd676d5e2",
+          "on": "2026-09-27"
+        }
+      ]
+    },
+    {
+      "datasetId": "100170",
+      "subcategory": "Noise",
+      "confidence": "high",
+      "evidence": [
+        {
+          "field": "title",
+          "quote": "Verkehrslärm"
+        },
+        {
+          "field": "description",
+          "quote": "Lärmsensor"
+        }
+      ],
+      "rationale": "Noise sensor readings; 'Smarte Strasse' is the project name.",
+      "metadataHash": "02408f3dc142e0",
+      "taxonomyVersion": "06ea73028278c5",
+      "decidedBy": {
+        "kind": "model",
+        "source": "claude-code-session",
+        "promptVersion": "topic-decision/v1"
+      },
+      "decidedAt": "2026-09-27",
+      "rebasedFrom": [
+        {
+          "metadataHash": "04686f37d606bd",
+          "on": "2026-09-27"
+        }
+      ]
+    },
+    {
+      "datasetId": "100176",
+      "subcategory": "Parking",
+      "confidence": "high",
+      "evidence": [
+        {
+          "field": "title",
+          "quote": "Parkplatz-Zonen"
+        },
+        {
+          "field": "description",
+          "quote": "Standorte der Parkplätze"
+        }
+      ],
+      "rationale": "Locations of parking spaces; 'Smarte Strasse' is the project name.",
+      "metadataHash": "003dcc8aebfbaf",
+      "taxonomyVersion": "06ea73028278c5",
+      "decidedBy": {
+        "kind": "model",
+        "source": "claude-code-session",
+        "promptVersion": "topic-decision/v1"
+      },
+      "decidedAt": "2026-09-27",
+      "rebasedFrom": [
+        {
+          "metadataHash": "11fc0f6d93970d",
+          "on": "2026-09-27"
+        }
+      ]
+    },
+    {
+      "datasetId": "100199",
+      "subcategory": "Road traffic",
+      "confidence": "high",
+      "evidence": [
+        {
+          "field": "title",
+          "quote": "Durchschnittlicher Tagesverkehr"
+        },
+        {
+          "field": "keywords",
+          "quote": "Verkehrszählung"
+        }
+      ],
+      "rationale": "Average daily traffic volumes; the police are only the data source.",
+      "metadataHash": "1586fd940d1d53",
+      "taxonomyVersion": "06ea73028278c5",
+      "decidedBy": {
+        "kind": "model",
+        "source": "claude-code-session",
+        "promptVersion": "topic-decision/v1"
+      },
+      "decidedAt": "2026-09-27",
+      "rebasedFrom": [
+        {
+          "metadataHash": "06971c6a1585f4",
+          "on": "2026-09-27"
+        }
+      ]
+    },
+    {
+      "datasetId": "100250",
+      "subcategory": "Road traffic",
+      "confidence": "medium",
+      "evidence": [
+        {
+          "field": "title",
+          "quote": "Strassentypen und Wege"
+        },
+        {
+          "field": "description",
+          "quote": "Strassennetzhierarchie"
+        }
+      ],
+      "rationale": "Road network and street hierarchy; not a utility network.",
+      "metadataHash": "1bc33ceacc7e97",
+      "taxonomyVersion": "06ea73028278c5",
+      "decidedBy": {
+        "kind": "model",
+        "source": "claude-code-session",
+        "promptVersion": "topic-decision/v1"
+      },
+      "decidedAt": "2026-09-27",
+      "rebasedFrom": [
+        {
+          "metadataHash": "0410d5d1457599",
+          "on": "2026-09-27"
+        }
+      ]
+    },
+    {
+      "datasetId": "100251",
+      "subcategory": "Walking",
+      "confidence": "high",
+      "evidence": [
+        {
+          "field": "title",
+          "quote": "Fussgängerzone"
+        },
+        {
+          "field": "description",
+          "quote": "signalisierten Fussgängerzonen"
+        }
+      ],
+      "rationale": "Signposted pedestrian zones.",
+      "metadataHash": "1f3995e9be4dd2",
+      "taxonomyVersion": "06ea73028278c5",
+      "decidedBy": {
+        "kind": "model",
+        "source": "claude-code-session",
+        "promptVersion": "topic-decision/v1"
+      },
+      "decidedAt": "2026-09-27",
+      "rebasedFrom": [
+        {
+          "metadataHash": "13d1f430be1b90",
+          "on": "2026-09-27"
+        }
+      ]
+    },
+    {
+      "datasetId": "100252",
+      "subcategory": "Road traffic",
+      "confidence": "medium",
+      "evidence": [
+        {
+          "field": "title",
+          "quote": "Tempo 30 - Zone"
+        }
+      ],
+      "rationale": "Speed-limit zones regulate motor traffic; the pedestrian keywords are copied from the sibling dataset.",
+      "metadataHash": "03be2cb4e76a11",
+      "taxonomyVersion": "06ea73028278c5",
+      "decidedBy": {
+        "kind": "model",
+        "source": "claude-code-session",
+        "promptVersion": "topic-decision/v1"
+      },
+      "decidedAt": "2026-09-27",
+      "rebasedFrom": [
+        {
+          "metadataHash": "174089619ea10d",
+          "on": "2026-09-27"
+        }
+      ]
+    },
+    {
+      "datasetId": "100426",
+      "subcategory": "Cycling",
+      "confidence": "high",
+      "evidence": [
+        {
+          "field": "title",
+          "quote": "Velostadtplan"
+        },
+        {
+          "field": "description",
+          "quote": "zum Velofahren eignen"
+        }
+      ],
+      "rationale": "Suitability of street segments for cycling.",
+      "metadataHash": "14c1ac8b6ed5a2",
+      "taxonomyVersion": "06ea73028278c5",
+      "decidedBy": {
+        "kind": "model",
+        "source": "claude-code-session",
+        "promptVersion": "topic-decision/v1"
+      },
+      "decidedAt": "2026-09-27",
+      "rebasedFrom": [
+        {
+          "metadataHash": "088f3a210128d5",
+          "on": "2026-09-27"
+        }
+      ]
+    },
+    {
+      "datasetId": "100477",
+      "subcategory": "Planning & parcels",
+      "confidence": "medium",
+      "evidence": [
+        {
+          "field": "description",
+          "quote": "amtlichen Vermessung"
+        },
+        {
+          "field": "title",
+          "quote": "Bodenbedeckung"
+        }
+      ],
+      "rationale": "Land cover layer of the official cadastral survey (buildings, paved, green, water surfaces); water is one class of many.",
+      "metadataHash": "0035264aeed29c",
+      "taxonomyVersion": "06ea73028278c5",
+      "decidedBy": {
+        "kind": "model",
+        "source": "claude-code-session",
+        "promptVersion": "topic-decision/v1"
+      },
+      "decidedAt": "2026-09-27",
+      "rebasedFrom": [
+        {
+          "metadataHash": "0d579fde99c070",
+          "on": "2026-09-27"
+        }
+      ]
+    }
+  ]
+}

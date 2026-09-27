@@ -10,7 +10,9 @@
     "mcp": "tsx src/mcp/stdio.ts",
     "mcp:demo": "tsx src/mcp/demo.ts",
     "test": "vitest run",
-    "test:live": "vitest run --config vitest.live.config.ts"
+    "test:live": "vitest run --config vitest.live.config.ts",
+    "cf:dev": "wrangler pages dev dist",
+    "cf:deploy": "npm run build && wrangler pages deploy dist --project-name datafit --branch main"
   },
   "dependencies": {
     "@modelcontextprotocol/client": "^2.0.0",

@@ -1,0 +1,3626 @@
+{
+"source": "https://data.bs.ch/explore/dataset/100057/ (OGD Datensätze), fetched 2026-09-27",
+"note": "Portal activity counters as published by Basel-Stadt. They include automated traffic and miss use through opendata.swiss, bulk exports and mirrors.",
+"rows": [
+{
+"dataset_identifier": "100003",
+"title": "Basler Index der Konsumentenpreise",
+"reuse_count": 0,
+"api_call_count": 403204,
+"download_count": 13606,
+"popularity_score": 26.7,
+"visibility_domain_or_restricted": "domain",
+"created": "2019-10-24"
+},
+{
+"dataset_identifier": "100004",
+"title": "Belegung der Elektroauto-Ladestationen der IWB",
+"reuse_count": 0,
+"api_call_count": 687701,
+"download_count": 57198,
+"popularity_score": 39.6,
+"visibility_domain_or_restricted": "domain",
+"created": "2019-11-06"
+},
+{
+"dataset_identifier": "100005",
+"title": "Standorte der IWB Ladestationen für Elektroautos",
+"reuse_count": 0,
+"api_call_count": 454170,
+"download_count": 28705,
+"popularity_score": 30.8,
+"visibility_domain_or_restricted": "domain",
+"created": "2019-06-07"
+},
+{
+"dataset_identifier": "100006",
+"title": "Verkehrszähldaten motorisierter Individualverkehr",
+"reuse_count": 1,
+"api_call_count": 376813,
+"download_count": 35037,
+"popularity_score": 30.8,
+"visibility_domain_or_restricted": "domain",
+"created": "2019-07-21"
+},
+{
+"dataset_identifier": "100007",
+"title": "Bevölkerungsszenarien Basel-Stadt 2026-2050",
+"reuse_count": 0,
+"api_call_count": 102330,
+"download_count": 11326,
+"popularity_score": 16.0,
+"visibility_domain_or_restricted": "domain",
+"created": "2019-10-28"
+},
+{
+"dataset_identifier": "100008",
+"title": "Bade-, Trinkwasser- und Zierbrunnen in Basel",
+"reuse_count": 0,
+"api_call_count": 415080,
+"download_count": 31504,
+"popularity_score": 30.3,
+"visibility_domain_or_restricted": "domain",
+"created": "2018-05-23"
+},
+{
+"dataset_identifier": "100009",
+"title": "Smart Climate Luftklima",
+"reuse_count": 0,
+"api_call_count": 4232640,
+"download_count": 165477,
+"popularity_score": 88.1,
+"visibility_domain_or_restricted": "domain",
+"created": "2020-05-12"
+},
+{
+"dataset_identifier": "100010",
+"title": "Leerstehende Wohnungen",
+"reuse_count": 0,
+"api_call_count": 52044,
+"download_count": 14718,
+"popularity_score": 13.9,
+"visibility_domain_or_restricted": "domain",
+"created": "2019-10-28"
+},
+{
+"dataset_identifier": "100011",
+"title": "Kennzahlen zu den Basler Wohnvierteln und Landgemeinden",
+"reuse_count": 0,
+"api_call_count": 41965,
+"download_count": 8756,
+"popularity_score": 11.6,
+"visibility_domain_or_restricted": "domain",
+"created": "2019-10-24"
+},
+{
+"dataset_identifier": "100013",
+"title": "Verkehrszähldaten Velos und Fussgänger",
+"reuse_count": 1,
+"api_call_count": 351268,
+"download_count": 36153,
+"popularity_score": 30.3,
+"visibility_domain_or_restricted": "domain",
+"created": "2019-07-21"
+},
+{
+"dataset_identifier": "100014",
+"title": "Zeitreihe der Belegung öffentlicher Parkhäuser Basel",
+"reuse_count": 0,
+"api_call_count": 805050,
+"download_count": 37998,
+"popularity_score": 39.4,
+"visibility_domain_or_restricted": "domain",
+"created": "2007-12-31"
+},
+{
+"dataset_identifier": "100015",
+"title": "Basel Info Points of Interest",
+"reuse_count": 0,
+"api_call_count": 42137,
+"download_count": 17033,
+"popularity_score": 13.6,
+"visibility_domain_or_restricted": "domain",
+"created": null
+},
+{
+"dataset_identifier": "100016",
+"title": "Postleitzahl",
+"reuse_count": 0,
+"api_call_count": 1226184,
+"download_count": 40109,
+"popularity_score": 46.4,
+"visibility_domain_or_restricted": "domain",
+"created": null
+},
+{
+"dataset_identifier": "100017",
+"title": "Gemeinde",
+"reuse_count": 0,
+"api_call_count": 37055,
+"download_count": 21596,
+"popularity_score": 14.1,
+"visibility_domain_or_restricted": "domain",
+"created": null
+},
+{
+"dataset_identifier": "100018",
+"title": "Allmendbewilligungen",
+"reuse_count": 0,
+"api_call_count": 389785,
+"download_count": 48359,
+"popularity_score": 31.9,
+"visibility_domain_or_restricted": "domain",
+"created": "2009-01-01"
+},
+{
+"dataset_identifier": "100019",
+"title": "Defibrillatoren",
+"reuse_count": 0,
+"api_call_count": 78695,
+"download_count": 16658,
+"popularity_score": 16.0,
+"visibility_domain_or_restricted": "domain",
+"created": "2017-10-04"
+},
+{
+"dataset_identifier": "100020",
+"title": "Elternberatung",
+"reuse_count": 0,
+"api_call_count": 23965,
+"download_count": 16973,
+"popularity_score": 12.0,
+"visibility_domain_or_restricted": "domain",
+"created": null
+},
+{
+"dataset_identifier": "100021",
+"title": "Entsorgungsstellen",
+"reuse_count": 0,
+"api_call_count": 221426,
+"download_count": 18709,
+"popularity_score": 22.5,
+"visibility_domain_or_restricted": "domain",
+"created": "2026-08-10"
+},
+{
+"dataset_identifier": "100022",
+"title": "Güteklassen öffentlicher Verkehr",
+"reuse_count": 0,
+"api_call_count": 19949,
+"download_count": 17417,
+"popularity_score": 11.6,
+"visibility_domain_or_restricted": "domain",
+"created": "2015-08-31"
+},
+{
+"dataset_identifier": "100023",
+"title": "Hundesignalisation: Orte mit Leinenpflicht oder Hundeverbot",
+"reuse_count": 0,
+"api_call_count": 9290,
+"download_count": 7550,
+"popularity_score": 7.8,
+"visibility_domain_or_restricted": "domain",
+"created": null
+},
+{
+"dataset_identifier": "100024",
+"title": "Kinder- und Jugendangebote",
+"reuse_count": 0,
+"api_call_count": 27119,
+"download_count": 16813,
+"popularity_score": 12.3,
+"visibility_domain_or_restricted": "domain",
+"created": "2018-03-06"
+},
+{
+"dataset_identifier": "100025",
+"title": "Politische Wahlkreise",
+"reuse_count": 0,
+"api_call_count": 23029,
+"download_count": 16455,
+"popularity_score": 11.8,
+"visibility_domain_or_restricted": "domain",
+"created": "2013-03-07"
+},
+{
+"dataset_identifier": "100026",
+"title": "Quartiertreffpunkte",
+"reuse_count": 0,
+"api_call_count": 26548,
+"download_count": 16035,
+"popularity_score": 12.1,
+"visibility_domain_or_restricted": "domain",
+"created": "2017-10-03"
+},
+{
+"dataset_identifier": "100027",
+"title": "Recyclingstationen",
+"reuse_count": 0,
+"api_call_count": 43515,
+"download_count": 26576,
+"popularity_score": 15.5,
+"visibility_domain_or_restricted": "domain",
+"created": "2018-07-03"
+},
+{
+"dataset_identifier": "100028",
+"title": "Bio-Klappen",
+"reuse_count": 0,
+"api_call_count": 9188,
+"download_count": 8405,
+"popularity_score": 8.0,
+"visibility_domain_or_restricted": "domain",
+"created": null
+},
+{
+"dataset_identifier": "100029",
+"title": "Schulstandorte (Gemeinde Basel)",
+"reuse_count": 0,
+"api_call_count": 64061,
+"download_count": 12151,
+"popularity_score": 14.1,
+"visibility_domain_or_restricted": "domain",
+"created": null
+},
+{
+"dataset_identifier": "100030",
+"title": "Schulstandorte (Gemeinden Riehen und Bettingen)",
+"reuse_count": 0,
+"api_call_count": 25029,
+"download_count": 18913,
+"popularity_score": 12.5,
+"visibility_domain_or_restricted": "domain",
+"created": "2017-07-31"
+},
+{
+"dataset_identifier": "100031",
+"title": "Sanitäre Anlagen",
+"reuse_count": 0,
+"api_call_count": 2916574,
+"download_count": 19607,
+"popularity_score": 62.5,
+"visibility_domain_or_restricted": "domain",
+"created": null
+},
+{
+"dataset_identifier": "100032",
+"title": "Alltagsvelorouten",
+"reuse_count": 0,
+"api_call_count": 27842,
+"download_count": 15768,
+"popularity_score": 12.1,
+"visibility_domain_or_restricted": "domain",
+"created": "2017-01-31"
+},
+{
+"dataset_identifier": "100033",
+"title": "Touristische Velorouten",
+"reuse_count": 0,
+"api_call_count": 24568,
+"download_count": 15250,
+"popularity_score": 11.7,
+"visibility_domain_or_restricted": "domain",
+"created": "2017-01-31"
+},
+{
+"dataset_identifier": "100038",
+"title": "Standorte der Zählstellen für Verkehrszähldaten",
+"reuse_count": 0,
+"api_call_count": 66148,
+"download_count": 62146,
+"popularity_score": 21.7,
+"visibility_domain_or_restricted": "domain",
+"created": "2012-05-31"
+},
+{
+"dataset_identifier": "100039",
+"title": "Statistische Raumeinheiten: Bezirke",
+"reuse_count": 0,
+"api_call_count": 60747,
+"download_count": 45212,
+"popularity_score": 19.4,
+"visibility_domain_or_restricted": "domain",
+"created": null
+},
+{
+"dataset_identifier": "100040",
+"title": "Statistische Raumeinheiten: Blöcke",
+"reuse_count": 0,
+"api_call_count": 52204,
+"download_count": 54204,
+"popularity_score": 19.9,
+"visibility_domain_or_restricted": "domain",
+"created": null
+},
+{
+"dataset_identifier": "100041",
+"title": "Statistische Raumeinheiten: Blockseiten",
+"reuse_count": 0,
+"api_call_count": 55062,
+"download_count": 17336,
+"popularity_score": 14.6,
+"visibility_domain_or_restricted": "domain",
+"created": null
+},
+{
+"dataset_identifier": "100042",
+"title": "Statistische Raumeinheiten: Wohnviertel",
+"reuse_count": 0,
+"api_call_count": 88944,
+"download_count": 48667,
+"popularity_score": 21.5,
+"visibility_domain_or_restricted": "domain",
+"created": null
+},
+{
+"dataset_identifier": "100043",
+"title": "Invasive Neophyten",
+"reuse_count": 0,
+"api_call_count": 55434,
+"download_count": 17776,
+"popularity_score": 14.8,
+"visibility_domain_or_restricted": "domain",
+"created": "2009-01-01"
+},
+{
+"dataset_identifier": "100044",
+"title": "Standorte der öffentlichen Parkhäuser Basel",
+"reuse_count": 0,
+"api_call_count": 4725440,
+"download_count": 227216,
+"popularity_score": 95.6,
+"visibility_domain_or_restricted": "domain",
+"created": "2019-02-14"
+},
+{
+"dataset_identifier": "100046",
+"title": "Rheinmesswerte kontinuierlich",
+"reuse_count": 1,
+"api_call_count": 20945541,
+"download_count": 29925,
+"popularity_score": 157.7,
+"visibility_domain_or_restricted": "domain",
+"created": "2018-05-23"
+},
+{
+"dataset_identifier": "100047",
+"title": "Smarte Strasse: Elektroauto-Ladestationen",
+"reuse_count": 1,
+"api_call_count": 232986,
+"download_count": 22514,
+"popularity_score": 24.6,
+"visibility_domain_or_restricted": "domain",
+"created": "2022-01-11"
+},
+{
+"dataset_identifier": "100048",
+"title": "Luftqualität Station Chrischona",
+"reuse_count": 0,
+"api_call_count": 66084,
+"download_count": 33592,
+"popularity_score": 18.1,
+"visibility_domain_or_restricted": "domain",
+"created": "2019-11-06"
+},
+{
+"dataset_identifier": "100049",
+"title": "Luftqualität Station St. Johannplatz",
+"reuse_count": 0,
+"api_call_count": 96346,
+"download_count": 34391,
+"popularity_score": 20.0,
+"visibility_domain_or_restricted": "domain",
+"created": "2019-11-06"
+},
+{
+"dataset_identifier": "100050",
+"title": "Luftqualität Station Feldbergstrasse",
+"reuse_count": 0,
+"api_call_count": 81108,
+"download_count": 35400,
+"popularity_score": 19.3,
+"visibility_domain_or_restricted": "domain",
+"created": "2019-11-06"
+},
+{
+"dataset_identifier": "100051",
+"title": "Luftqualität Station Basel-Binningen",
+"reuse_count": 0,
+"api_call_count": 312367,
+"download_count": 7034,
+"popularity_score": 22.5,
+"visibility_domain_or_restricted": "domain",
+"created": "2018-07-31"
+},
+{
+"dataset_identifier": "100052",
+"title": "Baumkataster: Baumbestand",
+"reuse_count": 0,
+"api_call_count": 108051,
+"download_count": 14358,
+"popularity_score": 17.0,
+"visibility_domain_or_restricted": "domain",
+"created": null
+},
+{
+"dataset_identifier": "100053",
+"title": "Schulwegsicherheit: Strassenquerungen",
+"reuse_count": 1,
+"api_call_count": 39782,
+"download_count": 9209,
+"popularity_score": 12.6,
+"visibility_domain_or_restricted": "domain",
+"created": "2016-08-02"
+},
+{
+"dataset_identifier": "100054",
+"title": "Baumkataster: Fäll- und Baumersatzliste",
+"reuse_count": 0,
+"api_call_count": 8171,
+"download_count": 5852,
+"popularity_score": 7.0,
+"visibility_domain_or_restricted": "domain",
+"created": "2010-01-01"
+},
+{
+"dataset_identifier": "100056",
+"title": "Schulwegsicherheit: Fusswege",
+"reuse_count": 1,
+"api_call_count": 27368,
+"download_count": 9008,
+"popularity_score": 11.4,
+"visibility_domain_or_restricted": "domain",
+"created": "2016-08-02"
+},
+{
+"dataset_identifier": "100057",
+"title": "OGD Datensätze",
+"reuse_count": 0,
+"api_call_count": 1054521,
+"download_count": 36949,
+"popularity_score": 43.4,
+"visibility_domain_or_restricted": "domain",
+"created": "2019-11-06"
+},
+{
+"dataset_identifier": "100058",
+"title": "Ordnungsbussen",
+"reuse_count": 0,
+"api_call_count": 519843,
+"download_count": 11755,
+"popularity_score": 29.0,
+"visibility_domain_or_restricted": "domain",
+"created": "2020-06-30"
+},
+{
+"dataset_identifier": "100059",
+"title": "Wohnbevölkerung nach Staatsangehörigkeit und Gemeinde",
+"reuse_count": 0,
+"api_call_count": 31614,
+"download_count": 27882,
+"popularity_score": 14.7,
+"visibility_domain_or_restricted": "domain",
+"created": "2020-02-04"
+},
+{
+"dataset_identifier": "100060",
+"title": "Wohnbevölkerung nach Staatsangehörigkeit und Wohnviertel",
+"reuse_count": 0,
+"api_call_count": 66634,
+"download_count": 28667,
+"popularity_score": 17.4,
+"visibility_domain_or_restricted": "domain",
+"created": "2020-02-04"
+},
+{
+"dataset_identifier": "100061",
+"title": "Wohnbevölkerung nach Staatsangehörigkeit und Bezirk",
+"reuse_count": 0,
+"api_call_count": 59193,
+"download_count": 28395,
+"popularity_score": 16.9,
+"visibility_domain_or_restricted": "domain",
+"created": "2020-02-04"
+},
+{
+"dataset_identifier": "100062",
+"title": "Wohnbevölkerung nach Staatsangehörigkeit und Block",
+"reuse_count": 0,
+"api_call_count": 73816,
+"download_count": 29139,
+"popularity_score": 17.9,
+"visibility_domain_or_restricted": "domain",
+"created": "2020-02-04"
+},
+{
+"dataset_identifier": "100063",
+"title": "Haltestellen des öffentlichen Verkehrs",
+"reuse_count": 0,
+"api_call_count": 55381,
+"download_count": 16836,
+"popularity_score": 14.6,
+"visibility_domain_or_restricted": "domain",
+"created": "2015-07-03"
+},
+{
+"dataset_identifier": "100064",
+"title": "Liniennetz des öffentlichen Verkehrs",
+"reuse_count": 0,
+"api_call_count": 51636,
+"download_count": 16680,
+"popularity_score": 14.3,
+"visibility_domain_or_restricted": "domain",
+"created": "2015-07-03"
+},
+{
+"dataset_identifier": "100065",
+"title": "Teilhaltestellen des öffentlichen Verkehrs",
+"reuse_count": 0,
+"api_call_count": 31538,
+"download_count": 16434,
+"popularity_score": 12.6,
+"visibility_domain_or_restricted": "domain",
+"created": "2015-07-03"
+},
+{
+"dataset_identifier": "100066",
+"title": "Umweltanalyse Oberflächengewässer",
+"reuse_count": 0,
+"api_call_count": 78214,
+"download_count": 28684,
+"popularity_score": 18.1,
+"visibility_domain_or_restricted": "domain",
+"created": "2020-04-06"
+},
+{
+"dataset_identifier": "100067",
+"title": "Umweltanalyse Grundwasser",
+"reuse_count": 0,
+"api_call_count": 586253,
+"download_count": 28184,
+"popularity_score": 33.7,
+"visibility_domain_or_restricted": "domain",
+"created": "2020-04-06"
+},
+{
+"dataset_identifier": "100068",
+"title": "Rheinüberwachungsstation: Umweltanalyse Schwebstoffe",
+"reuse_count": 0,
+"api_call_count": 54768,
+"download_count": 19323,
+"popularity_score": 15.0,
+"visibility_domain_or_restricted": "domain",
+"created": "2020-04-06"
+},
+{
+"dataset_identifier": "100069",
+"title": "Rheinüberwachungsstation: Umweltanalyse Wasserphase",
+"reuse_count": 0,
+"api_call_count": 55284,
+"download_count": 29713,
+"popularity_score": 16.8,
+"visibility_domain_or_restricted": "domain",
+"created": "2020-04-06"
+},
+{
+"dataset_identifier": "100070",
+"title": "Wilde Abfall-Deponien",
+"reuse_count": 0,
+"api_call_count": 832700,
+"download_count": 27363,
+"popularity_score": 38.3,
+"visibility_domain_or_restricted": "domain",
+"created": "2020-08-20"
+},
+{
+"dataset_identifier": "100073",
+"title": "Coronavirus (COVID-19): Fallzahlen Basel-Stadt",
+"reuse_count": 0,
+"api_call_count": 14161845,
+"download_count": 116743,
+"popularity_score": 139.6,
+"visibility_domain_or_restricted": "domain",
+"created": "2020-04-06"
+},
+{
+"dataset_identifier": "100074",
+"title": "Veranstaltungen mit potenziellem Einfluss auf Veloverkehr",
+"reuse_count": 0,
+"api_call_count": 80629,
+"download_count": 84212,
+"popularity_score": 24.8,
+"visibility_domain_or_restricted": "domain",
+"created": "2020-03-18"
+},
+{
+"dataset_identifier": "100075",
+"title": "Fahrgastzahlen BVB",
+"reuse_count": 0,
+"api_call_count": 53189,
+"download_count": 22546,
+"popularity_score": 15.5,
+"visibility_domain_or_restricted": "domain",
+"created": "2020-05-16"
+},
+{
+"dataset_identifier": "100076",
+"title": "Coronavirus (COVID-19): Todesfälle Basel-Stadt nach Alter und Geschlecht",
+"reuse_count": 0,
+"api_call_count": 195680,
+"download_count": 10042,
+"popularity_score": 19.6,
+"visibility_domain_or_restricted": "domain",
+"created": "2020-04-07"
+},
+{
+"dataset_identifier": "100077",
+"title": "Coronavirus (COVID-19): Fallzahlen ganze Schweiz",
+"reuse_count": 0,
+"api_call_count": 29868,
+"download_count": 191,
+"popularity_score": 6.3,
+"visibility_domain_or_restricted": "domain",
+"created": "2020-04-07"
+},
+{
+"dataset_identifier": "100078",
+"title": "EuroAirport: Tägliche Flugbewegungen, Passagiere und Fracht",
+"reuse_count": 0,
+"api_call_count": 278594,
+"download_count": 21558,
+"popularity_score": 24.9,
+"visibility_domain_or_restricted": "domain",
+"created": "2020-05-13"
+},
+{
+"dataset_identifier": "100079",
+"title": "Gestorbene nach Altersklasse, Geschlecht und Sterbedatum",
+"reuse_count": 0,
+"api_call_count": 103651,
+"download_count": 18783,
+"popularity_score": 17.7,
+"visibility_domain_or_restricted": "domain",
+"created": "2020-04-09"
+},
+{
+"dataset_identifier": "100080",
+"title": "Weiterverwendungen von OGD Datensätzen",
+"reuse_count": 0,
+"api_call_count": 421117,
+"download_count": 12787,
+"popularity_score": 27.0,
+"visibility_domain_or_restricted": "domain",
+"created": "2019-11-05"
+},
+{
+"dataset_identifier": "100081",
+"title": "Smart Climate Feinstaubmessungen",
+"reuse_count": 0,
+"api_call_count": 106584,
+"download_count": 14702,
+"popularity_score": 17.0,
+"visibility_domain_or_restricted": "domain",
+"created": "2020-05-04"
+},
+{
+"dataset_identifier": "100082",
+"title": "Standorte Messstationen Smart Climate Luftklima",
+"reuse_count": 0,
+"api_call_count": 246734,
+"download_count": 46286,
+"popularity_score": 27.6,
+"visibility_domain_or_restricted": "domain",
+"created": "2020-05-13"
+},
+{
+"dataset_identifier": "100083",
+"title": "Umfrage «digitale Mitwirkung» 2020",
+"reuse_count": 0,
+"api_call_count": 26776,
+"download_count": 8324,
+"popularity_score": 10.2,
+"visibility_domain_or_restricted": "domain",
+"created": "2020-04-27"
+},
+{
+"dataset_identifier": "100084",
+"title": "Standorte Mess-Stationen Smart Climate Feinstaubmessungen",
+"reuse_count": 0,
+"api_call_count": 123487,
+"download_count": 13890,
+"popularity_score": 17.7,
+"visibility_domain_or_restricted": "domain",
+"created": "2020-05-13"
+},
+{
+"dataset_identifier": "100085",
+"title": "Coronavirus (COVID-19): Ergänzte Fallzahlen ganze Schweiz",
+"reuse_count": 0,
+"api_call_count": 2533541,
+"download_count": 488,
+"popularity_score": 52.4,
+"visibility_domain_or_restricted": "domain",
+"created": "2020-04-07"
+},
+{
+"dataset_identifier": "100086",
+"title": "Grosser Rat: Politische Vorstösse",
+"reuse_count": 0,
+"api_call_count": 54162,
+"download_count": 38881,
+"popularity_score": 18.1,
+"visibility_domain_or_restricted": "domain",
+"created": "2020-06-29"
+},
+{
+"dataset_identifier": "100087",
+"title": "Smart Climate Schallpegelmessungen",
+"reuse_count": 0,
+"api_call_count": 1509679,
+"download_count": 38114,
+"popularity_score": 50.1,
+"visibility_domain_or_restricted": "domain",
+"created": "2020-06-25"
+},
+{
+"dataset_identifier": "100088",
+"title": "Aktuelle Belegung der öffentlichen Parkhäuser Basel",
+"reuse_count": 0,
+"api_call_count": 5514868,
+"download_count": 841947,
+"popularity_score": 125.0,
+"visibility_domain_or_restricted": "domain",
+"created": "2007-12-31"
+},
+{
+"dataset_identifier": "100089",
+"title": "Rhein Wasserstand, Pegel und Abfluss",
+"reuse_count": 1,
+"api_call_count": 6609152,
+"download_count": 22862,
+"popularity_score": 91.9,
+"visibility_domain_or_restricted": "domain",
+"created": "2020-06-25"
+},
+{
+"dataset_identifier": "100090",
+"title": "Standorte Mess-Stationen Smart Climate Schallpegelmessungen",
+"reuse_count": 0,
+"api_call_count": 20893,
+"download_count": 13847,
+"popularity_score": 11.0,
+"visibility_domain_or_restricted": "domain",
+"created": "2020-06-25"
+},
+{
+"dataset_identifier": "100092",
+"title": "Geborene nach Geschlecht, Staatsangehörigkeit, Wohnviertel und Geburtsdatum",
+"reuse_count": 0,
+"api_call_count": 82829,
+"download_count": 16071,
+"popularity_score": 16.1,
+"visibility_domain_or_restricted": "domain",
+"created": "2020-08-12"
+},
+{
+"dataset_identifier": "100093",
+"title": "Smarte Strasse: Luftqualität",
+"reuse_count": 2,
+"api_call_count": 103519,
+"download_count": 9199,
+"popularity_score": 17.5,
+"visibility_domain_or_restricted": "domain",
+"created": "2022-01-11"
+},
+{
+"dataset_identifier": "100094",
+"title": "Coronavirus (COVID-19): Tests Basel-Stadt",
+"reuse_count": 0,
+"api_call_count": 1176348,
+"download_count": 63664,
+"popularity_score": 48.5,
+"visibility_domain_or_restricted": "domain",
+"created": "2020-08-27"
+},
+{
+"dataset_identifier": "100095",
+"title": "Abfuhrzonen (Gemeinde Basel)",
+"reuse_count": 0,
+"api_call_count": 5274,
+"download_count": 3288,
+"popularity_score": 5.4,
+"visibility_domain_or_restricted": "domain",
+"created": null
+},
+{
+"dataset_identifier": "100096",
+"title": "Abfuhrtermine",
+"reuse_count": 0,
+"api_call_count": 141106,
+"download_count": 31130,
+"popularity_score": 21.6,
+"visibility_domain_or_restricted": "domain",
+"created": "2020-08-27"
+},
+{
+"dataset_identifier": "100097",
+"title": "Geschwindigkeitsmonitoring: Einzelmessungen",
+"reuse_count": 0,
+"api_call_count": 637132,
+"download_count": 18607,
+"popularity_score": 33.0,
+"visibility_domain_or_restricted": "domain",
+"created": "2021-02-02"
+},
+{
+"dataset_identifier": "100098",
+"title": "Wahllokale Kanton Basel-Stadt",
+"reuse_count": 0,
+"api_call_count": 14524,
+"download_count": 7987,
+"popularity_score": 8.7,
+"visibility_domain_or_restricted": "domain",
+"created": "2023-07-25"
+},
+{
+"dataset_identifier": "100099",
+"title": "Geborene nach Geschlecht, Staatsangehörigkeit und Geburtsmonat",
+"reuse_count": 0,
+"api_call_count": 51590,
+"download_count": 15992,
+"popularity_score": 14.1,
+"visibility_domain_or_restricted": "domain",
+"created": "2020-09-22"
+},
+{
+"dataset_identifier": "100100",
+"title": "Feinstaubmessungen Naturhistorisches Museum Basel",
+"reuse_count": 0,
+"api_call_count": 103913,
+"download_count": 16602,
+"popularity_score": 17.3,
+"visibility_domain_or_restricted": "domain",
+"created": "2020-11-19"
+},
+{
+"dataset_identifier": "100101",
+"title": "Resultate der Grossratswahlen 25. Oktober 2020",
+"reuse_count": 0,
+"api_call_count": 263495,
+"download_count": 9369,
+"popularity_score": 21.7,
+"visibility_domain_or_restricted": "domain",
+"created": "2020-10-19"
+},
+{
+"dataset_identifier": "100102",
+"title": "Resultate der Regierungsrats- und Regierungspräsidiumswahlen 2020",
+"reuse_count": 0,
+"api_call_count": 250691,
+"download_count": 8207,
+"popularity_score": 21.0,
+"visibility_domain_or_restricted": "domain",
+"created": "2020-10-19"
+},
+{
+"dataset_identifier": "100105",
+"title": "Coronavirus (COVID-19): Positiv getestete Personen nach Alter und Geschlecht",
+"reuse_count": 0,
+"api_call_count": 396890,
+"download_count": 11525,
+"popularity_score": 26.1,
+"visibility_domain_or_restricted": "domain",
+"created": "2020-11-24"
+},
+{
+"dataset_identifier": "100106",
+"title": "Tägliche Logiernächte, verfügbare und belegte Zimmer",
+"reuse_count": 0,
+"api_call_count": 60698,
+"download_count": 10022,
+"popularity_score": 13.3,
+"visibility_domain_or_restricted": "domain",
+"created": "2021-01-20"
+},
+{
+"dataset_identifier": "100107",
+"title": "Monatliche Ankünfte und Logiernächte",
+"reuse_count": 0,
+"api_call_count": 68631,
+"download_count": 9533,
+"popularity_score": 13.7,
+"visibility_domain_or_restricted": "domain",
+"created": "2021-01-20"
+},
+{
+"dataset_identifier": "100108",
+"title": "Coronavirus (COVID-19): Fallzahlen und Inzidenzen Basel-Stadt",
+"reuse_count": 0,
+"api_call_count": 1069534,
+"download_count": 45259,
+"popularity_score": 44.7,
+"visibility_domain_or_restricted": "domain",
+"created": "2020-12-03"
+},
+{
+"dataset_identifier": "100109",
+"title": "Coronavirus (COVID-19): Hospitalisierte in baselstädtischen Spitälern",
+"reuse_count": 0,
+"api_call_count": 1137751,
+"download_count": 7999,
+"popularity_score": 39.2,
+"visibility_domain_or_restricted": "domain",
+"created": "2020-12-09"
+},
+{
+"dataset_identifier": "100110",
+"title": "Coronavirus (COVID-19): Reproduktionszahl (Re)",
+"reuse_count": 0,
+"api_call_count": 127614,
+"download_count": 33546,
+"popularity_score": 21.4,
+"visibility_domain_or_restricted": "domain",
+"created": "2020-12-23"
+},
+{
+"dataset_identifier": "100111",
+"title": "Coronavirus (COVID-19): In Basel-Stadt verabreichte Impfungen",
+"reuse_count": 0,
+"api_call_count": 2990396,
+"download_count": 49754,
+"popularity_score": 67.7,
+"visibility_domain_or_restricted": "domain",
+"created": "2021-01-04"
+},
+{
+"dataset_identifier": "100112",
+"title": "Geschwindigkeitsmonitoring: Kennzahlen pro Mess-Standort",
+"reuse_count": 0,
+"api_call_count": 435978,
+"download_count": 22932,
+"popularity_score": 29.4,
+"visibility_domain_or_restricted": "domain",
+"created": "2021-02-02"
+},
+{
+"dataset_identifier": "100113",
+"title": "Feinstaubmessungen auf BVB-Trams",
+"reuse_count": 0,
+"api_call_count": 79056,
+"download_count": 16224,
+"popularity_score": 15.9,
+"visibility_domain_or_restricted": "domain",
+"created": "2021-01-22"
+},
+{
+"dataset_identifier": "100114",
+"title": "Smarte Strasse: Sensoren",
+"reuse_count": 1,
+"api_call_count": 90004,
+"download_count": 13119,
+"popularity_score": 16.8,
+"visibility_domain_or_restricted": "domain",
+"created": "2021-10-14"
+},
+{
+"dataset_identifier": "100116",
+"title": "Coronavirus (COVID-19): Tests nach Nachweismethode",
+"reuse_count": 0,
+"api_call_count": 69364,
+"download_count": 352,
+"popularity_score": 9.5,
+"visibility_domain_or_restricted": "domain",
+"created": "2021-03-11"
+},
+{
+"dataset_identifier": "100120",
+"title": "Strassenverkehrsunfälle",
+"reuse_count": 0,
+"api_call_count": 126292,
+"download_count": 9867,
+"popularity_score": 16.8,
+"visibility_domain_or_restricted": "domain",
+"created": null
+},
+{
+"dataset_identifier": "100121",
+"title": "Schülerprognose Basel",
+"reuse_count": 0,
+"api_call_count": 35286,
+"download_count": 10468,
+"popularity_score": 11.6,
+"visibility_domain_or_restricted": "domain",
+"created": "2021-03-23"
+},
+{
+"dataset_identifier": "100122",
+"title": "Schülerprognose Riehen und Bettingen",
+"reuse_count": 0,
+"api_call_count": 37477,
+"download_count": 10605,
+"popularity_score": 11.8,
+"visibility_domain_or_restricted": "domain",
+"created": "2021-03-23"
+},
+{
+"dataset_identifier": "100123",
+"title": "Lohntabelle des Kantons Basel-Stadt",
+"reuse_count": 0,
+"api_call_count": 292373,
+"download_count": 10580,
+"popularity_score": 22.9,
+"visibility_domain_or_restricted": "domain",
+"created": "2023-06-12"
+},
+{
+"dataset_identifier": "100124",
+"title": "Perimeter der Schülerprognosen Basel-Stadt",
+"reuse_count": 0,
+"api_call_count": 35460,
+"download_count": 12982,
+"popularity_score": 12.2,
+"visibility_domain_or_restricted": "domain",
+"created": "2021-03-23"
+},
+{
+"dataset_identifier": "100125",
+"title": "Wohnbevölkerung nach Bezirk",
+"reuse_count": 0,
+"api_call_count": 97333,
+"download_count": 25617,
+"popularity_score": 18.7,
+"visibility_domain_or_restricted": "domain",
+"created": "2021-03-25"
+},
+{
+"dataset_identifier": "100126",
+"title": "Wohnbevölkerung nach Geschlecht, Staatsangehörigkeit und Wohnviertel",
+"reuse_count": 0,
+"api_call_count": 47907,
+"download_count": 11875,
+"popularity_score": 12.9,
+"visibility_domain_or_restricted": "domain",
+"created": "2021-03-25"
+},
+{
+"dataset_identifier": "100127",
+"title": "Nachnamen der baselstädtischen Bevölkerung",
+"reuse_count": 1,
+"api_call_count": 154919,
+"download_count": 9255,
+"popularity_score": 18.8,
+"visibility_domain_or_restricted": "domain",
+"created": "2021-03-25"
+},
+{
+"dataset_identifier": "100128",
+"title": "Wohnbevölkerung nach Geschlecht, Alter, Staatsangehörigkeit und Wohnviertel",
+"reuse_count": 0,
+"api_call_count": 62754,
+"download_count": 11635,
+"popularity_score": 13.9,
+"visibility_domain_or_restricted": "domain",
+"created": "2021-03-25"
+},
+{
+"dataset_identifier": "100129",
+"title": "Vornamen der baselstädtischen Bevölkerung",
+"reuse_count": 0,
+"api_call_count": 155635,
+"download_count": 9162,
+"popularity_score": 17.9,
+"visibility_domain_or_restricted": "domain",
+"created": "2021-03-25"
+},
+{
+"dataset_identifier": "100131",
+"title": "Resultate der Wahl von fünf Präsidentinnen oder Präsidenten des Appellationsgerichts 9. Mai 2021",
+"reuse_count": 0,
+"api_call_count": 14182,
+"download_count": 8285,
+"popularity_score": 8.7,
+"visibility_domain_or_restricted": "domain",
+"created": "2021-05-09"
+},
+{
+"dataset_identifier": "100132",
+"title": "Resultate der Wahl eines Mitglieds des Gerichts für fürsorgerische Unterbringungen 9. Mai 2021",
+"reuse_count": 0,
+"api_call_count": 12921,
+"download_count": 8307,
+"popularity_score": 8.6,
+"visibility_domain_or_restricted": "domain",
+"created": "2021-05-09"
+},
+{
+"dataset_identifier": "100133",
+"title": "Resultate der Wahl von sieben Präsidentinnen oder Präsidenten des Strafgerichts 9. Mai 2021",
+"reuse_count": 0,
+"api_call_count": 14983,
+"download_count": 8222,
+"popularity_score": 8.8,
+"visibility_domain_or_restricted": "domain",
+"created": "2021-05-09"
+},
+{
+"dataset_identifier": "100134",
+"title": "Coronavirus (COVID-19): Teststellen",
+"reuse_count": 0,
+"api_call_count": 31490,
+"download_count": 16621,
+"popularity_score": 12.7,
+"visibility_domain_or_restricted": "domain",
+"created": "2021-03-31"
+},
+{
+"dataset_identifier": "100135",
+"title": "Coronavirus (COVID-19): Impfungen nach Altersgruppe",
+"reuse_count": 0,
+"api_call_count": 54895,
+"download_count": 9415,
+"popularity_score": 12.8,
+"visibility_domain_or_restricted": "domain",
+"created": "2021-06-03"
+},
+{
+"dataset_identifier": "100136",
+"title": "Coronavirus (COVID-19): Für Impfung angemeldete Personen nach Altersklasse",
+"reuse_count": 0,
+"api_call_count": 38749,
+"download_count": 8261,
+"popularity_score": 11.2,
+"visibility_domain_or_restricted": "domain",
+"created": "2021-05-27"
+},
+{
+"dataset_identifier": "100137",
+"title": "Coronavirus (COVID-19): Erweiterte Daten zu Impfungen nach Altersgruppe",
+"reuse_count": 0,
+"api_call_count": 259570,
+"download_count": 10158,
+"popularity_score": 21.8,
+"visibility_domain_or_restricted": "domain",
+"created": "2021-06-01"
+},
+{
+"dataset_identifier": "100138",
+"title": "Wanderungen (Zuzug, Wegzug und Umzug) Kanton Basel-Stadt",
+"reuse_count": 1,
+"api_call_count": 45265,
+"download_count": 17984,
+"popularity_score": 15.1,
+"visibility_domain_or_restricted": "domain",
+"created": "2021-10-22"
+},
+{
+"dataset_identifier": "100139",
+"title": "Scheidungen nach Scheidungsdatum, Ehedauer sowie Alter und Staatsangehörigkeit der ehemaligen Ehepartner",
+"reuse_count": 0,
+"api_call_count": 45608,
+"download_count": 14946,
+"popularity_score": 13.5,
+"visibility_domain_or_restricted": "domain",
+"created": "2021-06-14"
+},
+{
+"dataset_identifier": "100145",
+"title": "Coronavirus (COVID-19): Massentests an Schulen der Primar- und Sekundarstufe I",
+"reuse_count": 1,
+"api_call_count": 159568,
+"download_count": 8591,
+"popularity_score": 18.8,
+"visibility_domain_or_restricted": "domain",
+"created": "2021-06-08"
+},
+{
+"dataset_identifier": "100146",
+"title": "Coronavirus (COVID-19): Massentests in Betrieben",
+"reuse_count": 1,
+"api_call_count": 34399,
+"download_count": 8325,
+"popularity_score": 11.9,
+"visibility_domain_or_restricted": "domain",
+"created": "2021-06-08"
+},
+{
+"dataset_identifier": "100148",
+"title": "Sammlung Europa",
+"reuse_count": 0,
+"api_call_count": 48684,
+"download_count": 8727,
+"popularity_score": 12.1,
+"visibility_domain_or_restricted": "domain",
+"created": "2021-04-08"
+},
+{
+"dataset_identifier": "100149",
+"title": "Rohdaten-Zeitreihe der Belegung der Elektroauto-Ladestationen der IWB",
+"reuse_count": 0,
+"api_call_count": 34828,
+"download_count": 9527,
+"popularity_score": 11.3,
+"visibility_domain_or_restricted": "domain",
+"created": "2022-06-02"
+},
+{
+"dataset_identifier": "100150",
+"title": "Jahresübersicht Open-Data-Kennzahlen",
+"reuse_count": 0,
+"api_call_count": 5684,
+"download_count": 2408,
+"popularity_score": 5.1,
+"visibility_domain_or_restricted": "domain",
+"created": "2026-02-02"
+},
+{
+"dataset_identifier": "100151",
+"title": "Sport- und Bewegungsanlagen",
+"reuse_count": 0,
+"api_call_count": 79759,
+"download_count": 16422,
+"popularity_score": 16.0,
+"visibility_domain_or_restricted": "domain",
+"created": null
+},
+{
+"dataset_identifier": "100152",
+"title": "Coronavirus (COVID-19): Positiv getestete Minderjährige in 3-Jahresklassen",
+"reuse_count": 0,
+"api_call_count": 122609,
+"download_count": 8458,
+"popularity_score": 16.2,
+"visibility_domain_or_restricted": "domain",
+"created": "2021-09-09"
+},
+{
+"dataset_identifier": "100153",
+"title": "Coronavirus (COVID-19): Massentests an Schulen der Sekundarstufe II",
+"reuse_count": 0,
+"api_call_count": 16722,
+"download_count": 8397,
+"popularity_score": 9.1,
+"visibility_domain_or_restricted": "domain",
+"created": "2021-09-19"
+},
+{
+"dataset_identifier": "100156",
+"title": "Heiraten nach Trauungsdatum",
+"reuse_count": 0,
+"api_call_count": 48396,
+"download_count": 15720,
+"popularity_score": 13.8,
+"visibility_domain_or_restricted": "domain",
+"created": "2021-08-24"
+},
+{
+"dataset_identifier": "100158",
+"title": "Überwachung Luftqualität Sanierung Areal Walkeweg",
+"reuse_count": 0,
+"api_call_count": 44574,
+"download_count": 13680,
+"popularity_score": 13.1,
+"visibility_domain_or_restricted": "domain",
+"created": "2021-12-15"
+},
+{
+"dataset_identifier": "100160",
+"title": "Smarte Strasse: Parkplatzbelegung",
+"reuse_count": 0,
+"api_call_count": 32153,
+"download_count": 8803,
+"popularity_score": 10.8,
+"visibility_domain_or_restricted": "domain",
+"created": "2022-01-19"
+},
+{
+"dataset_identifier": "100162",
+"title": "Coronavirus (COVID-19): Geimpfte Personen mit Wohnsitz in Basel-Stadt",
+"reuse_count": 0,
+"api_call_count": 731930,
+"download_count": 9564,
+"popularity_score": 32.8,
+"visibility_domain_or_restricted": "domain",
+"created": "2021-11-29"
+},
+{
+"dataset_identifier": "100164",
+"title": "Wasserstand Grundwasser",
+"reuse_count": 0,
+"api_call_count": 913284,
+"download_count": 32760,
+"popularity_score": 40.5,
+"visibility_domain_or_restricted": "domain",
+"created": "2022-07-11"
+},
+{
+"dataset_identifier": "100165",
+"title": "Steuerstatistik Basel-Stadt: Kennzahlen seit 1991 nach Gemeinde und Wohnviertel",
+"reuse_count": 0,
+"api_call_count": 28478,
+"download_count": 8107,
+"popularity_score": 10.3,
+"visibility_domain_or_restricted": "domain",
+"created": "2022-01-10"
+},
+{
+"dataset_identifier": "100170",
+"title": "Smarte Strasse: Verkehrslärm",
+"reuse_count": 1,
+"api_call_count": 112084,
+"download_count": 11139,
+"popularity_score": 17.5,
+"visibility_domain_or_restricted": "domain",
+"created": "2022-01-19"
+},
+{
+"dataset_identifier": "100171",
+"title": "Smarte Strasse: Zu- und Wegfahrten, Parkplatzauslastung",
+"reuse_count": 0,
+"api_call_count": 51634,
+"download_count": 8732,
+"popularity_score": 12.3,
+"visibility_domain_or_restricted": "domain",
+"created": "2022-01-19"
+},
+{
+"dataset_identifier": "100172",
+"title": "Smarte Strasse: Fahrzeugdurchfahrten",
+"reuse_count": 1,
+"api_call_count": 264411,
+"download_count": 9637,
+"popularity_score": 22.8,
+"visibility_domain_or_restricted": "domain",
+"created": "2022-01-18"
+},
+{
+"dataset_identifier": "100173",
+"title": "Monatliche Sterberaten nach Geschlecht und Altersgruppe",
+"reuse_count": 0,
+"api_call_count": 73505,
+"download_count": 8837,
+"popularity_score": 13.8,
+"visibility_domain_or_restricted": "domain",
+"created": "2022-03-01"
+},
+{
+"dataset_identifier": "100174",
+"title": "Smarte Strasse: Luftqualität des Vortages",
+"reuse_count": 1,
+"api_call_count": 36711,
+"download_count": 8766,
+"popularity_score": 12.2,
+"visibility_domain_or_restricted": "domain",
+"created": "2022-01-25"
+},
+{
+"dataset_identifier": "100175",
+"title": "Smarte Strasse: Geschwindigkeitsmessungen",
+"reuse_count": 1,
+"api_call_count": 380395,
+"download_count": 11306,
+"popularity_score": 26.6,
+"visibility_domain_or_restricted": "domain",
+"created": "2022-01-18"
+},
+{
+"dataset_identifier": "100176",
+"title": "Smarte Strasse: Parkplatz-Zonen",
+"reuse_count": 0,
+"api_call_count": 20415,
+"download_count": 15114,
+"popularity_score": 11.2,
+"visibility_domain_or_restricted": "domain",
+"created": "2022-01-19"
+},
+{
+"dataset_identifier": "100177",
+"title": "Öffentlicher Archivkatalog in RDF",
+"reuse_count": 0,
+"api_call_count": 2663,
+"download_count": 2165,
+"popularity_score": 4.2,
+"visibility_domain_or_restricted": "domain",
+"created": "2022-05-03"
+},
+{
+"dataset_identifier": "100178",
+"title": "Smarte Strasse: Luftqualität Vergleichsmessungen",
+"reuse_count": 2,
+"api_call_count": 45506,
+"download_count": 8841,
+"popularity_score": 13.9,
+"visibility_domain_or_restricted": "domain",
+"created": "2022-02-17"
+},
+{
+"dataset_identifier": "100179",
+"title": "Temperatur Grundwasser",
+"reuse_count": 0,
+"api_call_count": 850607,
+"download_count": 32594,
+"popularity_score": 39.4,
+"visibility_domain_or_restricted": "domain",
+"created": "2022-07-11"
+},
+{
+"dataset_identifier": "100180",
+"title": "Wasserstand Grundwasser: Langjährige Statistiken",
+"reuse_count": 0,
+"api_call_count": 393420,
+"download_count": 27614,
+"popularity_score": 29.1,
+"visibility_domain_or_restricted": "domain",
+"created": "2022-07-11"
+},
+{
+"dataset_identifier": "100181",
+"title": "Temperatur Grundwasser: Langjährige Statistiken",
+"reuse_count": 0,
+"api_call_count": 38179,
+"download_count": 27346,
+"popularity_score": 15.2,
+"visibility_domain_or_restricted": "domain",
+"created": "2022-07-11"
+},
+{
+"dataset_identifier": "100182",
+"title": "Bohrkataster",
+"reuse_count": 0,
+"api_call_count": 214851,
+"download_count": 16821,
+"popularity_score": 21.9,
+"visibility_domain_or_restricted": "domain",
+"created": null
+},
+{
+"dataset_identifier": "100183",
+"title": "Coronavirus (COVID-19): Massentests an Schulen",
+"reuse_count": 0,
+"api_call_count": 21073,
+"download_count": 8231,
+"popularity_score": 9.6,
+"visibility_domain_or_restricted": "domain",
+"created": "2022-06-23"
+},
+{
+"dataset_identifier": "100185",
+"title": "Befragung 55plus (jahresübergreifend)",
+"reuse_count": 0,
+"api_call_count": 3571,
+"download_count": 4655,
+"popularity_score": 5.6,
+"visibility_domain_or_restricted": "domain",
+"created": "2022-03-16"
+},
+{
+"dataset_identifier": "100186",
+"title": "Grosser Rat: Live-Abstimmungsergebnisse",
+"reuse_count": 0,
+"api_call_count": 161594,
+"download_count": 13023,
+"popularity_score": 19.1,
+"visibility_domain_or_restricted": "domain",
+"created": "2022-03-29"
+},
+{
+"dataset_identifier": "100187",
+"title": "Coronavirus (COVID-19): SARS-CoV-2 im Abwasser und positiv auf SARS-CoV-2 getestete Personen",
+"reuse_count": 0,
+"api_call_count": 622446,
+"download_count": 10617,
+"popularity_score": 30.9,
+"visibility_domain_or_restricted": "domain",
+"created": "2022-03-22"
+},
+{
+"dataset_identifier": "100188",
+"title": "Grosser Rat: Sitzungskalender",
+"reuse_count": 0,
+"api_call_count": 32271,
+"download_count": 17007,
+"popularity_score": 12.8,
+"visibility_domain_or_restricted": "domain",
+"created": "2022-03-29"
+},
+{
+"dataset_identifier": "100189",
+"title": "Strassennamen",
+"reuse_count": 0,
+"api_call_count": 87734,
+"download_count": 26744,
+"popularity_score": 18.3,
+"visibility_domain_or_restricted": "domain",
+"created": null
+},
+{
+"dataset_identifier": "100191",
+"title": "Studierende der Universität Basel nach Geschlecht und Fakultät",
+"reuse_count": 0,
+"api_call_count": 15969,
+"download_count": 8392,
+"popularity_score": 9.0,
+"visibility_domain_or_restricted": "domain",
+"created": "2022-05-02"
+},
+{
+"dataset_identifier": "100192",
+"title": "Vornamen der Neugeborenen nach Geschlecht",
+"reuse_count": 1,
+"api_call_count": 79484,
+"download_count": 9833,
+"popularity_score": 15.4,
+"visibility_domain_or_restricted": "domain",
+"created": "2022-04-28"
+},
+{
+"dataset_identifier": "100193",
+"title": "Fischereistatistik Basel-Stadt",
+"reuse_count": 0,
+"api_call_count": 100544,
+"download_count": 14981,
+"popularity_score": 16.8,
+"visibility_domain_or_restricted": "domain",
+"created": "2022-08-15"
+},
+{
+"dataset_identifier": "100196",
+"title": "Zeitreihe der Belegung der Elektroauto-Ladestationen der IWB",
+"reuse_count": 0,
+"api_call_count": 36047,
+"download_count": 9372,
+"popularity_score": 11.3,
+"visibility_domain_or_restricted": "domain",
+"created": "2022-06-01"
+},
+{
+"dataset_identifier": "100197",
+"title": "Wohnbevölkerung nach Postleitzahl seit 1979",
+"reuse_count": 0,
+"api_call_count": 15484,
+"download_count": 8558,
+"popularity_score": 9.0,
+"visibility_domain_or_restricted": "domain",
+"created": "2022-06-02"
+},
+{
+"dataset_identifier": "100198",
+"title": "Ein- und Ausfahrten öffentlicher Parkhäuser Basel",
+"reuse_count": 0,
+"api_call_count": 32777,
+"download_count": 9779,
+"popularity_score": 11.1,
+"visibility_domain_or_restricted": "domain",
+"created": "2022-07-11"
+},
+{
+"dataset_identifier": "100199",
+"title": "Durchschnittlicher Tagesverkehr (basierend auf dem Geschwindigkeitsmonitoring der Kantonspolizei)",
+"reuse_count": 0,
+"api_call_count": 51966,
+"download_count": 29627,
+"popularity_score": 16.6,
+"visibility_domain_or_restricted": "domain",
+"created": "2022-07-22"
+},
+{
+"dataset_identifier": "100201",
+"title": "Liegenschaften: Parzellen",
+"reuse_count": 0,
+"api_call_count": 95129,
+"download_count": 21733,
+"popularity_score": 17.9,
+"visibility_domain_or_restricted": "domain",
+"created": null
+},
+{
+"dataset_identifier": "100202",
+"title": "Zuordnung von Parzellen auf Statistische Raumeinheiten",
+"reuse_count": 0,
+"api_call_count": 39176,
+"download_count": 13964,
+"popularity_score": 12.7,
+"visibility_domain_or_restricted": "domain",
+"created": "2022-09-19"
+},
+{
+"dataset_identifier": "100203",
+"title": "Befragung 55plus (2019)",
+"reuse_count": 0,
+"api_call_count": 3240,
+"download_count": 4635,
+"popularity_score": 5.5,
+"visibility_domain_or_restricted": "domain",
+"created": "2022-03-16"
+},
+{
+"dataset_identifier": "100204",
+"title": "Befragung 55plus (2015)",
+"reuse_count": 0,
+"api_call_count": 2937,
+"download_count": 4816,
+"popularity_score": 5.5,
+"visibility_domain_or_restricted": "domain",
+"created": "2022-03-16"
+},
+{
+"dataset_identifier": "100205",
+"title": "Befragung 55plus (2011)",
+"reuse_count": 0,
+"api_call_count": 3149,
+"download_count": 4848,
+"popularity_score": 5.6,
+"visibility_domain_or_restricted": "domain",
+"created": "2022-03-16"
+},
+{
+"dataset_identifier": "100213",
+"title": "Velopumpen",
+"reuse_count": 0,
+"api_call_count": 186822,
+"download_count": 17404,
+"popularity_score": 21.0,
+"visibility_domain_or_restricted": "domain",
+"created": null
+},
+{
+"dataset_identifier": "100214",
+"title": "Kunst im öffentlichen Raum",
+"reuse_count": 0,
+"api_call_count": 82608,
+"download_count": 14377,
+"popularity_score": 15.7,
+"visibility_domain_or_restricted": "domain",
+"created": "2018-06-05"
+},
+{
+"dataset_identifier": "100215",
+"title": "Verkehrsberuhigte Zonen: Begegnungszone",
+"reuse_count": 0,
+"api_call_count": 16149,
+"download_count": 7295,
+"popularity_score": 8.7,
+"visibility_domain_or_restricted": "domain",
+"created": null
+},
+{
+"dataset_identifier": "100216",
+"title": "Unfallschwerpunkte",
+"reuse_count": 0,
+"api_call_count": 139206,
+"download_count": 19876,
+"popularity_score": 19.6,
+"visibility_domain_or_restricted": "domain",
+"created": "2022-09-13"
+},
+{
+"dataset_identifier": "100221",
+"title": "Swisslos-Sportfonds Basel-Stadt",
+"reuse_count": 0,
+"api_call_count": 12925,
+"download_count": 6114,
+"popularity_score": 7.9,
+"visibility_domain_or_restricted": "domain",
+"created": "2024-12-02"
+},
+{
+"dataset_identifier": "100223",
+"title": "Briefliche Stimmbeteiligung",
+"reuse_count": 0,
+"api_call_count": 75181,
+"download_count": 9817,
+"popularity_score": 14.2,
+"visibility_domain_or_restricted": "domain",
+"created": "2022-09-07"
+},
+{
+"dataset_identifier": "100225",
+"title": "Schutzsuchende im Kanton Basel-Stadt nach Geschlecht, Altersklasse, Staatsangehörigkeit, Zuzugs- und Wegzugsmonat",
+"reuse_count": 0,
+"api_call_count": 27956,
+"download_count": 8364,
+"popularity_score": 10.3,
+"visibility_domain_or_restricted": "domain",
+"created": "2022-09-07"
+},
+{
+"dataset_identifier": "100226",
+"title": "Kennzahlen zu den Basler Wohnvierteln und Landgemeinden - langer Datensatz",
+"reuse_count": 0,
+"api_call_count": 37750,
+"download_count": 8021,
+"popularity_score": 11.1,
+"visibility_domain_or_restricted": "domain",
+"created": "2019-10-24"
+},
+{
+"dataset_identifier": "100227",
+"title": "Witterung",
+"reuse_count": 0,
+"api_call_count": 38962,
+"download_count": 19808,
+"popularity_score": 13.9,
+"visibility_domain_or_restricted": "domain",
+"created": "2022-11-17"
+},
+{
+"dataset_identifier": "100229",
+"title": "Kantonale Abstimmungen",
+"reuse_count": 0,
+"api_call_count": 34434,
+"download_count": 8623,
+"popularity_score": 11.0,
+"visibility_domain_or_restricted": "domain",
+"created": "2022-12-22"
+},
+{
+"dataset_identifier": "100230",
+"title": "Gebäude (Gebäude- und Wohnungsregister GWR)",
+"reuse_count": 0,
+"api_call_count": 95824,
+"download_count": 66349,
+"popularity_score": 23.8,
+"visibility_domain_or_restricted": "domain",
+"created": "2022-09-23"
+},
+{
+"dataset_identifier": "100231",
+"title": "Gebäudeeingänge (Gebäude- und Wohnungsregister GWR)",
+"reuse_count": 1,
+"api_call_count": 119160,
+"download_count": 28371,
+"popularity_score": 21.2,
+"visibility_domain_or_restricted": "domain",
+"created": "2022-09-23"
+},
+{
+"dataset_identifier": "100232",
+"title": "Wohnungen (Gebäude- und Wohnungsregister GWR)",
+"reuse_count": 1,
+"api_call_count": 92997,
+"download_count": 20416,
+"popularity_score": 18.5,
+"visibility_domain_or_restricted": "domain",
+"created": "2022-09-23"
+},
+{
+"dataset_identifier": "100233",
+"title": "Kantonaler Stromverbrauch",
+"reuse_count": 3,
+"api_call_count": 166775,
+"download_count": 50827,
+"popularity_score": 28.3,
+"visibility_domain_or_restricted": "domain",
+"created": "2022-11-22"
+},
+{
+"dataset_identifier": "100234",
+"title": "Nutzungsplan - Zonenplan Stadt Basel: Überlagernde Festlegungen",
+"reuse_count": 0,
+"api_call_count": 2916418,
+"download_count": 17182,
+"popularity_score": 62.0,
+"visibility_domain_or_restricted": "domain",
+"created": null
+},
+{
+"dataset_identifier": "100235",
+"title": "Wiese Wasserstand und Abfluss",
+"reuse_count": 0,
+"api_call_count": 8090936,
+"download_count": 22700,
+"popularity_score": 99.7,
+"visibility_domain_or_restricted": "domain",
+"created": "2022-11-01"
+},
+{
+"dataset_identifier": "100236",
+"title": "Birs Temperatur, Wasserstand und Abfluss",
+"reuse_count": 0,
+"api_call_count": 1238878,
+"download_count": 23269,
+"popularity_score": 44.0,
+"visibility_domain_or_restricted": "domain",
+"created": "2022-11-01"
+},
+{
+"dataset_identifier": "100238",
+"title": "Bevölkerung nach Geschlecht, Heimat und Altersjahr ab 1945",
+"reuse_count": 0,
+"api_call_count": 75965,
+"download_count": 9032,
+"popularity_score": 14.0,
+"visibility_domain_or_restricted": "domain",
+"created": "2022-12-06"
+},
+{
+"dataset_identifier": "100241",
+"title": "Veloabstellplätze",
+"reuse_count": 0,
+"api_call_count": 50554,
+"download_count": 17787,
+"popularity_score": 14.4,
+"visibility_domain_or_restricted": "domain",
+"created": null
+},
+{
+"dataset_identifier": "100242",
+"title": "Strassen und Wege: Durchgangsstrassen",
+"reuse_count": 0,
+"api_call_count": 25536,
+"download_count": 17263,
+"popularity_score": 12.2,
+"visibility_domain_or_restricted": "domain",
+"created": null
+},
+{
+"dataset_identifier": "100243",
+"title": "Rhein Wasserstand Klingentalfähre",
+"reuse_count": 0,
+"api_call_count": 1134989,
+"download_count": 7063,
+"popularity_score": 38.8,
+"visibility_domain_or_restricted": "domain",
+"created": "2020-12-04"
+},
+{
+"dataset_identifier": "100244",
+"title": "Gefahrenstufen für Hochwasser",
+"reuse_count": 0,
+"api_call_count": 10503,
+"download_count": 468,
+"popularity_score": 4.5,
+"visibility_domain_or_restricted": "domain",
+"created": "2022-12-06"
+},
+{
+"dataset_identifier": "100245",
+"title": "Effektiver und erwarteter täglicher Stromverbrauch",
+"reuse_count": 3,
+"api_call_count": 115132,
+"download_count": 11484,
+"popularity_score": 19.7,
+"visibility_domain_or_restricted": "domain",
+"created": "2022-12-21"
+},
+{
+"dataset_identifier": "100246",
+"title": "BachApp: Infos - Allgemein",
+"reuse_count": 0,
+"api_call_count": 2617115,
+"download_count": 8702,
+"popularity_score": 57.1,
+"visibility_domain_or_restricted": "domain",
+"created": "2023-04-06"
+},
+{
+"dataset_identifier": "100247",
+"title": "Events in Gewässernähe",
+"reuse_count": 0,
+"api_call_count": 1638517,
+"download_count": 8800,
+"popularity_score": 46.3,
+"visibility_domain_or_restricted": "domain",
+"created": "2023-04-12"
+},
+{
+"dataset_identifier": "100249",
+"title": "Strassen und Wege: Kantonsstrassen Riehen und Bettingen",
+"reuse_count": 0,
+"api_call_count": 20683,
+"download_count": 16696,
+"popularity_score": 11.6,
+"visibility_domain_or_restricted": "domain",
+"created": "2019-05-07"
+},
+{
+"dataset_identifier": "100250",
+"title": "Strassen und Wege: Strassentypen und Wege",
+"reuse_count": 0,
+"api_call_count": 77562,
+"download_count": 16475,
+"popularity_score": 15.9,
+"visibility_domain_or_restricted": "domain",
+"created": null
+},
+{
+"dataset_identifier": "100251",
+"title": "Verkehrsberuhigte Zonen: Fussgängerzone",
+"reuse_count": 0,
+"api_call_count": 13769,
+"download_count": 7276,
+"popularity_score": 8.4,
+"visibility_domain_or_restricted": "domain",
+"created": null
+},
+{
+"dataset_identifier": "100252",
+"title": "Verkehrsberuhigte Zonen: Tempo 30 - Zone",
+"reuse_count": 0,
+"api_call_count": 28360,
+"download_count": 7132,
+"popularity_score": 10.0,
+"visibility_domain_or_restricted": "domain",
+"created": null
+},
+{
+"dataset_identifier": "100253",
+"title": "Verkehrsberuhigte Zonen: Kernzone Verkehrskonzept Innenstadt",
+"reuse_count": 0,
+"api_call_count": 11120,
+"download_count": 7526,
+"popularity_score": 8.1,
+"visibility_domain_or_restricted": "domain",
+"created": null
+},
+{
+"dataset_identifier": "100254",
+"title": "Tägliche Klimadaten der NBCN-Station Basel-Binningen",
+"reuse_count": 0,
+"api_call_count": 412211,
+"download_count": 5832,
+"popularity_score": 24.8,
+"visibility_domain_or_restricted": "domain",
+"created": "2022-12-21"
+},
+{
+"dataset_identifier": "100255",
+"title": "BachApp: Am Fluss",
+"reuse_count": 0,
+"api_call_count": 227207,
+"download_count": 8408,
+"popularity_score": 20.3,
+"visibility_domain_or_restricted": "domain",
+"created": "2023-04-06"
+},
+{
+"dataset_identifier": "100256",
+"title": "Nutzungsplan - Zonenplan Riehen: Überlagernde Festlegungen",
+"reuse_count": 0,
+"api_call_count": 30727,
+"download_count": 15814,
+"popularity_score": 12.4,
+"visibility_domain_or_restricted": "domain",
+"created": null
+},
+{
+"dataset_identifier": "100257",
+"title": "Nutzungsplan - Zonenplan Bettingen:  Überlagernde Festlegungen",
+"reuse_count": 0,
+"api_call_count": 18171,
+"download_count": 15695,
+"popularity_score": 11.1,
+"visibility_domain_or_restricted": "domain",
+"created": null
+},
+{
+"dataset_identifier": "100259",
+"title": "Gebäudeadressen und -informationen",
+"reuse_count": 0,
+"api_call_count": 264062,
+"download_count": 20086,
+"popularity_score": 24.2,
+"visibility_domain_or_restricted": "domain",
+"created": "1999-01-01"
+},
+{
+"dataset_identifier": "100261",
+"title": "Gewässernetz: Gewässerachsen",
+"reuse_count": 0,
+"api_call_count": 3980,
+"download_count": 7259,
+"popularity_score": 6.6,
+"visibility_domain_or_restricted": "domain",
+"created": null
+},
+{
+"dataset_identifier": "100262",
+"title": "Gewässernetz: Eindolungen",
+"reuse_count": 0,
+"api_call_count": 4159,
+"download_count": 7004,
+"popularity_score": 6.6,
+"visibility_domain_or_restricted": "domain",
+"created": null
+},
+{
+"dataset_identifier": "100268",
+"title": "Einzelmessungen der Smiley-Geschwindigkeitsanzeigen",
+"reuse_count": 0,
+"api_call_count": 97296,
+"download_count": 16411,
+"popularity_score": 16.9,
+"visibility_domain_or_restricted": "domain",
+"created": "2023-12-19"
+},
+{
+"dataset_identifier": "100269",
+"title": "Temperatur Wiese",
+"reuse_count": 0,
+"api_call_count": 1088960,
+"download_count": 21788,
+"popularity_score": 41.5,
+"visibility_domain_or_restricted": "domain",
+"created": "2023-04-04"
+},
+{
+"dataset_identifier": "100270",
+"title": "Empfohlene Schwimmbereiche im Rhein",
+"reuse_count": 0,
+"api_call_count": 974262,
+"download_count": 13442,
+"popularity_score": 38.0,
+"visibility_domain_or_restricted": "domain",
+"created": "2023-04-14"
+},
+{
+"dataset_identifier": "100271",
+"title": "Vorhersagen Rhein: Wasserstand und Abfluss",
+"reuse_count": 0,
+"api_call_count": 726403,
+"download_count": 165125,
+"popularity_score": 49.3,
+"visibility_domain_or_restricted": "domain",
+"created": "2023-02-09"
+},
+{
+"dataset_identifier": "100272",
+"title": "Vorhersagen Birs: Wasserstand und Abfluss",
+"reuse_count": 0,
+"api_call_count": 135557,
+"download_count": 258,
+"popularity_score": 12.7,
+"visibility_domain_or_restricted": "domain",
+"created": "2023-02-09"
+},
+{
+"dataset_identifier": "100273",
+"title": "Überwachung Luftqualität Transformation Areal Rosental: Flüchtige Schadstoffe",
+"reuse_count": 0,
+"api_call_count": 78119,
+"download_count": 8508,
+"popularity_score": 14.0,
+"visibility_domain_or_restricted": "domain",
+"created": "2023-10-09"
+},
+{
+"dataset_identifier": "100274",
+"title": "Überwachung Luftqualität Transformation Areal Rosental: Staubgebundene Schadstoffe",
+"reuse_count": 0,
+"api_call_count": 137226,
+"download_count": 8491,
+"popularity_score": 16.9,
+"visibility_domain_or_restricted": "domain",
+"created": "2023-10-09"
+},
+{
+"dataset_identifier": "100275",
+"title": "Überwachung Luftqualität Transformation Areal Rosental: Online Sensor Feinstaub",
+"reuse_count": 0,
+"api_call_count": 50033,
+"download_count": 18594,
+"popularity_score": 14.5,
+"visibility_domain_or_restricted": "domain",
+"created": "2023-10-09"
+},
+{
+"dataset_identifier": "100276",
+"title": "Feuerstellen in Gewässernähe",
+"reuse_count": 0,
+"api_call_count": 980738,
+"download_count": 15551,
+"popularity_score": 38.6,
+"visibility_domain_or_restricted": "domain",
+"created": "2023-04-17"
+},
+{
+"dataset_identifier": "100277",
+"title": "Statistiken der Smiley-Geschwindigkeitsanzeigen",
+"reuse_count": 0,
+"api_call_count": 19374,
+"download_count": 13621,
+"popularity_score": 10.8,
+"visibility_domain_or_restricted": "domain",
+"created": "2023-12-19"
+},
+{
+"dataset_identifier": "100278",
+"title": "Fischereiverbotszonen Rhein",
+"reuse_count": 0,
+"api_call_count": 972605,
+"download_count": 12590,
+"popularity_score": 37.8,
+"visibility_domain_or_restricted": "domain",
+"created": "2023-05-03"
+},
+{
+"dataset_identifier": "100281",
+"title": "Resultate der Nationalratswahlen 22. Oktober 2023",
+"reuse_count": 0,
+"api_call_count": 38665,
+"download_count": 8099,
+"popularity_score": 11.2,
+"visibility_domain_or_restricted": "domain",
+"created": "2023-06-08"
+},
+{
+"dataset_identifier": "100282",
+"title": "Resultate der Ständeratswahlen 22. Oktober 2023",
+"reuse_count": 0,
+"api_call_count": 16517,
+"download_count": 8015,
+"popularity_score": 9.0,
+"visibility_domain_or_restricted": "domain",
+"created": "2023-06-08"
+},
+{
+"dataset_identifier": "100283",
+"title": "Buvetten in Gewässernähe",
+"reuse_count": 0,
+"api_call_count": 974138,
+"download_count": 8363,
+"popularity_score": 36.7,
+"visibility_domain_or_restricted": "domain",
+"created": "2023-04-12"
+},
+{
+"dataset_identifier": "100284",
+"title": "Grillstellen in Gewässernähe",
+"reuse_count": 0,
+"api_call_count": 973227,
+"download_count": 8363,
+"popularity_score": 36.7,
+"visibility_domain_or_restricted": "domain",
+"created": "2023-04-12"
+},
+{
+"dataset_identifier": "100285",
+"title": "Treppen und Ausstiegsleitern an Gewässern",
+"reuse_count": 0,
+"api_call_count": 977742,
+"download_count": 13093,
+"popularity_score": 38.0,
+"visibility_domain_or_restricted": "domain",
+"created": "2023-04-04"
+},
+{
+"dataset_identifier": "100286",
+"title": "Standorte der Smiley-Geschwindigkeitsanzeigen",
+"reuse_count": 0,
+"api_call_count": 27220,
+"download_count": 16264,
+"popularity_score": 12.2,
+"visibility_domain_or_restricted": "domain",
+"created": "2023-03-06"
+},
+{
+"dataset_identifier": "100287",
+"title": "Baustellen in Gewässernähe",
+"reuse_count": 0,
+"api_call_count": 1630671,
+"download_count": 8413,
+"popularity_score": 46.1,
+"visibility_domain_or_restricted": "domain",
+"created": "2023-04-04"
+},
+{
+"dataset_identifier": "100288",
+"title": "Sauberkeitsindex pro Monat und Strassenabschnitt",
+"reuse_count": 0,
+"api_call_count": 21370,
+"download_count": 14770,
+"popularity_score": 11.2,
+"visibility_domain_or_restricted": "domain",
+"created": "2023-03-14"
+},
+{
+"dataset_identifier": "100290",
+"title": "BachApp: Extras",
+"reuse_count": 0,
+"api_call_count": 976249,
+"download_count": 8144,
+"popularity_score": 36.7,
+"visibility_domain_or_restricted": "domain",
+"created": "2023-04-06"
+},
+{
+"dataset_identifier": "100291",
+"title": "Gewässerschutzkarte: Gewässerschutzbereiche",
+"reuse_count": 0,
+"api_call_count": 14832,
+"download_count": 15184,
+"popularity_score": 10.6,
+"visibility_domain_or_restricted": "domain",
+"created": null
+},
+{
+"dataset_identifier": "100292",
+"title": "Gewässerschutzkarte: Grundwasserschutzzonen",
+"reuse_count": 0,
+"api_call_count": 2907932,
+"download_count": 15225,
+"popularity_score": 61.5,
+"visibility_domain_or_restricted": "domain",
+"created": null
+},
+{
+"dataset_identifier": "100293",
+"title": "Überwachung Luftqualität Transformation Areal Rosental: Standorte",
+"reuse_count": 0,
+"api_call_count": 23269,
+"download_count": 13611,
+"popularity_score": 11.2,
+"visibility_domain_or_restricted": "domain",
+"created": "2023-10-09"
+},
+{
+"dataset_identifier": "100294",
+"title": "Wetterstation Rosental Mitte",
+"reuse_count": 0,
+"api_call_count": 253825,
+"download_count": 139492,
+"popularity_score": 36.3,
+"visibility_domain_or_restricted": "domain",
+"created": "2023-04-12"
+},
+{
+"dataset_identifier": "100295",
+"title": "Überwachung Luftqualität Transformation Areal Rosental: Gemessene Überschreitungen der Interventionswerte",
+"reuse_count": 0,
+"api_call_count": 14950,
+"download_count": 8159,
+"popularity_score": 8.8,
+"visibility_domain_or_restricted": "domain",
+"created": "2023-10-09"
+},
+{
+"dataset_identifier": "100296",
+"title": "Überwachung Luftqualität Transformation Areal Rosental: Baustellenbereich",
+"reuse_count": 0,
+"api_call_count": 28662,
+"download_count": 13435,
+"popularity_score": 11.7,
+"visibility_domain_or_restricted": "domain",
+"created": "2023-10-09"
+},
+{
+"dataset_identifier": "100297",
+"title": "Resultate der Nationalratswahlen 22. Oktober 2023 (aggregierte Daten)",
+"reuse_count": 0,
+"api_call_count": 13697,
+"download_count": 7807,
+"popularity_score": 8.5,
+"visibility_domain_or_restricted": "domain",
+"created": "2023-06-08"
+},
+{
+"dataset_identifier": "100300",
+"title": "Resultate der Bürgergemeinderatswahlen 18. Juni 2023",
+"reuse_count": 1,
+"api_call_count": 42348,
+"download_count": 13175,
+"popularity_score": 13.8,
+"visibility_domain_or_restricted": "domain",
+"created": "2023-06-17"
+},
+{
+"dataset_identifier": "100301",
+"title": "Resultate der Bürgergemeinderatswahlen 2023 auf Listenebene",
+"reuse_count": 1,
+"api_call_count": 44114,
+"download_count": 8454,
+"popularity_score": 12.7,
+"visibility_domain_or_restricted": "domain",
+"created": "2023-06-17"
+},
+{
+"dataset_identifier": "100302",
+"title": "Abwassermonitoring: Influenza und RSV",
+"reuse_count": 0,
+"api_call_count": 174285,
+"download_count": 10515,
+"popularity_score": 19.0,
+"visibility_domain_or_restricted": "domain",
+"created": "2023-11-10"
+},
+{
+"dataset_identifier": "100304",
+"title": "Gasverbrauch im Versorgungsgebiet der IWB",
+"reuse_count": 0,
+"api_call_count": 47216,
+"download_count": 21477,
+"popularity_score": 14.9,
+"visibility_domain_or_restricted": "domain",
+"created": "2023-07-06"
+},
+{
+"dataset_identifier": "100305",
+"title": "Tigermückenbekämpfungsgebiet",
+"reuse_count": 0,
+"api_call_count": 12281,
+"download_count": 15142,
+"popularity_score": 10.2,
+"visibility_domain_or_restricted": "domain",
+"created": null
+},
+{
+"dataset_identifier": "100306",
+"title": "Smarte Strasse: Aufrufe der Microsites",
+"reuse_count": 0,
+"api_call_count": 25033,
+"download_count": 13241,
+"popularity_score": 11.3,
+"visibility_domain_or_restricted": "domain",
+"created": "2023-07-02"
+},
+{
+"dataset_identifier": "100307",
+"title": "Grosser Rat: Ratsmitgliedschaften",
+"reuse_count": 0,
+"api_call_count": 210393,
+"download_count": 33179,
+"popularity_score": 24.6,
+"visibility_domain_or_restricted": "domain",
+"created": "2023-08-15"
+},
+{
+"dataset_identifier": "100308",
+"title": "Grosser Rat: Mitgliedschaften in Gremien",
+"reuse_count": 0,
+"api_call_count": 148862,
+"download_count": 29462,
+"popularity_score": 21.7,
+"visibility_domain_or_restricted": "domain",
+"created": "2023-08-17"
+},
+{
+"dataset_identifier": "100309",
+"title": "Grosser Rat: Interessensbindungen Ratsmitglieder",
+"reuse_count": 0,
+"api_call_count": 120542,
+"download_count": 12865,
+"popularity_score": 17.3,
+"visibility_domain_or_restricted": "domain",
+"created": "2023-08-16"
+},
+{
+"dataset_identifier": "100310",
+"title": "Grosser Rat: Gremien",
+"reuse_count": 0,
+"api_call_count": 29083,
+"download_count": 27955,
+"popularity_score": 14.5,
+"visibility_domain_or_restricted": "domain",
+"created": "2023-08-16"
+},
+{
+"dataset_identifier": "100311",
+"title": "Grosser Rat: Geschäfte",
+"reuse_count": 0,
+"api_call_count": 2110425,
+"download_count": 24054,
+"popularity_score": 55.1,
+"visibility_domain_or_restricted": "domain",
+"created": "2023-08-16"
+},
+{
+"dataset_identifier": "100312",
+"title": "Grosser Rat: Zuweisungen von Geschäften",
+"reuse_count": 0,
+"api_call_count": 898709,
+"download_count": 13629,
+"popularity_score": 36.8,
+"visibility_domain_or_restricted": "domain",
+"created": "2023-08-16"
+},
+{
+"dataset_identifier": "100313",
+"title": "Grosser Rat: Dokumente",
+"reuse_count": 0,
+"api_call_count": 1051809,
+"download_count": 33301,
+"popularity_score": 42.8,
+"visibility_domain_or_restricted": "domain",
+"created": "2023-08-16"
+},
+{
+"dataset_identifier": "100314",
+"title": "Grosser Rat: Vorgänge von Geschäften",
+"reuse_count": 0,
+"api_call_count": 1043154,
+"download_count": 13608,
+"popularity_score": 39.2,
+"visibility_domain_or_restricted": "domain",
+"created": "2023-08-16"
+},
+{
+"dataset_identifier": "100316",
+"title": "Kandidierende der Nationalratswahlen 22. Oktober 2023",
+"reuse_count": 0,
+"api_call_count": 20571,
+"download_count": 8124,
+"popularity_score": 9.5,
+"visibility_domain_or_restricted": "domain",
+"created": "2023-09-15"
+},
+{
+"dataset_identifier": "100317",
+"title": "Kandidierende der Ständeratswahlen 22. Oktober 2023",
+"reuse_count": 0,
+"api_call_count": 8535,
+"download_count": 8206,
+"popularity_score": 7.8,
+"visibility_domain_or_restricted": "domain",
+"created": "2023-09-15"
+},
+{
+"dataset_identifier": "100318",
+"title": "Gesundheitsversorgung (GSV): Pflegeheime",
+"reuse_count": 0,
+"api_call_count": 81096,
+"download_count": 12613,
+"popularity_score": 15.2,
+"visibility_domain_or_restricted": "domain",
+"created": "2023-10-20"
+},
+{
+"dataset_identifier": "100319",
+"title": "Gesundheitsversorgung (GSV): Pflegeheimbewohnende",
+"reuse_count": 0,
+"api_call_count": 29092,
+"download_count": 7593,
+"popularity_score": 10.2,
+"visibility_domain_or_restricted": "domain",
+"created": "2023-10-20"
+},
+{
+"dataset_identifier": "100320",
+"title": "Gesundheitsversorgung (GSV): Spitalkennzahlen",
+"reuse_count": 0,
+"api_call_count": 336250,
+"download_count": 12765,
+"popularity_score": 24.8,
+"visibility_domain_or_restricted": "domain",
+"created": "2023-10-20"
+},
+{
+"dataset_identifier": "100321",
+"title": "Erwerb des Schweizer Bürgerrechts nach Geschlecht, Alter, Geburtsland und Staatsangehörigkeit bei Gesuchsstellung",
+"reuse_count": 0,
+"api_call_count": 49770,
+"download_count": 7944,
+"popularity_score": 12.0,
+"visibility_domain_or_restricted": "domain",
+"created": "2023-06-22"
+},
+{
+"dataset_identifier": "100323",
+"title": "Rheintrübung kontinuierlich",
+"reuse_count": 0,
+"api_call_count": 94280,
+"download_count": 22930,
+"popularity_score": 18.0,
+"visibility_domain_or_restricted": "domain",
+"created": "2023-10-19"
+},
+{
+"dataset_identifier": "100325",
+"title": "Kantonales Leistungsverzeichnis: Gebühren",
+"reuse_count": 0,
+"api_call_count": 19967,
+"download_count": 8908,
+"popularity_score": 9.6,
+"visibility_domain_or_restricted": "domain",
+"created": "2023-11-07"
+},
+{
+"dataset_identifier": "100326",
+"title": "Lebendgeborene seit 1901",
+"reuse_count": 0,
+"api_call_count": 10731,
+"download_count": 7714,
+"popularity_score": 8.1,
+"visibility_domain_or_restricted": "domain",
+"created": "2023-11-07"
+},
+{
+"dataset_identifier": "100329",
+"title": "Parkflächen",
+"reuse_count": 0,
+"api_call_count": 40421,
+"download_count": 9832,
+"popularity_score": 11.8,
+"visibility_domain_or_restricted": "domain",
+"created": "2023-12-13"
+},
+{
+"dataset_identifier": "100330",
+"title": "Handelsregister: Firmen mit Rechtsform und Standort",
+"reuse_count": 0,
+"api_call_count": 140935,
+"download_count": 37690,
+"popularity_score": 22.5,
+"visibility_domain_or_restricted": "domain",
+"created": "2024-01-02"
+},
+{
+"dataset_identifier": "100331",
+"title": "Veränderte Wahlzettel der Nationalratswahlen 22. Oktober 2023",
+"reuse_count": 0,
+"api_call_count": 28243,
+"download_count": 7884,
+"popularity_score": 10.2,
+"visibility_domain_or_restricted": "domain",
+"created": "2023-02-13"
+},
+{
+"dataset_identifier": "100332",
+"title": "Verbotszonen geteilte Mikromobilität: Sperr- und Parkverbotszonen",
+"reuse_count": 0,
+"api_call_count": 14381,
+"download_count": 15894,
+"popularity_score": 10.6,
+"visibility_domain_or_restricted": "domain",
+"created": "2023-12-05"
+},
+{
+"dataset_identifier": "100333",
+"title": "Kandidierende der Ersatzwahlen Regierungsrat 3. März 2024",
+"reuse_count": 0,
+"api_call_count": 9569,
+"download_count": 7887,
+"popularity_score": 7.9,
+"visibility_domain_or_restricted": "domain",
+"created": "2024-01-05"
+},
+{
+"dataset_identifier": "100334",
+"title": "Kandidierende der Ersatzwahlen Regierungspräsidium 3. März 2024",
+"reuse_count": 0,
+"api_call_count": 6526,
+"download_count": 7792,
+"popularity_score": 7.4,
+"visibility_domain_or_restricted": "domain",
+"created": "2024-01-05"
+},
+{
+"dataset_identifier": "100335",
+"title": "Baustellen",
+"reuse_count": 0,
+"api_call_count": 43936,
+"download_count": 12126,
+"popularity_score": 12.7,
+"visibility_domain_or_restricted": "domain",
+"created": "2024-05-14"
+},
+{
+"dataset_identifier": "100336",
+"title": "Einzugsgebiet der ARA Basel",
+"reuse_count": 0,
+"api_call_count": 57189,
+"download_count": 12689,
+"popularity_score": 13.8,
+"visibility_domain_or_restricted": "domain",
+"created": "2024-01-17"
+},
+{
+"dataset_identifier": "100337",
+"title": "Resultate der Ersatzwahlen Regierungsrat 3. März 2024",
+"reuse_count": 0,
+"api_call_count": 38084,
+"download_count": 7513,
+"popularity_score": 10.9,
+"visibility_domain_or_restricted": "domain",
+"created": "2024-01-28"
+},
+{
+"dataset_identifier": "100338",
+"title": "Resultate der Ersatzwahlen Regierungspräsidium 3. März 2024",
+"reuse_count": 0,
+"api_call_count": 29752,
+"download_count": 7526,
+"popularity_score": 10.2,
+"visibility_domain_or_restricted": "domain",
+"created": "2024-01-28"
+},
+{
+"dataset_identifier": "100341",
+"title": "Tagesheime und Kitas",
+"reuse_count": 0,
+"api_call_count": 16236,
+"download_count": 9962,
+"popularity_score": 9.5,
+"visibility_domain_or_restricted": "domain",
+"created": "2017-10-16"
+},
+{
+"dataset_identifier": "100345",
+"title": "Abstimmungen Details",
+"reuse_count": 0,
+"api_call_count": 63568,
+"download_count": 13458,
+"popularity_score": 14.4,
+"visibility_domain_or_restricted": "domain",
+"created": "2024-01-28"
+},
+{
+"dataset_identifier": "100346",
+"title": "Kennzahlen der Abstimmungen",
+"reuse_count": 0,
+"api_call_count": 170791,
+"download_count": 7760,
+"popularity_score": 18.0,
+"visibility_domain_or_restricted": "domain",
+"created": "2024-01-28"
+},
+{
+"dataset_identifier": "100348",
+"title": "Grosser Rat: Tagesordnungen und Traktandenlisten der Grossratssitzungen",
+"reuse_count": 0,
+"api_call_count": 33658,
+"download_count": 9186,
+"popularity_score": 11.1,
+"visibility_domain_or_restricted": "domain",
+"created": "2024-03-18"
+},
+{
+"dataset_identifier": "100352",
+"title": "Kantonsblatt",
+"reuse_count": 0,
+"api_call_count": 134096,
+"download_count": 18017,
+"popularity_score": 19.0,
+"visibility_domain_or_restricted": "domain",
+"created": "2024-02-29"
+},
+{
+"dataset_identifier": "100353",
+"title": "Effektiver und erwarteter täglicher Gasverbrauch",
+"reuse_count": 0,
+"api_call_count": 28572,
+"download_count": 19551,
+"popularity_score": 13.0,
+"visibility_domain_or_restricted": "domain",
+"created": "2024-03-08"
+},
+{
+"dataset_identifier": "100354",
+"title": "Gesetzessammlung: Gesetzestexte",
+"reuse_count": 0,
+"api_call_count": 33546,
+"download_count": 8999,
+"popularity_score": 11.0,
+"visibility_domain_or_restricted": "domain",
+"created": "2024-10-25"
+},
+{
+"dataset_identifier": "100355",
+"title": "Gesetzessammlung: Gesetzesänderungen",
+"reuse_count": 0,
+"api_call_count": 12315,
+"download_count": 8392,
+"popularity_score": 8.5,
+"visibility_domain_or_restricted": "domain",
+"created": "2024-10-25"
+},
+{
+"dataset_identifier": "100356",
+"title": "Geschwindigkeitsklassen motorisierter Individualverkehr",
+"reuse_count": 0,
+"api_call_count": 59476,
+"download_count": 14454,
+"popularity_score": 14.3,
+"visibility_domain_or_restricted": "domain",
+"created": "2024-03-05"
+},
+{
+"dataset_identifier": "100357",
+"title": "Baumkronenbedeckung",
+"reuse_count": 0,
+"api_call_count": 9891,
+"download_count": 7863,
+"popularity_score": 8.0,
+"visibility_domain_or_restricted": "domain",
+"created": "2012-12-31"
+},
+{
+"dataset_identifier": "100360",
+"title": "Resultate der Ersatzwahlen Regierungsrat 7. April 2024 (2. Wahlgang)",
+"reuse_count": 0,
+"api_call_count": 14887,
+"download_count": 7569,
+"popularity_score": 8.6,
+"visibility_domain_or_restricted": "domain",
+"created": "2024-03-20"
+},
+{
+"dataset_identifier": "100361",
+"title": "Resultate der Ersatzwahlen Regierungspräsidium 7. April 2024 (2. Wahlgang)",
+"reuse_count": 0,
+"api_call_count": 12988,
+"download_count": 7578,
+"popularity_score": 8.4,
+"visibility_domain_or_restricted": "domain",
+"created": "2024-03-20"
+},
+{
+"dataset_identifier": "100362",
+"title": "Sauberkeitsindex pro Quartal und Wohnviertel",
+"reuse_count": 0,
+"api_call_count": 276015,
+"download_count": 11710,
+"popularity_score": 22.7,
+"visibility_domain_or_restricted": "domain",
+"created": "2024-05-01"
+},
+{
+"dataset_identifier": "100363",
+"title": "Secondhand-Angebote / Wiederverwendungsstellen",
+"reuse_count": 0,
+"api_call_count": 34019,
+"download_count": 15158,
+"popularity_score": 12.6,
+"visibility_domain_or_restricted": "domain",
+"created": "2026-08-10"
+},
+{
+"dataset_identifier": "100365",
+"title": "Staatsarchiv: Neuzugänge im öffentlichen Archivkatalog",
+"reuse_count": 0,
+"api_call_count": 25782,
+"download_count": 7047,
+"popularity_score": 9.7,
+"visibility_domain_or_restricted": "domain",
+"created": "2024-05-29"
+},
+{
+"dataset_identifier": "100366",
+"title": "Kantonsblatt: Baupublikationen",
+"reuse_count": 0,
+"api_call_count": 33433,
+"download_count": 15963,
+"popularity_score": 12.7,
+"visibility_domain_or_restricted": "domain",
+"created": "2024-04-11"
+},
+{
+"dataset_identifier": "100375",
+"title": "Zivilschutzkataster Quartier",
+"reuse_count": 0,
+"api_call_count": 5418,
+"download_count": 6844,
+"popularity_score": 6.8,
+"visibility_domain_or_restricted": "domain",
+"created": null
+},
+{
+"dataset_identifier": "100376",
+"title": "Zivilschutzkataster Sektor",
+"reuse_count": 0,
+"api_call_count": 3049,
+"download_count": 6705,
+"popularity_score": 6.2,
+"visibility_domain_or_restricted": "domain",
+"created": null
+},
+{
+"dataset_identifier": "100377",
+"title": "Gesundheitsversorgung (GSV): Tagesgäste von Tages- und Nachtpflegeeinrichtungen (TNP)",
+"reuse_count": 0,
+"api_call_count": 7514,
+"download_count": 6015,
+"popularity_score": 7.0,
+"visibility_domain_or_restricted": "domain",
+"created": "2024-08-14"
+},
+{
+"dataset_identifier": "100378",
+"title": "Gesundheitsversorgung (GSV): Pflegebedürftige im Bereich der Pflege zu Hause (PzH)",
+"reuse_count": 0,
+"api_call_count": 7936,
+"download_count": 5975,
+"popularity_score": 7.0,
+"visibility_domain_or_restricted": "domain",
+"created": "2024-09-11"
+},
+{
+"dataset_identifier": "100379",
+"title": "Kandidierende der Gerichtspräsidienwahlen seit 2024",
+"reuse_count": 0,
+"api_call_count": 8433,
+"download_count": 7249,
+"popularity_score": 7.5,
+"visibility_domain_or_restricted": "domain",
+"created": "2024-06-25"
+},
+{
+"dataset_identifier": "100380",
+"title": "Entwicklung und Zusammenarbeit: Unterstützte Projekte",
+"reuse_count": 0,
+"api_call_count": 141036,
+"download_count": 6229,
+"popularity_score": 16.3,
+"visibility_domain_or_restricted": "domain",
+"created": "2024-06-28"
+},
+{
+"dataset_identifier": "100381",
+"title": "Resultate der Wahl eines zusätzl. Strafgerichtspräsidiums 18. August 2024",
+"reuse_count": 0,
+"api_call_count": 15983,
+"download_count": 6727,
+"popularity_score": 8.5,
+"visibility_domain_or_restricted": "domain",
+"created": "2024-07-07"
+},
+{
+"dataset_identifier": "100382",
+"title": "Solarkataster: Solarpotenzial",
+"reuse_count": 0,
+"api_call_count": 72465,
+"download_count": 13296,
+"popularity_score": 14.9,
+"visibility_domain_or_restricted": "domain",
+"created": "2012-03-06"
+},
+{
+"dataset_identifier": "100383",
+"title": "Solarkataster: Dachkanten",
+"reuse_count": 0,
+"api_call_count": 13928,
+"download_count": 13711,
+"popularity_score": 10.1,
+"visibility_domain_or_restricted": "domain",
+"created": "2012-03-06"
+},
+{
+"dataset_identifier": "100384",
+"title": "Zeitreihe der Temperaturen der Gartenbäder",
+"reuse_count": 0,
+"api_call_count": 50137,
+"download_count": 30077,
+"popularity_score": 16.5,
+"visibility_domain_or_restricted": "domain",
+"created": "2024-08-16"
+},
+{
+"dataset_identifier": "100385",
+"title": "Kandidierende der Grossratswahlen 20. Oktober 2024",
+"reuse_count": 0,
+"api_call_count": 44998,
+"download_count": 6970,
+"popularity_score": 11.3,
+"visibility_domain_or_restricted": "domain",
+"created": "2024-08-15"
+},
+{
+"dataset_identifier": "100386",
+"title": "Kandidierende der Regierungsratswahlen 20. Oktober 2024",
+"reuse_count": 0,
+"api_call_count": 10547,
+"download_count": 6674,
+"popularity_score": 7.7,
+"visibility_domain_or_restricted": "domain",
+"created": "2024-08-15"
+},
+{
+"dataset_identifier": "100387",
+"title": "Kandidierende der Regierungspräsidiumswahlen 20. Oktober 2024",
+"reuse_count": 0,
+"api_call_count": 6844,
+"download_count": 6853,
+"popularity_score": 7.1,
+"visibility_domain_or_restricted": "domain",
+"created": "2024-08-15"
+},
+{
+"dataset_identifier": "100388",
+"title": "Aktuelle Temperaturen der Gartenbäder",
+"reuse_count": 0,
+"api_call_count": 83644,
+"download_count": 48765,
+"popularity_score": 21.2,
+"visibility_domain_or_restricted": "domain",
+"created": "2024-08-16"
+},
+{
+"dataset_identifier": "100389",
+"title": "Sprayereien",
+"reuse_count": 0,
+"api_call_count": 35754,
+"download_count": 16172,
+"popularity_score": 12.9,
+"visibility_domain_or_restricted": "domain",
+"created": "2024-10-25"
+},
+{
+"dataset_identifier": "100391",
+"title": "Kandidierende der Grossratswahlen nach Geschlecht seit 1968",
+"reuse_count": 0,
+"api_call_count": 12665,
+"download_count": 6782,
+"popularity_score": 8.1,
+"visibility_domain_or_restricted": "domain",
+"created": "2024-08-21"
+},
+{
+"dataset_identifier": "100392",
+"title": "Kandidierende der Grossratswahlen nach Alter, Geschlecht und Liste seit 2020",
+"reuse_count": 0,
+"api_call_count": 22233,
+"download_count": 6909,
+"popularity_score": 9.3,
+"visibility_domain_or_restricted": "domain",
+"created": "2024-08-21"
+},
+{
+"dataset_identifier": "100393",
+"title": "Kandidierende der Grossratswahlen 2024 nach Häufigkeit der Kandidatur seit 2008",
+"reuse_count": 0,
+"api_call_count": 12817,
+"download_count": 6897,
+"popularity_score": 8.1,
+"visibility_domain_or_restricted": "domain",
+"created": "2024-08-21"
+},
+{
+"dataset_identifier": "100394",
+"title": "Kandidierende der Grossratswahlen nach Berufsgruppe seit 2020",
+"reuse_count": 0,
+"api_call_count": 10466,
+"download_count": 6939,
+"popularity_score": 7.8,
+"visibility_domain_or_restricted": "domain",
+"created": "2024-08-21"
+},
+{
+"dataset_identifier": "100396",
+"title": "U-Abos nach Alter und Wohnsitz",
+"reuse_count": 0,
+"api_call_count": 9152,
+"download_count": 4033,
+"popularity_score": 6.5,
+"visibility_domain_or_restricted": "domain",
+"created": "2024-10-10"
+},
+{
+"dataset_identifier": "100397",
+"title": "Schulferien Kanton Basel-Stadt",
+"reuse_count": 0,
+"api_call_count": 1181579,
+"download_count": 74734,
+"popularity_score": 49.7,
+"visibility_domain_or_restricted": "domain",
+"created": "2024-09-16"
+},
+{
+"dataset_identifier": "100398",
+"title": "Grundwassernutzung",
+"reuse_count": 0,
+"api_call_count": 10717,
+"download_count": 8995,
+"popularity_score": 8.4,
+"visibility_domain_or_restricted": "domain",
+"created": "2024-02-16"
+},
+{
+"dataset_identifier": "100399",
+"title": "Resultate der Grossratswahlen 20. Oktober 2024",
+"reuse_count": 0,
+"api_call_count": 183688,
+"download_count": 6972,
+"popularity_score": 18.3,
+"visibility_domain_or_restricted": "domain",
+"created": "2024-09-24"
+},
+{
+"dataset_identifier": "100400",
+"title": "Resultate der Regierungsratswahlen 20. Oktober 2024",
+"reuse_count": 0,
+"api_call_count": 183324,
+"download_count": 6913,
+"popularity_score": 18.3,
+"visibility_domain_or_restricted": "domain",
+"created": "2024-09-24"
+},
+{
+"dataset_identifier": "100401",
+"title": "Resultate der Regierungspräsidiumswahl 20. Oktober 2024",
+"reuse_count": 0,
+"api_call_count": 172920,
+"download_count": 6665,
+"popularity_score": 17.8,
+"visibility_domain_or_restricted": "domain",
+"created": "2024-09-24"
+},
+{
+"dataset_identifier": "100402",
+"title": "Hochbauprojekte aus Verwaltungs- und Finanzvermögen",
+"reuse_count": 0,
+"api_call_count": 51982,
+"download_count": 11418,
+"popularity_score": 13.1,
+"visibility_domain_or_restricted": "domain",
+"created": null
+},
+{
+"dataset_identifier": "100403",
+"title": "Gesundheitsversorgung (GSV): Patientenkennzahlen",
+"reuse_count": 0,
+"api_call_count": 51811,
+"download_count": 6090,
+"popularity_score": 11.5,
+"visibility_domain_or_restricted": "domain",
+"created": "2024-10-04"
+},
+{
+"dataset_identifier": "100404",
+"title": "Velostadtplan: Hinweise",
+"reuse_count": 0,
+"api_call_count": 23653,
+"download_count": 24069,
+"popularity_score": 13.3,
+"visibility_domain_or_restricted": "domain",
+"created": null
+},
+{
+"dataset_identifier": "100405",
+"title": "Kandidierende der Regierungsratswahlen 24. November 2024 (2. Wahlgang)",
+"reuse_count": 0,
+"api_call_count": 4674,
+"download_count": 6570,
+"popularity_score": 6.6,
+"visibility_domain_or_restricted": "domain",
+"created": "2024-10-25"
+},
+{
+"dataset_identifier": "100406",
+"title": "Dashboards - Open Data Basel-Stadt",
+"reuse_count": 0,
+"api_call_count": 15428,
+"download_count": 6826,
+"popularity_score": 8.4,
+"visibility_domain_or_restricted": "domain",
+"created": "2024-11-07"
+},
+{
+"dataset_identifier": "100407",
+"title": "Resultate der Regierungsratswahlen 24. November 2024 (2. Wahlgang)",
+"reuse_count": 0,
+"api_call_count": 26789,
+"download_count": 6332,
+"popularity_score": 9.6,
+"visibility_domain_or_restricted": "domain",
+"created": "2024-11-20"
+},
+{
+"dataset_identifier": "100408",
+"title": "Veränderte Wahlzettel der Grossratswahlen 20. Oktober 2024",
+"reuse_count": 0,
+"api_call_count": 7283,
+"download_count": 8263,
+"popularity_score": 7.6,
+"visibility_domain_or_restricted": "domain",
+"created": "2024-12-01"
+},
+{
+"dataset_identifier": "100412",
+"title": "Befragung 55plus (2023)",
+"reuse_count": 0,
+"api_call_count": 8176,
+"download_count": 6680,
+"popularity_score": 7.3,
+"visibility_domain_or_restricted": "domain",
+"created": "2025-01-21"
+},
+{
+"dataset_identifier": "100413",
+"title": "Tägliche Ankünfte, Logiernächte, Zimmer nach Hotelkategorie",
+"reuse_count": 0,
+"api_call_count": 23052,
+"download_count": 7170,
+"popularity_score": 9.4,
+"visibility_domain_or_restricted": "domain",
+"created": "2025-01-29"
+},
+{
+"dataset_identifier": "100414",
+"title": "Tägliche Ankünfte und Logiernächte nach Herkunftsland",
+"reuse_count": 0,
+"api_call_count": 20300,
+"download_count": 8223,
+"popularity_score": 9.5,
+"visibility_domain_or_restricted": "domain",
+"created": "2025-01-29"
+},
+{
+"dataset_identifier": "100415",
+"title": "Geteilte Mikromobilität: Aktuelle Verfügbarkeit",
+"reuse_count": 0,
+"api_call_count": 106633,
+"download_count": 28328,
+"popularity_score": 19.6,
+"visibility_domain_or_restricted": "domain",
+"created": "2025-01-31"
+},
+{
+"dataset_identifier": "100416",
+"title": "Geteilte Mikromobilität nach Bezirk und Tag",
+"reuse_count": 0,
+"api_call_count": 11671,
+"download_count": 19231,
+"popularity_score": 10.9,
+"visibility_domain_or_restricted": "domain",
+"created": "2025-01-31"
+},
+{
+"dataset_identifier": "100417",
+"title": "ESC Eurovision Song Contest - FAQ",
+"reuse_count": 0,
+"api_call_count": 103948,
+"download_count": 6228,
+"popularity_score": 14.6,
+"visibility_domain_or_restricted": "domain",
+"created": "2025-01-31"
+},
+{
+"dataset_identifier": "100418",
+"title": "Erwartete Besucherzahl im Raum St. Jakob",
+"reuse_count": 0,
+"api_call_count": 321,
+"download_count": 591,
+"popularity_score": 1.9,
+"visibility_domain_or_restricted": "domain",
+"created": "2025-02-28"
+},
+{
+"dataset_identifier": "100419",
+"title": "Veranstaltungen im Raum St. Jakob",
+"reuse_count": 0,
+"api_call_count": 21854,
+"download_count": 13942,
+"popularity_score": 11.1,
+"visibility_domain_or_restricted": "domain",
+"created": "2025-02-28"
+},
+{
+"dataset_identifier": "100420",
+"title": "Wasserverbrauch im Kanton Basel-Stadt und in Binningen seit 1951",
+"reuse_count": 0,
+"api_call_count": 6980,
+"download_count": 5980,
+"popularity_score": 6.9,
+"visibility_domain_or_restricted": "domain",
+"created": "2025-02-03"
+},
+{
+"dataset_identifier": "100421",
+"title": "Zivilschutzkataster Block",
+"reuse_count": 0,
+"api_call_count": 3158,
+"download_count": 7115,
+"popularity_score": 6.3,
+"visibility_domain_or_restricted": "domain",
+"created": null
+},
+{
+"dataset_identifier": "100422",
+"title": "Geteilte Mikromobilität nach Gemeinde und Tag",
+"reuse_count": 0,
+"api_call_count": 9469,
+"download_count": 19586,
+"popularity_score": 10.7,
+"visibility_domain_or_restricted": "domain",
+"created": "2025-01-31"
+},
+{
+"dataset_identifier": "100424",
+"title": "Bewilligungen gemäss dem baselstädtischen Gesetz über öffentliche Ruhetage und Ladenöffnung",
+"reuse_count": 0,
+"api_call_count": 4736,
+"download_count": 2386,
+"popularity_score": 4.8,
+"visibility_domain_or_restricted": "domain",
+"created": "2025-04-09"
+},
+{
+"dataset_identifier": "100425",
+"title": "Bewilligungen für Nacht-, Sonn- und/oder Feiertagsarbeit",
+"reuse_count": 0,
+"api_call_count": 2994,
+"download_count": 2421,
+"popularity_score": 4.4,
+"visibility_domain_or_restricted": "domain",
+"created": "2025-04-10"
+},
+{
+"dataset_identifier": "100426",
+"title": "Velostadtplan: Eignung",
+"reuse_count": 0,
+"api_call_count": 7085,
+"download_count": 866,
+"popularity_score": 4.3,
+"visibility_domain_or_restricted": "domain",
+"created": null
+},
+{
+"dataset_identifier": "100428",
+"title": "Geteilte Mikromobilität nach Bezirk, Wochentagesabschnitt und Monat",
+"reuse_count": 0,
+"api_call_count": 14305,
+"download_count": 12878,
+"popularity_score": 10.0,
+"visibility_domain_or_restricted": "domain",
+"created": "2025-01-31"
+},
+{
+"dataset_identifier": "100429",
+"title": "Anreiseempfehlungen für Veranstaltungen im Raum St. Jakob",
+"reuse_count": 0,
+"api_call_count": 3766,
+"download_count": 11230,
+"popularity_score": 7.7,
+"visibility_domain_or_restricted": "domain",
+"created": "2025-03-05"
+},
+{
+"dataset_identifier": "100430",
+"title": "Lichtsignalanlagen",
+"reuse_count": 0,
+"api_call_count": 7398,
+"download_count": 9728,
+"popularity_score": 8.1,
+"visibility_domain_or_restricted": "domain",
+"created": null
+},
+{
+"dataset_identifier": "100431",
+"title": "Kantonale Partizipationsvorhaben",
+"reuse_count": 0,
+"api_call_count": 7369,
+"download_count": 10327,
+"popularity_score": 8.2,
+"visibility_domain_or_restricted": "domain",
+"created": null
+},
+{
+"dataset_identifier": "100440",
+"title": "Velostadtplan: Fussgängerzone",
+"reuse_count": 0,
+"api_call_count": 1156,
+"download_count": 838,
+"popularity_score": 2.7,
+"visibility_domain_or_restricted": "domain",
+"created": null
+},
+{
+"dataset_identifier": "100441",
+"title": "Angezeigte Straftaten nach Ausländer- und Integrationsgesetz (AIG)",
+"reuse_count": 0,
+"api_call_count": 5610,
+"download_count": 2435,
+"popularity_score": 5.1,
+"visibility_domain_or_restricted": "domain",
+"created": "2025-12-09"
+},
+{
+"dataset_identifier": "100443",
+"title": "FAQ zur KI-Richtlinie",
+"reuse_count": 0,
+"api_call_count": 13092,
+"download_count": 3726,
+"popularity_score": 7.0,
+"visibility_domain_or_restricted": "domain",
+"created": "2025-06-16"
+},
+{
+"dataset_identifier": "100444",
+"title": "Registrierte Hunde nach Postleitzahl und verschiedenen Merkmalen seit 2008",
+"reuse_count": 0,
+"api_call_count": 13240,
+"download_count": 11601,
+"popularity_score": 9.5,
+"visibility_domain_or_restricted": "domain",
+"created": "2025-05-20"
+},
+{
+"dataset_identifier": "100445",
+"title": "Hundebestand im Kanton Basel-Stadt seit 1970",
+"reuse_count": 0,
+"api_call_count": 10084,
+"download_count": 10720,
+"popularity_score": 8.8,
+"visibility_domain_or_restricted": "domain",
+"created": "2025-05-20"
+},
+{
+"dataset_identifier": "100446",
+"title": "Hundenamen im Kanton Basel-Stadt seit 2008",
+"reuse_count": 0,
+"api_call_count": 84063,
+"download_count": 11478,
+"popularity_score": 15.1,
+"visibility_domain_or_restricted": "domain",
+"created": "2025-05-23"
+},
+{
+"dataset_identifier": "100447",
+"title": "Anzahl registrierter Hundebesitzer seit 2018",
+"reuse_count": 0,
+"api_call_count": 6882,
+"download_count": 10787,
+"popularity_score": 8.3,
+"visibility_domain_or_restricted": "domain",
+"created": "2025-05-23"
+},
+{
+"dataset_identifier": "100448",
+"title": "Arbeitsfreie Tage für Mitarbeitende der kantonalen Verwaltung Basel-Stadt",
+"reuse_count": 0,
+"api_call_count": 7342,
+"download_count": 9099,
+"popularity_score": 7.9,
+"visibility_domain_or_restricted": "domain",
+"created": "2025-06-06"
+},
+{
+"dataset_identifier": "100449",
+"title": "Angezeigte Straftaten nach Betäubungsmittelgesetz (BetmG)",
+"reuse_count": 0,
+"api_call_count": 4555,
+"download_count": 2450,
+"popularity_score": 4.8,
+"visibility_domain_or_restricted": "domain",
+"created": "2025-12-09"
+},
+{
+"dataset_identifier": "100459",
+"title": "Notfalltreffpunkte",
+"reuse_count": 0,
+"api_call_count": 10004,
+"download_count": 10046,
+"popularity_score": 8.6,
+"visibility_domain_or_restricted": "domain",
+"created": "2025-03-21"
+},
+{
+"dataset_identifier": "100462",
+"title": "Spielen in Basel: Spielplätze",
+"reuse_count": 0,
+"api_call_count": 11602,
+"download_count": 16094,
+"popularity_score": 10.3,
+"visibility_domain_or_restricted": "domain",
+"created": "2025-09-26"
+},
+{
+"dataset_identifier": "100463",
+"title": "Spielen in Basel: Spielgeräte",
+"reuse_count": 0,
+"api_call_count": 11471,
+"download_count": 7270,
+"popularity_score": 8.0,
+"visibility_domain_or_restricted": "domain",
+"created": "2025-09-26"
+},
+{
+"dataset_identifier": "100464",
+"title": "Informationen für den Raum St. Jakob",
+"reuse_count": 0,
+"api_call_count": 2705,
+"download_count": 10709,
+"popularity_score": 7.2,
+"visibility_domain_or_restricted": "domain",
+"created": "2025-02-28"
+},
+{
+"dataset_identifier": "100465",
+"title": "Gesammelte PET-Einwegflaschen im Kanton Basel-Stadt",
+"reuse_count": 0,
+"api_call_count": 3499,
+"download_count": 4150,
+"popularity_score": 5.4,
+"visibility_domain_or_restricted": "domain",
+"created": "2025-08-26"
+},
+{
+"dataset_identifier": "100468",
+"title": "Open Data Basel-Stadt Mastodon-Posts",
+"reuse_count": 0,
+"api_call_count": 57257,
+"download_count": 4674,
+"popularity_score": 11.4,
+"visibility_domain_or_restricted": "domain",
+"created": "2025-09-10"
+},
+{
+"dataset_identifier": "100477",
+"title": "Bodenbedeckung",
+"reuse_count": 0,
+"api_call_count": 19921,
+"download_count": 16162,
+"popularity_score": 11.4,
+"visibility_domain_or_restricted": "domain",
+"created": null
+},
+{
+"dataset_identifier": "100488",
+"title": "Resultate der Einwohnerratswahlen in Riehen 2025",
+"reuse_count": 0,
+"api_call_count": 8463,
+"download_count": 3740,
+"popularity_score": 6.3,
+"visibility_domain_or_restricted": "domain",
+"created": "2025-10-14"
+},
+{
+"dataset_identifier": "100508",
+"title": "Angezeigte Straftaten nach Strafgesetzbuch (StGB)",
+"reuse_count": 0,
+"api_call_count": 12464,
+"download_count": 187,
+"popularity_score": 4.3,
+"visibility_domain_or_restricted": "domain",
+"created": "2025-12-09"
+},
+{
+"dataset_identifier": "100513",
+"title": "Anschauungsbeispiel: Vom Kanton in Auftrag gegebene Gutachten",
+"reuse_count": 0,
+"api_call_count": 2768,
+"download_count": 3554,
+"popularity_score": 4.9,
+"visibility_domain_or_restricted": "domain",
+"created": "2025-12-17"
+},
+{
+"dataset_identifier": "100514",
+"title": "Rückmeldungen Vernehmlassungen",
+"reuse_count": 0,
+"api_call_count": 2730,
+"download_count": 1154,
+"popularity_score": 3.5,
+"visibility_domain_or_restricted": "domain",
+"created": "2026-01-07"
+},
+{
+"dataset_identifier": "100515",
+"title": "Dokumente Vernehmlassungen",
+"reuse_count": 0,
+"api_call_count": 1160,
+"download_count": 946,
+"popularity_score": 2.8,
+"visibility_domain_or_restricted": "domain",
+"created": "2026-01-07"
+},
+{
+"dataset_identifier": "100516",
+"title": "Vernehmlassungen",
+"reuse_count": 0,
+"api_call_count": 1152,
+"download_count": 899,
+"popularity_score": 2.7,
+"visibility_domain_or_restricted": "domain",
+"created": "2026-01-29"
+},
+{
+"dataset_identifier": "100519",
+"title": "Anzahl durch Wärmepumpen beheizte Gebäude",
+"reuse_count": 0,
+"api_call_count": 4966,
+"download_count": 2625,
+"popularity_score": 5.0,
+"visibility_domain_or_restricted": "domain",
+"created": "2026-01-23"
+},
+{
+"dataset_identifier": "100533",
+"title": "Bevölkerungsbefragung (2011): Befragung zu Lebenslage und Zufriedenheit",
+"reuse_count": 0,
+"api_call_count": 787,
+"download_count": 2726,
+"popularity_score": 3.7,
+"visibility_domain_or_restricted": "domain",
+"created": "2026-06-08"
+},
+{
+"dataset_identifier": "100534",
+"title": "Bevölkerungsbefragung (2015): Befragung zu Lebenslage und Zufriedenheit",
+"reuse_count": 0,
+"api_call_count": 913,
+"download_count": 2431,
+"popularity_score": 3.6,
+"visibility_domain_or_restricted": "domain",
+"created": "2026-03-26"
+},
+{
+"dataset_identifier": "100535",
+"title": "Bevölkerungsbefragung (2019): Befragung zu Lebenslage und Zufriedenheit",
+"reuse_count": 0,
+"api_call_count": 886,
+"download_count": 2728,
+"popularity_score": 3.8,
+"visibility_domain_or_restricted": "domain",
+"created": "2026-03-26"
+},
+{
+"dataset_identifier": "100536",
+"title": "Bevölkerungsbefragung (2023): Befragung zu Lebenslage und Zufriedenheit",
+"reuse_count": 0,
+"api_call_count": 1109,
+"download_count": 2558,
+"popularity_score": 3.8,
+"visibility_domain_or_restricted": "domain",
+"created": "2026-03-26"
+},
+{
+"dataset_identifier": "100541",
+"title": "Verteilung des Haushaltseinkommens im Kanton Basel-Stadt (Gesamtkanton)",
+"reuse_count": 0,
+"api_call_count": 1370,
+"download_count": 466,
+"popularity_score": 2.4,
+"visibility_domain_or_restricted": "domain",
+"created": "2026-06-10"
+},
+{
+"dataset_identifier": "100542",
+"title": "Verteilung des Haushaltseinkommens nach Gemeinde",
+"reuse_count": 0,
+"api_call_count": 1258,
+"download_count": 513,
+"popularity_score": 2.4,
+"visibility_domain_or_restricted": "domain",
+"created": "2026-06-11"
+},
+{
+"dataset_identifier": "100543",
+"title": "Verteilung des Haushaltseinkommens nach Wohnviertel",
+"reuse_count": 0,
+"api_call_count": 7423,
+"download_count": 521,
+"popularity_score": 4.0,
+"visibility_domain_or_restricted": "domain",
+"created": "2026-06-11"
+},
+{
+"dataset_identifier": "100544",
+"title": "Verteilung des Haushaltseinkommens nach Altersgruppe (älteste Person)",
+"reuse_count": 0,
+"api_call_count": 2280,
+"download_count": 466,
+"popularity_score": 2.7,
+"visibility_domain_or_restricted": "domain",
+"created": "2026-06-11"
+},
+{
+"dataset_identifier": "100545",
+"title": "Verteilung des Haushaltseinkommens nach Altersgruppe (jüngste Person)",
+"reuse_count": 0,
+"api_call_count": 1605,
+"download_count": 463,
+"popularity_score": 2.4,
+"visibility_domain_or_restricted": "domain",
+"created": "2026-06-11"
+},
+{
+"dataset_identifier": "100546",
+"title": "Verteilung des Haushaltseinkommens nach Haushaltsform",
+"reuse_count": 0,
+"api_call_count": 2107,
+"download_count": 471,
+"popularity_score": 2.6,
+"visibility_domain_or_restricted": "domain",
+"created": "2026-06-11"
+},
+{
+"dataset_identifier": "100548",
+"title": "Staatsquote",
+"reuse_count": 0,
+"api_call_count": 1052,
+"download_count": 714,
+"popularity_score": 2.5,
+"visibility_domain_or_restricted": "domain",
+"created": "2026-07-17"
+}
+]
+}

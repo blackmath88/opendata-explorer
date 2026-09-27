@@ -1,0 +1,21 @@
+{
+  "_note": "Synthetic fixture in the shape of an opendata.swiss CKAN package (DCAT-AP CH). Written by hand from the published schema, not captured from the live API.",
+  "name": "velozaehlstellen-beispiel",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "identifier": "velozaehlstellen-beispiel@kanton-beispiel",
+  "title": { "de": "Velozählstellen", "fr": "Points de comptage vélo", "it": "", "en": "Bicycle counting stations" },
+  "description": { "de": "<p>Standorte und Tageswerte der <b>Velozählstellen</b>.</p>", "fr": "Emplacements et valeurs journalières.", "it": "", "en": "" },
+  "keywords": { "de": ["Velo", "Verkehrszählung"], "fr": ["vélo", "comptage"], "it": [], "en": ["bicycle"] },
+  "groups": [ { "name": "mobility", "display_name": { "de": "Mobilität und Verkehr", "fr": "Mobilité et transports", "it": "Mobilità e trasporti", "en": "Mobility and Transport" } } ],
+  "organization": { "name": "kanton-beispiel", "title": "{\"de\": \"Kanton Beispiel\", \"fr\": \"Canton Exemple\"}" },
+  "publisher": "{\"name\": \"Tiefbauamt Kanton Beispiel\", \"url\": \"https://example.test\"}",
+  "accrual_periodicity": "http://publications.europa.eu/resource/authority/frequency/DAILY",
+  "temporals": [ { "start_date": "2019-01-01T00:00:00", "end_date": "2025-12-31T00:00:00" } ],
+  "spatial": "Kanton Beispiel",
+  "modified": "2026-08-30T09:00:00",
+  "resources": [
+    { "format": "CSV", "media_type": "text/csv", "download_url": "https://example.test/velo.csv", "rights": "NonCommercialAllowed-CommercialAllowed-ReferenceRequired" },
+    { "format": "WMS", "url": "https://example.test/wms" },
+    { "format": "GeoJSON", "download_url": "https://example.test/velo.geojson" }
+  ]
+}

@@ -1,5 +1,6 @@
 import type { CatalogueAdapter, DatasetRecord, DatasetStructure, InspectOptions } from '../types';
 import { normalizeOdsDataset } from './normalize';
+import { BASEL_STADT } from '../portal';
 import { structureFromCatalogEntry } from './ods-structure';
 
 /**
@@ -6406,7 +6407,7 @@ const FALLBACK_ENTRIES: unknown[] = [
 ];
 
 export const fallbackDatasets: DatasetRecord[] = FALLBACK_ENTRIES
-  .map(normalizeOdsDataset)
+  .map(entry => normalizeOdsDataset(entry, BASEL_STADT))
   .filter((record): record is DatasetRecord => record !== null);
 
 export class FallbackCatalogueAdapter implements CatalogueAdapter {

@@ -1,4 +1,7 @@
-import * as d3 from 'd3';
+import { BASEL_STADT, activePortal, portalFromSearch, setActivePortal } from './portal';
+import { topicProvenance } from './topic-provenance';
+import { loadUsage, type UsageIndex } from './usage';
+import { loadPortrait, renderPortrait } from './portrait';
 import './styles.css';
 import { openCatalogue } from './data/catalogue';
 import { parseUseCaseIntent } from './intent';
@@ -11,8 +14,9 @@ import { planOperation } from './execution/operations';
 import type { ExecutionResult } from './execution/types';
 import { BENCHMARK_USE_CASES } from './benchmarks/useCases';
 import { canCompose, catalogueStatus, filterCatalogue, type CatalogueView } from './catalogue-ui';
-import { renderGraph, resetAtlasZoom, stopGraph, zoomAtlasIn, zoomAtlasOut, zoomAtlasTo, type AtlasGraphActions } from './ui/graph';
-import { ATLAS_LENS_LABEL, buildAtlasHierarchy, type AtlasHierarchyDatum, type AtlasLens, type AtlasState } from './atlas';
+import { renderGraph, resetAtlasZoom, stopGraph, zoomAtlasOut, zoomAtlasTo, type AtlasGraphActions } from './ui/graph';
+import { formatDeepLink, missingLinkNotice, parseDeepLink } from './deep-link';
+import { ATLAS_LENS_LABEL, atlasSegments, buildAtlasHierarchy, type AtlasHierarchyDatum, type AtlasLens, type AtlasState } from './atlas';
 import { recommendRepresentations, type RepresentationSpec, type RepresentationType } from './representation';
 import { resolveTrustedEvidence } from './evidence-sources/resolver';
 import { providerById, resourceById } from './evidence-sources/registry';
@@ -41,8 +45,17 @@ import type {
   EvidencePlan,
   UseCaseIntent,
 } from './types';
+import { icon } from './ui/icons';
 
-const DEFAULT_QUERY = BENCHMARK_USE_CASES[0].prompt;
+// One portal per page load (`?portal=bs`). Set before anything parses a question.
+setActivePortal(portalFromSearch(location.search));
+const portal = activePortal();
+// Portal-specific look (src/styles.css, :root[data-portal=...]). Style only: never the portal's logo or name as sender.
+document.documentElement.dataset.portal = portal.id;
+
+/** Benchmark questions were written for Basel-Stadt; elsewhere they ask about the portal's own place. */
+const localPrompt = (prompt: string): string => prompt.split(BASEL_STADT.place).join(portal.place);
+const DEFAULT_QUERY = localPrompt(BENCHMARK_USE_CASES[0].prompt);
 
 const app = document.querySelector<HTMLDivElement>('#app')!;
 
@@ -70,6 +83,10 @@ let analysing = false;
 /** Bumped on every workspace change so a stale in-flight analysis is discarded. */
 let analysisToken = 0;
 const structures = new Map<string, DatasetStructure>();
+/** Portrait HTML per dataset, or an error note; loaded on selection only. */
+const portraits = new Map<string, string>();
+/** Portal activity counters for doorways; null until loaded or where the portal has none. */
+let usage: UsageIndex | null = null;
 let inspectorOpen = false;
 /** Execution results keyed by the assessment they validated. */
 const executions = new Map<string, ExecutionResult>();
@@ -86,7 +103,7 @@ app.innerHTML = `
   <header class="header">
     <div class="brand">
       <div class="logo">DF</div><h1>DataFit</h1>
-      <div class="brand-meta">Basel-Stadt Open Data</div>
+      <div class="brand-meta">${escapeHtml(portal.label)}</div><span class="unofficial" title="An independent prototype built on the public API of this portal. Not operated or endorsed by the portal owner.">Unofficial prototype</span>
     </div>
     <div class="header-right">
       <button class="source-pill" id="sourcePill" aria-label="Show catalogue source diagnostics">Loading catalogue…</button>
@@ -95,11 +112,11 @@ app.innerHTML = `
   </header>
   <div class="shell">
     <nav class="rail">
-      <button class="rail-btn active" id="stageDiscover"><span class="rail-icon">⌕</span><span>Discover</span></button>
-      <button class="rail-btn" id="stageCompose" title="Build from the evidence plan"><span class="rail-icon">⌘</span><span>Build</span></button>
-      <button class="rail-btn" disabled title="Milestone 5"><span class="rail-icon">▣</span><span>Materialize</span></button>
+      <button class="rail-btn active" id="stageDiscover"><span class="rail-icon">${icon('discover', { size: 18 })}</span><span>Discover</span></button>
+      <button class="rail-btn" id="stageCompose" title="Build from the evidence plan"><span class="rail-icon">${icon('build', { size: 18 })}</span><span>Build</span></button>
+      <button class="rail-btn" disabled title="Milestone 5"><span class="rail-icon">${icon('materialize', { size: 18 })}</span><span>Materialize</span></button>
       <div class="rail-spacer"></div>
-      <button class="rail-btn" id="legendBtn" title="What the provenance tags mean"><span class="rail-icon">?</span></button>
+      <button class="rail-btn" id="legendBtn" title="What the provenance tags mean"><span class="rail-icon">${icon('help', { size: 18 })}</span></button>
     </nav>
     <main class="main">
       <div class="canvas-toolbar">
@@ -115,12 +132,12 @@ app.innerHTML = `
       <div class="catalogue-list" id="catalogueList"></div>
       <div class="viz-wrap" id="vizWrap">
         <div class="atlas-nav">
-          <div class="atlas-lenses" id="atlasLenses" aria-label="Atlas lens"><button data-lens="topic" class="active">Topic</button><button data-lens="space">Space</button><button data-lens="time">Time</button><button data-lens="readiness">Readiness</button></div>
+          <div class="atlas-lenses" id="atlasLenses" aria-label="Atlas lens"><button data-lens="topic" class="active">${icon('topic', { size: 14 })}Topic</button><button data-lens="space">${icon('space', { size: 14 })}Space</button><button data-lens="time">${icon('time', { size: 14 })}Time</button><button data-lens="readiness">${icon('readiness', { size: 14 })}Readiness</button></div>
           <nav class="atlas-breadcrumb" id="atlasBreadcrumb" aria-label="Atlas breadcrumb"></nav>
           <div class="landscape-info"><b id="landscapeCount">Atlas categories</b><span id="landscapeTotal">all loaded datasets</span></div>
+          <div class="atlas-zoom-controls" aria-label="Atlas navigation"><button id="atlasZoomOut" aria-label="Up one level" title="Up one level (Esc)">${icon('up', { size: 14 })} Up</button><button id="atlasZoomReset">Overview</button></div>
         </div>
-        <div class="atlas-zoom-controls" aria-label="Atlas zoom controls"><button id="atlasZoomIn" aria-label="Zoom in">+</button><button id="atlasZoomOut" aria-label="Zoom out">−</button><button id="atlasZoomReset">Reset</button></div>
-        <div class="viz-scroll"><svg class="viz" id="viz" aria-label="Hierarchical catalogue Atlas"></svg></div>
+        <div class="viz-scroll"><div class="atlas-canvas" id="atlasCanvas" role="group" aria-label="Hierarchical catalogue Atlas"></div></div>
       </div>
       <div class="workbench" id="workbench" hidden></div>
       <div class="prompt-dock">
@@ -152,7 +169,7 @@ const vizWrap = el<HTMLDivElement>('#vizWrap');
 const examples = el<HTMLDivElement>('#examples');
 const composeBtn = el<HTMLButtonElement>('#stageCompose');
 const discoverBtn = el<HTMLButtonElement>('#stageDiscover');
-const svg = d3.select<SVGSVGElement, unknown>('#viz');
+const atlasCanvas = el<HTMLDivElement>('#atlasCanvas');
 
 function el<T extends Element>(selector: string): T {
   return document.querySelector<T>(selector)!;
@@ -202,10 +219,69 @@ function findAtlasNode(root: AtlasHierarchyDatum | null, path: string[]): AtlasH
 }
 
 const atlasActions: AtlasGraphActions = {
-  onFocus: (path, id) => { atlas = { lens: atlas.lens, path }; atlasFocusId = id; renderAtlasBreadcrumb(); },
+  onFocus: (path, id) => { atlas = { lens: atlas.lens, path }; atlasFocusId = id; renderAtlasBreadcrumb(); el<HTMLButtonElement>('#atlasZoomOut').disabled = !path.length; },
   onSelect: selectDataset,
   onWorkspace: toggleWorkspace,
 };
+
+/**
+ * Cross-entrance link: open the Landscape where this dataset lives in the current lens, with it
+ * selected. Works from the question roles, the inspector and Build; same dataset ID everywhere.
+ */
+let linkNotice = '';
+
+/** Open whatever `#dataset=…&lens=…` names; a missing id gets an honest notice, not silence. */
+function applyDeepLink(hash: string): void {
+  const link = parseDeepLink(hash);
+  if (link.lens) {
+    atlas = { lens: link.lens, path: [] };
+    document.querySelectorAll<HTMLButtonElement>('#atlasLenses button').forEach(button => button.classList.toggle('active', button.dataset.lens === link.lens));
+  }
+  if (!link.dataset) return;
+  if (catalog.datasets.some(dataset => dataset.id === link.dataset)) { linkNotice = ''; showInLandscape(link.dataset); return; }
+  linkNotice = missingLinkNotice(link.dataset, catalog.source, catalog.datasets.length);
+  inspectorOpen = true;
+  render();
+}
+
+function showInLandscape(id: string): void {
+  const dataset = catalog.datasets.find(item => item.id === id);
+  if (!dataset) return;
+  const root = buildAtlasHierarchy(catalog.datasets, matches, atlas.lens, searchDatasetIds());
+  const segments = atlasSegments(dataset, atlas.lens);
+  let path: string[] = [];
+  let node: AtlasHierarchyDatum | null = root;
+  for (let depth = segments.length; depth > 0; depth--) {
+    const found = findAtlasNode(root, segments.slice(0, depth));
+    if (found) { path = segments.slice(0, depth); node = found; break; }
+  }
+  atlas = { lens: atlas.lens, path };
+  atlasFocusId = node?.id ?? root.id;
+  catalogueView = 'landscape';
+  document.querySelectorAll<HTMLButtonElement>('[data-view]').forEach(button => button.classList.toggle('active', button.dataset.view === 'landscape'));
+  selectedId = id;
+  if (stage !== 'discover') stage = 'discover';
+  history.replaceState(null, '', formatDeepLink({ dataset: id, lens: atlas.lens }) || location.pathname);
+  render();
+  void loadStructure(id);
+  void loadPortraitFor(id);
+}
+
+async function loadPortraitFor(id: string): Promise<void> {
+  if (portraits.has(id)) return;
+  const dataset = catalog.datasets.find(item => item.id === id);
+  if (!dataset) return;
+  if (catalog.source !== 'live') {
+    portraits.set(id, renderPortrait({ kind: 'none', reason: 'Offline snapshot: previews need the live catalogue.' }));
+  } else {
+    try {
+      portraits.set(id, renderPortrait(await loadPortrait(dataset, portal)));
+    } catch (error) {
+      portraits.set(id, renderPortrait({ kind: 'none', reason: `No preview: ${error instanceof Error ? error.message : 'the source did not answer'}.` }));
+    }
+  }
+  if (selectedId === id) render();
+}
 
 function renderAtlas(): void {
   const searchMatches = searchDatasetIds();
@@ -214,7 +290,7 @@ function renderAtlas(): void {
   datasetCount.textContent = `${catalog.datasets.length} datasets in Atlas`;
   el<HTMLElement>('#landscapeCount').textContent = `${atlasRoot.children?.length ?? 0} ${ATLAS_LENS_LABEL[atlas.lens]} categories`;
   el<HTMLElement>('#landscapeTotal').textContent = catalogueQuery.trim() ? `${searchMatches.size} catalogue matches highlighted` : `${atlasRoot.total} datasets represented`;
-  renderGraph(vizWrap, svg, { root: atlasRoot, matches, searchActive: Boolean(catalogueQuery.trim()) }, selectedId, workspace, atlasActions, atlasFocusId);
+  renderGraph(atlasCanvas, { root: atlasRoot, matches, searchActive: Boolean(catalogueQuery.trim()), usage }, selectedId, workspace, atlasActions, atlasFocusId);
 }
 
 function renderFilters(): void {
@@ -237,13 +313,14 @@ function renderExamples(): void {
   };
   const demoLabels: Record<string, string> = { cycling_safety: 'Cycling comfort' };
   examples.innerHTML = BENCHMARK_USE_CASES.filter(useCase => demoIds.includes(useCase.id)).map(
-    useCase => `<button class="example" data-id="${escapeHtml(useCase.id)}" data-prompt="${escapeHtml(useCase.prompt)}"><b>${escapeHtml(demoLabels[useCase.id] ?? useCase.label)}</b><span>${escapeHtml(demoSubtitles[useCase.id])}</span></button>`,
+    useCase => `<button class="example" data-id="${escapeHtml(useCase.id)}" data-prompt="${escapeHtml(localPrompt(useCase.prompt))}"><b>${escapeHtml(demoLabels[useCase.id] ?? useCase.label)}</b><span>${escapeHtml(demoSubtitles[useCase.id])}</span></button>`,
   ).join('');
   examples.querySelectorAll<HTMLButtonElement>('button').forEach(button =>
     button.addEventListener('click', () => {
       const prompt = button.dataset.prompt ?? '';
       workspace.clear();
-      for (const id of demoWorkspaces[button.dataset.id ?? ''] ?? []) {
+      // The demo workspaces are Basel-Stadt dataset ids.
+      for (const id of portal.id === BASEL_STADT.id ? demoWorkspaces[button.dataset.id ?? ''] ?? [] : []) {
         if (catalog.datasets.some(dataset => dataset.id === id)) workspace.add(id);
       }
       el<HTMLInputElement>('#promptInput').value = prompt;
@@ -261,6 +338,8 @@ function renderInspector(): void {
     .filter(Boolean);
 
   inspectorBody.innerHTML = `
+    ${linkNotice ? `<div class="warning link-notice">${escapeHtml(linkNotice)}</div>` : ''}
+    ${selected ? renderDatasetDetail(selected, structures.get(selected.id), selectedMatch, plan, portraits.get(selected.id) ?? '<div class="portrait portrait-loading">Loading preview…</div>') : ''}
     ${renderSourceNotice(catalog)}
     ${renderSourceDiagnostics(catalog)}
     ${section(
@@ -276,7 +355,6 @@ function renderInspector(): void {
         : '<div class="quiet">Workspace · 0. Build can start from the question; manually adding datasets is an expert override.</div>',
     )}
     ${renderIntentSection(intent)}
-    ${selected ? renderDatasetDetail(selected, structures.get(selected.id), selectedMatch, plan) : ''}
     ${stage === 'discover' ? renderMatches(activeMatches().slice(0, 10), workspace, plan) : ''}
     `;
 
@@ -291,6 +369,11 @@ function renderInspector(): void {
     item.querySelector('.remove')?.addEventListener('click', () => toggleWorkspace(id));
   });
   inspectorBody.querySelector<HTMLButtonElement>('.compose-now')?.addEventListener('click', () => setStage('compose'));
+  inspectorBody.querySelectorAll<HTMLButtonElement>('[data-locate]').forEach(button => button.addEventListener('click', () => showInLandscape(button.dataset.locate!)));
+  inspectorBody.querySelectorAll<HTMLButtonElement>('[data-copy-link]').forEach(button => button.addEventListener('click', () => {
+    const url = `${location.origin}${location.pathname}${location.search}${formatDeepLink({ dataset: button.dataset.copyLink!, lens: atlas.lens })}`;
+    void navigator.clipboard?.writeText(url).then(() => { button.textContent = 'Link copied'; }, () => { button.textContent = url; });
+  }));
 }
 
 function renderWorkbench(): void {
@@ -361,22 +444,22 @@ function renderTrustedEvidence(resolution: EvidenceResolution): string {
     .filter((item, index, all) => all.findIndex(other => other.resourceId === item.resourceId && other.roleId === item.roleId) === index);
   const localRows = local.length ? local.map(role => {
     const dataset = catalog.datasets.find(item => item.id === role.localDatasetId);
-    return `<li><span class="source-state ${role.localStatus === 'locally_available' ? 'ready' : 'weak'}">${role.localStatus === 'locally_available' ? '✓' : '△'}</span><b>${escapeHtml(role.label)}</b><span>${escapeHtml(dataset?.title ?? role.localReason)}</span></li>`;
+    return `<li><span class="source-state ${role.localStatus === 'locally_available' ? 'ready' : 'weak'}">${role.localStatus === 'locally_available' ? icon('confirmed', { size: 14 }) : icon('weak', { size: 14 })}</span><b>${escapeHtml(role.label)}</b><span>${escapeHtml(dataset?.title ?? role.localReason)}</span></li>`;
   }).join('') : '<li><span class="source-state">—</span><span>No local role is resolved yet.</span></li>';
   const externalRows = external.length ? external.map(candidate => {
     const resource = resourceById(candidate.resourceId)!;
     const provider = providerById(candidate.providerId)!;
     const status = candidate.status.replace('_', ' ');
-    return `<li><span class="source-state candidate">+</span><div><b>${escapeHtml(resource.label)}</b><span>${escapeHtml(provider.label)} · national · ${escapeHtml(status)} · not validated</span><small>Fills: ${escapeHtml(candidate.roleId.replaceAll('_', ' '))}</small><p>${escapeHtml(candidate.reason)}</p><details><summary>Technical source details</summary><p>Access: ${escapeHtml(resource.accessType)} · ${escapeHtml(resource.formats.join(', '))}</p><p>${escapeHtml(resource.notes.join(' '))}</p><a href="${escapeHtml(resource.catalogueUrl)}" target="_blank" rel="noreferrer">Official source</a></details></div></li>`;
+    return `<li><span class="source-state candidate">${icon('unchecked', { size: 14 })}</span><div><b>${escapeHtml(resource.label)}</b><span>${escapeHtml(provider.label)} · national · ${escapeHtml(status)} · not validated</span><small>Fills: ${escapeHtml(candidate.roleId.replaceAll('_', ' '))}</small><p>${escapeHtml(candidate.reason)}</p><details><summary>Technical source details</summary><p>Access: ${escapeHtml(resource.accessType)} · ${escapeHtml(resource.formats.join(', '))}</p><p>${escapeHtml(resource.notes.join(' '))}</p><a href="${escapeHtml(resource.catalogueUrl)}" target="_blank" rel="noreferrer">Official source</a></details></div></li>`;
   }).join('') : '<li><span class="source-state">—</span><span>No national gap-fill is needed.</span></li>';
   const missingRows = resolution.unresolved.length
-    ? resolution.unresolved.map(role => `<li><span class="source-state missing">×</span><b>${escapeHtml(role.label)}</b><span>${escapeHtml(role.localReason)}</span></li>`).join('')
-    : '<li><span class="source-state ready">✓</span><span>No unresolved roles without a known source.</span></li>';
-  return `<section class="trusted-evidence"><div><span class="eyebrow">Local Basel evidence</span><ul>${localRows}</ul></div><div><span class="eyebrow">Swiss public data · proposed gap-fill</span><ul>${externalRows}</ul></div><div><span class="eyebrow">Still missing</span><ul>${missingRows}</ul></div></section>`;
+    ? resolution.unresolved.map(role => `<li><span class="source-state missing">${icon('evidence-missing', { size: 14 })}</span><b>${escapeHtml(role.label)}</b><span>${escapeHtml(role.localReason)}</span></li>`).join('')
+    : '<li><span class="source-state ready">' + icon('confirmed', { size: 14 }) + '</span><span>No unresolved roles without a known source.</span></li>';
+  return `<section class="trusted-evidence"><div><span class="eyebrow">Local ${escapeHtml(portal.place)} evidence</span><ul>${localRows}</ul></div><div><span class="eyebrow">Swiss public data · proposed gap-fill</span><ul>${externalRows}</ul></div><div><span class="eyebrow">Still missing</span><ul>${missingRows}</ul></div></section>`;
 }
 
 function renderBuildProposal(spec: RepresentationSpec, recommendations: RepresentationSpec[], covered: number, totalRoles: number, missing: number, next: string, currentAnalysis: WorkspaceAnalysis | null, executable: Set<string>): string {
-  const useRows = spec.inputs.map(input => `<li class="input-${input.status}"><span>${input.status === 'selected' ? '✓' : input.status === 'available' ? '△' : '✕'}</span>${escapeHtml(input.label)}${input.status === 'available' ? ' · available, not selected' : input.status === 'external' ? ' · external' : ''}</li>`).join('');
+  const useRows = spec.inputs.map(input => `<li class="input-${input.status}"><span>${input.status === 'selected' ? icon('check', { size: 12 }) : input.status === 'available' ? icon('add', { size: 12 }) : icon('evidence-missing', { size: 12 })}</span>${escapeHtml(input.label)}${input.status === 'available' ? ' · available, not selected' : input.status === 'external' ? ' · external' : ''}</li>`).join('');
   const needsValidation = spec.requiredAssessmentIds.filter(id => !executions.has(id));
   return `<section class="build-proposal">
     <div class="build-kicker">Build · proposed view</div><div class="build-question">${escapeHtml(query)}</div>
@@ -459,7 +542,7 @@ function render(): void {
   composeBtn.disabled = false;
   composeBtn.classList.toggle('active', stage === 'compose');
   discoverBtn.classList.toggle('active', stage === 'discover');
-  stageTitle.textContent = stage === 'discover' ? 'Basel-Stadt dataset catalogue' : 'Build';
+  stageTitle.textContent = stage === 'discover' ? `${portal.shortLabel} dataset catalogue` : 'Build';
   el<HTMLElement>('#inspectorTitle').textContent = stage === 'discover' ? 'Discover' : 'Build';
   el<HTMLElement>('#inspectorSub').textContent =
     stage === 'discover' ? 'Evidence shortlist and dataset detail' : 'Selected evidence and its structure';
@@ -480,6 +563,8 @@ function render(): void {
     ? 'Search the catalogue within the Atlas'
     : 'Search title, keyword, dataset id or publisher';
   evidenceSummary.innerHTML = renderEvidenceSummary(plan, catalog.datasets);
+  evidenceSummary.querySelectorAll<HTMLButtonElement>('[data-open]').forEach(button => button.addEventListener('click', () => selectDataset(button.dataset.open!)));
+  evidenceSummary.querySelectorAll<HTMLButtonElement>('[data-locate]').forEach(button => button.addEventListener('click', () => showInLandscape(button.dataset.locate!)));
   renderInspector();
   if (listView) {
     stopGraph();
@@ -514,6 +599,8 @@ function applyQuery(next: string): void {
 
 function selectDataset(id: string): void {
   selectedId = id;
+  linkNotice = '';
+  history.replaceState(null, '', formatDeepLink({ dataset: id, lens: atlas.lens }) || location.pathname);
   inspectorOpen = true;
   syncInspector();
   render();
@@ -612,7 +699,6 @@ el<HTMLElement>('#atlasLenses').querySelectorAll<HTMLButtonElement>('button').fo
   el<HTMLElement>('#atlasLenses').querySelectorAll('button').forEach(item => item.classList.toggle('active', item === button));
   render();
 }));
-el<HTMLButtonElement>('#atlasZoomIn').addEventListener('click', zoomAtlasIn);
 el<HTMLButtonElement>('#atlasZoomOut').addEventListener('click', () => zoomAtlasOut(atlasActions));
 el<HTMLButtonElement>('#atlasZoomReset').addEventListener('click', () => resetAtlasZoom(atlasActions));
 discoverBtn.addEventListener('click', () => setStage('discover'));
@@ -658,6 +744,7 @@ const session = await openCatalogue();
 adapter = session.adapter;
 catalog = session.state;
 plan = buildEvidencePlan(intent, catalog.datasets, { selectedIds: [] });
+el<HTMLButtonElement>('#atlasLenses button[data-lens="topic"]').title = `Topic lens: ${topicProvenance(catalog.datasets).label}`;
 sourcePill.textContent = catalogueStatus(catalog).label;
 sourcePill.classList.toggle('live', catalog.source === 'live');
 sourcePill.title =
@@ -667,9 +754,12 @@ sourcePill.title =
 // Execution needs live geometry; the frozen snapshot has none, so in fallback
 // mode the engine stays null and the UI says why rather than offering a button
 // that cannot work.
-if (catalog.source === 'live') {
+if (catalog.source === 'live' && portal.api.kind === 'ods') {
   previewSource = new OdsGeoJsonSource(new Map(catalog.datasets.map(dataset => [dataset.id, dataset.recordsCount])));
   engine = new GeoJsonExecutionEngine(previewSource);
 }
 renderExamples();
 render();
+applyDeepLink(location.hash);
+if (catalog.source === 'live') void loadUsage(portal).then(index => { usage = index; if (index) render(); });
+window.addEventListener('hashchange', () => applyDeepLink(location.hash));

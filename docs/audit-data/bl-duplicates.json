@@ -1,0 +1,318 @@
+{
+  "portal": "bl",
+  "primarySource": "src/data/portals/bl/snapshot.json.gz (2026-09-27)",
+  "takenAt": "2026-09-27T11:53:37.593Z",
+  "primary": 184,
+  "national": 599,
+  "linked": 132,
+  "linkedBy": {
+    "identifier": 132,
+    "name": 0
+  },
+  "primaryOnly": [
+    "10060",
+    "10070",
+    "10100",
+    "10110",
+    "10120",
+    "10140",
+    "10160",
+    "10180",
+    "10290",
+    "10340",
+    "10350",
+    "10360",
+    "10370",
+    "10380",
+    "10390",
+    "10420",
+    "10430",
+    "10520",
+    "10950",
+    "10990",
+    "11050",
+    "11080",
+    "11300",
+    "11500",
+    "11580",
+    "11890",
+    "11970",
+    "12140",
+    "12150",
+    "12190",
+    "12240",
+    "12250",
+    "12290",
+    "12340",
+    "12800",
+    "12810",
+    "12820",
+    "12830",
+    "12840",
+    "12850",
+    "12860",
+    "12870",
+    "13010",
+    "13030",
+    "13040",
+    "13050",
+    "13060",
+    "13400",
+    "13410",
+    "13420",
+    "4bb74943-8e36-4a63-a6f9-cb8afecd0dbc_radondaten_gebaeude",
+    "df5befc9-9d5b-40ae-9310-84db9480f044_friedensrichterkreis"
+  ],
+  "nationalOnly": 467,
+  "nationalOnlyKinds": {
+    "vote-* (one per ballot)": 364,
+    "other identifier": 103
+  },
+  "nationalOnlyShapes": {
+    "table": 467
+  },
+  "nationalOnlyDownloadable": 467,
+  "nationalOnlySample": [
+    {
+      "id": "anderung-der-kantonsverfassung-betreffend-einfuhrung-kantonaler-deponieabgaben-massnahme-des-ma",
+      "identifier": "vote-ct-13-60@kanton-basel-landschaft",
+      "title": "Änderung der Kantonsverfassung betreffend Einführung kantonaler Deponieabgaben (Massnahme des Massnahmenpakets zur Förderung des Baustoffkreislaufs Regio Basel)",
+      "publisher": "Basel-Landschaft"
+    },
+    {
+      "id": "anderung-der-kantonsverfassung-vom-13-februar-2014-einfuhrung-einer-gewerbeparkkarte",
+      "identifier": "vote-anderung-der-kantonsverfassung-vom-13-februar-2014-einfuehrung-einer-gewerbeparkkarte@kanton-basel-landschaft",
+      "title": "Änderung der Kantonsverfassung vom 13. Februar 2014 \"Einführung einer Gewerbeparkkarte\"",
+      "publisher": "Basel-Landschaft"
+    },
+    {
+      "id": "anderung-der-kantonsverfassung-vom-13-januar-2022-betreffend-anpassung-der-bestimmungen-uber-di",
+      "identifier": "vote-ct-13-30@kanton-basel-landschaft",
+      "title": "Änderung der Kantonsverfassung vom 13. Januar 2022 betreffend Anpassung der Bestimmungen über die Ombudsperson ",
+      "publisher": "Basel-Landschaft"
+    },
+    {
+      "id": "anderung-der-kantonsverfassung-vom-22-marz-2012-uber-den-verzicht-des-amtsnotariats",
+      "identifier": "vote-anderung-der-kantonsverfassung-vom-22-maerz-2012-ueber-den-verzicht-des-amtsnotariats@kanton-basel-landschaft",
+      "title": "Änderung der Kantonsverfassung vom 22. März 2012 über den Verzicht des Amtsnotariats",
+      "publisher": "Basel-Landschaft"
+    },
+    {
+      "id": "anderung-der-kantonsverfassung-vom-22-marz-2012-uber-die-organisation-der-gerichte-gerichtsorga",
+      "identifier": "vote-anderung-der-kantonsverfassung-vom-22-maerz-2012-ueber-die-organisation-der-gerichte-gerichtsorganisation@kanton-basel-landschaft",
+      "title": "Änderung der Kantonsverfassung vom 22. März 2012 über die Organisation der Gerichte (Gerichtsorganisation)",
+      "publisher": "Basel-Landschaft"
+    },
+    {
+      "id": "anderung-der-verfassung-des-kantons-basel-landschaft-betreffend-abschaffung-der-amtszeitbeschra",
+      "identifier": "vote-anderung-der-verfassung-des-kantons-basel-landschaft-betreffend-abschaffung-der-amtszeitbeschraenkung-fuer-mitglieder-des-landrats@kanton-basel-landschaft",
+      "title": "Änderung der Verfassung des Kantons Basel-Landschaft betreffend Abschaffung der Amtszeitbeschränkung für Mitglieder des Landrats",
+      "publisher": "Basel-Landschaft"
+    },
+    {
+      "id": "anderung-der-verfassung-des-kantons-basel-landschaft-betreffend-aufgabenzuordnung-und-zusammena",
+      "identifier": "vote-anderung-der-verfassung-des-kantons-basel-landschaft-betreffend-aufgabenzuordnung-und-zusammenarbeit-der-baselbieter-gemeinden@kanton-basel-landschaft",
+      "title": "Änderung der Verfassung des Kantons Basel-Landschaft betreffend Aufgabenzuordnung und Zusammenarbeit der Baselbieter Gemeinden",
+      "publisher": "Basel-Landschaft"
+    },
+    {
+      "id": "anderung-der-verfassung-gemass-beschluss-des-landrats-vom-28-september-2017-betreffend-unverein",
+      "identifier": "vote-anderung-der-verfassung-gemaess-beschluss-des-landrats-vom-28-september-2017-betreffend-unvereinbarkeit-der-gleichzeitigen-mitgliedschaft-in-regierungsrat-baselland-und-bundesversammlung@kanton-basel-landschaft",
+      "title": "Änderung der Verfassung gemäss Beschluss des Landrats vom 28. September 2017 betreffend Unvereinbarkeit der gleichzeitigen Mitgliedschaft in Regierungsrat Baselland und Bundesversammlung",
+      "publisher": "Basel-Landschaft"
+    },
+    {
+      "id": "anderung-des-bildungsgesetzes-ersatz-bildungsrat-durch-beirat-bildung",
+      "identifier": "vote-anderung-des-bildungsgesetzes-ersatz-bildungsrat-durch-beirat-bildung@kanton-basel-landschaft",
+      "title": "Änderung des Bildungsgesetzes (Ersatz Bildungsrat durch Beirat Bildung)",
+      "publisher": "Basel-Landschaft"
+    },
+    {
+      "id": "anderung-des-bildungsgesetzes-stufenlehrplane-volksschule-gegenvorschlag-des-landrats-zur-zuruc",
+      "identifier": "vote-anderung-des-bildungsgesetzes-stufenlehrplaene-volksschule-gegenvorschlag-des-landrats-zur-zurueckgezogenen-formulierten-gesetzesinitiative-ja-zu-lehrplaenen-mit-klar-definierten-stoffinhalten-und-themen@kanton-basel-landschaft",
+      "title": "Änderung des Bildungsgesetzes (Stufenlehrpläne Volksschule, Gegenvorschlag des Landrats zur zurückgezogenen formulierten Gesetzesinitiative «JA zu Lehrplänen mit klar definierten Stoffinhalten und Themen») ",
+      "publisher": "Basel-Landschaft"
+    },
+    {
+      "id": "anderung-des-bildungsgesetzes-vom-27-juni-2019-umsetzung-der-nichtformulierten-volksinitia-2016",
+      "identifier": "vote-anderung-des-bildungsgesetzes-vom-27-juni-2019-umsetzung-der-nichtformulierten-volksinitiative-stopp-dem-verheizen-von-schueler-innen-ausstieg-aus-dem-gescheiterten-passepartout-fremdsprachenprojekt-vom-28-april-2016@kanton-basel-landschaft",
+      "title": "Änderung des Bildungsgesetzes vom 27. Juni 2019 (Umsetzung der nichtformulierten Volksinitiative «Stopp dem Verheizen von Schüler/-innen: Ausstieg aus dem gescheiterten Passepartout-Fremdsprachenprojekt» vom 28. April 2016)",
+      "publisher": "Basel-Landschaft"
+    },
+    {
+      "id": "anderung-des-bildungsgesetzes-vom-6-april-2017-betreffend-streichung-der-pauschalen-beitrage-zu",
+      "identifier": "vote-anderung-des-bildungsgesetzes-vom-6-april-2017-betreffend-streichung-der-pauschalen-beitraege-zum-besuch-von-privatschulen@kanton-basel-landschaft",
+      "title": "Änderung des Bildungsgesetzes vom 6. April 2017 betreffend Streichung der pauschalen Beiträge zum Besuch von Privatschulen",
+      "publisher": "Basel-Landschaft"
+    },
+    {
+      "id": "anderung-des-bundesgesetzes-uber-die-alters-und-hinterlassenenversicherung-ahvg-11-ahv-revision",
+      "identifier": "vote-anderung-des-bundesgesetzes-ueber-die-alters-und-hinterlassenenversicherung-ahvg-11-ahv-revision@kanton-basel-landschaft",
+      "title": "Änderung des Bundesgesetzes über die Alters- und Hinterlassenenversicherung (AHVG); (11. AHV-Revision)",
+      "publisher": "Basel-Landschaft"
+    },
+    {
+      "id": "anderung-des-bundesgesetzes-uber-die-invalidenversicherung-ivg",
+      "identifier": "vote-anderung-des-bundesgesetzes-ueber-die-invalidenversicherung-ivg@kanton-basel-landschaft",
+      "title": "Änderung des Bundesgesetzes über die Invalidenversicherung (IVG)",
+      "publisher": "Basel-Landschaft"
+    },
+    {
+      "id": "anderung-des-energiegesetzes-vom-19-oktober-2023",
+      "identifier": "vote-ct-13-80@kanton-basel-landschaft",
+      "title": "Änderung des Energiegesetzes vom 19. Oktober 2023",
+      "publisher": "Basel-Landschaft"
+    },
+    {
+      "id": "anderung-des-gesetzes-betreffend-die-strafprozessordnung",
+      "identifier": "vote-anderung-des-gesetzes-betreffend-die-strafprozessordnung@kanton-basel-landschaft",
+      "title": "Änderung des Gesetzes betreffend die Strafprozessordnung",
+      "publisher": "Basel-Landschaft"
+    },
+    {
+      "id": "anderung-des-gesetzes-vom-20-februar-2014-uber-die-berufliche-vorsorge-durch-die-basellandschaf",
+      "identifier": "vote-anderung-des-gesetzes-vom-20-februar-2014-ueber-die-berufliche-vorsorge-durch-die-basellandschaftliche-pensionskasse-pensionskassengesetz@kanton-basel-landschaft",
+      "title": "Änderung des Gesetzes vom 20. Februar 2014 über die berufliche Vorsorge durch die Basellandschaftliche Pensionskasse (Pensionskassengesetz)",
+      "publisher": "Basel-Landschaft"
+    },
+    {
+      "id": "anderung-des-kantonalbankgesetzes-gegenvorschlag-zur-zuruckgezogenen-formulierten-gesetzesiniti",
+      "identifier": "vote-anderung-des-kantonalbankgesetzes-gegenvorschlag-zur-zurueckgezogenen-formulierten-gesetzesinitiative-fuer-einen-unabhaengigen-bankrat@kanton-basel-landschaft",
+      "title": "Änderung des Kantonalbankgesetzes (Gegenvorschlag zur zurückgezogenen formulierten Gesetzesinitiative «Für einen unabhängigen Bankrat»)",
+      "publisher": "Basel-Landschaft"
+    },
+    {
+      "id": "anderung-des-raumplanungs-und-baugesetzes-aufhebung-der-gebuhrengrenze",
+      "identifier": "vote-anderung-des-raumplanungs-und-baugesetzes-aufhebung-der-gebuehrengrenze@kanton-basel-landschaft",
+      "title": "Änderung des Raumplanungs- und Baugesetzes (Aufhebung der Gebührengrenze)",
+      "publisher": "Basel-Landschaft"
+    },
+    {
+      "id": "anderung-des-steuergesetzes-vermogenssteuerreform-i",
+      "identifier": "vote-ct-13-50@kanton-basel-landschaft",
+      "title": "Änderung des Steuergesetzes, Vermögenssteuerreform I",
+      "publisher": "Basel-Landschaft"
+    },
+    {
+      "id": "anderung-des-steuergesetzes-vom-28-juni-2018-gegenvorschlag-des-landrats-zur-zuruckgezogen-2017",
+      "identifier": "vote-anderung-des-steuergesetzes-vom-28-juni-2018-gegenvorschlag-des-landrats-zur-zurueckgezogenen-formulierten-gesetzesinitiative-fuer-eine-faire-steuerliche-behandlung-der-wohnkosten-wohnkosten-initiative-vom-26-oktober-2017@kanton-basel-landschaft",
+      "title": "Änderung des Steuergesetzes vom 28. Juni 2018, Gegenvorschlag des Landrats zur zurückgezogenen formulierten Gesetzesinitiative «Für eine faire steuerliche Behandlung der Wohnkosten» («Wohnkosten-Initiative») vom 26. Oktober 2017",
+      "publisher": "Basel-Landschaft"
+    },
+    {
+      "id": "anderung-des-steuergesetzes-vom-6-juni-2019-steuervorlage-17-sv17",
+      "identifier": "vote-anderung-des-steuergesetzes-vom-6-juni-2019-steuervorlage-17-sv17@kanton-basel-landschaft",
+      "title": "Änderung des Steuergesetzes vom 6. Juni 2019 (Steuervorlage 17, SV17)",
+      "publisher": "Basel-Landschaft"
+    },
+    {
+      "id": "anderung-des-umweltschutzgesetzes-basel-landschaft-betreffend-einfuhrung-kantonaler-deponieabga",
+      "identifier": "vote-ct-13-70@kanton-basel-landschaft",
+      "title": "Änderung des Umweltschutzgesetzes Basel-Landschaft betreffend Einführung kantonaler Deponieabgaben (Massnahme des Massnahmenpakets zur Förderung des Baustoffkreislaufs Regio Basel)",
+      "publisher": "Basel-Landschaft"
+    },
+    {
+      "id": "anderung-des-verwaltungsverfahrensgesetzes",
+      "identifier": "vote-anderung-des-verwaltungsverfahrensgesetzes@kanton-basel-landschaft",
+      "title": "Änderung des Verwaltungsverfahrensgesetzes",
+      "publisher": "Basel-Landschaft"
+    },
+    {
+      "id": "anderung-vom-1-oktober-2021-des-bundesgesetzes-uber-die-transplantation-von-organen-geweben-und1",
+      "identifier": "vote-6560@kanton-basel-landschaft",
+      "title": "Änderung vom 1. Oktober 2021 des Bundesgesetzes über die Transplantation von Organen, Geweben und ZeIlen (Transplantationsgesetz)",
+      "publisher": "Basel-Landschaft"
+    },
+    {
+      "id": "anderung-vom-1-oktober-2021-des-bundesgesetzes-uber-filmproduktion-und-filmkultur-filmgesetz-fi1",
+      "identifier": "vote-6550@kanton-basel-landschaft",
+      "title": "Änderung vom 1. Oktober 2021 des Bundesgesetzes über Filmproduktion und Filmkultur (Filmgesetz, FiG)",
+      "publisher": "Basel-Landschaft"
+    },
+    {
+      "id": "anderung-vom-10-april-2014-der-kantonsverfassung-68-betreffend-konstituierung-landratsprasidium",
+      "identifier": "vote-anderung-vom-10-april-2014-der-kantonsverfassung-ss-68-betreffend-konstituierung-landratspraesidium@kanton-basel-landschaft",
+      "title": "Änderung vom 10. April 2014 der Kantonsverfassung (§ 68 betreffend Konstituierung Landratspräsidium)",
+      "publisher": "Basel-Landschaft"
+    },
+    {
+      "id": "anderung-vom-10-april-2014-des-gesetzes-uber-erganzungsleistungen-zur-ahv-und-iv-anpassung-erga",
+      "identifier": "vote-anderung-vom-10-april-2014-des-gesetzes-ueber-ergaenzungsleistungen-zur-ahv-und-iv-anpassung-ergaenzungsleistungen-zur-ahv-und-iv-vermoegensverzehr@kanton-basel-landschaft",
+      "title": "Änderung vom 10. April 2014 des Gesetzes über Ergänzungsleistungen zur AHV und IV; Anpassung Ergänzungsleistungen zur AHV und IV (Vermögensverzehr)",
+      "publisher": "Basel-Landschaft"
+    },
+    {
+      "id": "anderung-vom-10-februar-der-kantonsverfassung-55-offentlichkeit-von-verhandlungen-und-56-inform",
+      "identifier": "vote-anderung-vom-10-februar-der-kantonsverfassung-ss-55-offentlichkeit-von-verhandlungen-und-ss-56-information-und-datenschutzgesetz@kanton-basel-landschaft",
+      "title": "Änderung vom 10. Februar der Kantonsverfassung (§ 55 Öffentlichkeit von Verhandlungen und § 56 Information) und Datenschutzgesetz",
+      "publisher": "Basel-Landschaft"
+    },
+    {
+      "id": "anderung-vom-12-dezember-2014-des-bundesgesetzes-uber-die-medizinisch-unterstutzte-fortpflanzun",
+      "identifier": "vote-anderung-vom-12-dezember-2014-des-bundesgesetzes-ueber-die-medizinisch-unterstuetzte-fortpflanzung-fortpflanzungsmedizingesetz-fmedg@kanton-basel-landschaft",
+      "title": "Änderung vom 12. Dezember 2014 des Bundesgesetzes über die medizinisch unterstützte Fortpflanzung (Fortpflanzungsmedizingesetz, FMedG);",
+      "publisher": "Basel-Landschaft"
+    },
+    {
+      "id": "anderung-vom-12-juni-2014-der-kantonsverfassung-gegenvorschlag-zur-formulierten-verfassungsinit",
+      "identifier": "vote-anderung-vom-12-juni-2014-der-kantonsverfassung-gegenvorschlag-zur-formulierten-verfassungsinitiative-fuer-die-fusion-der-kantone-basel-stadt-und-basel-landschaft@kanton-basel-landschaft",
+      "title": "Änderung vom 12. Juni 2014 der Kantonsverfassung (Gegenvorschlag zur formulierten Verfassungsinitiative «Für die Fusion der Kantone Basel-Stadt und Basel-Landschaft»)",
+      "publisher": "Basel-Landschaft"
+    },
+    {
+      "id": "anderung-vom-13-12-2002-des-obligationenrechts-miete",
+      "identifier": "vote-obligationenrecht@kanton-basel-landschaft",
+      "title": "Änderung vom 13.12.2002 des Obligationenrechts (Miete)",
+      "publisher": "Basel-Landschaft"
+    },
+    {
+      "id": "anderung-vom-14-dezember-2012-des-bundesgesetzes-uber-die-arbeit-in-industrie-gewerbe-und-hande1",
+      "identifier": "vote-anderung-vom-14-dezember-2012-des-bundesgesetzes-ueber-die-arbeit-in-industrie-gewerbe-und-handel-arbeitsgesetz-arg-offnungszeiten-der-tankstellenshops@kanton-basel-landschaft",
+      "title": "Änderung vom 14. Dezember 2012 des Bundesgesetzes über die Arbeit in Industrie, Gewerbe und Handel (Arbeitsgesetz, ArG; Öffnungszeiten der Tankstellenshops)",
+      "publisher": "Basel-Landschaft"
+    },
+    {
+      "id": "anderung-vom-14-dezember-2018-des-strafgesetzbuches-und-des-militarstrafgesetzes-diskriminierun1",
+      "identifier": "vote-anderung-vom-14-dezember-2018-des-strafgesetzbuches-und-des-militaerstrafgesetzes-diskriminierung-und-aufruf-zu-hass-aufgrund-der-sexuellen-orientierung@kanton-basel-landschaft",
+      "title": "Änderung vom 14. Dezember 2018 des Strafgesetzbuches und des Militärstrafgesetzes (Diskriminierung und Aufruf zu Hass aufgrund der sexuellen Orientierung)",
+      "publisher": "Basel-Landschaft"
+    },
+    {
+      "id": "anderung-vom-15-juni-2012-des-bundesgesetzes-uber-die-raumplanung1",
+      "identifier": "vote-anderung-vom-15-juni-2012-des-bundesgesetzes-ueber-die-raumplanung@kanton-basel-landschaft",
+      "title": "Änderung vom 15. Juni 2012 des Bundesgesetzes über die Raumplanung",
+      "publisher": "Basel-Landschaft"
+    },
+    {
+      "id": "anderung-vom-16-dezember-2005-des-asylgesetzes",
+      "identifier": "vote-anderung-vom-16-dezember-2005-des-asylgesetzes@kanton-basel-landschaft",
+      "title": "Änderung vom 16. Dezember 2005 des Asylgesetzes",
+      "publisher": "Basel-Landschaft"
+    },
+    {
+      "id": "anderung-vom-16-dezember-2022-des-bundesgesetzes-uber-die-gesetzlichen-grundlagen-fur-verordnun1",
+      "identifier": "vote-6640@kanton-basel-landschaft",
+      "title": "Änderung vom 16. Dezember 2022 des Bundesgesetzes über die gesetzlichen Grundlagen für Verordnungen des Bundesrates zur Bewältigung der Covid-19-Epidemie (Covid-19-Gesetz)",
+      "publisher": "Basel-Landschaft"
+    },
+    {
+      "id": "anderung-vom-16-juni-2016-der-verfassung-des-kantons-basel-landschaft-betreffend-einfuhrung-ein",
+      "identifier": "vote-anderung-vom-16-juni-2016-der-verfassung-des-kantons-basel-landschaft-betreffend-einfuehrung-einer-energieabgabe-zur-finanzierung-von-foerdermassnahmen-im-energiebereich@kanton-basel-landschaft",
+      "title": "Änderung vom 16. Juni 2016 der Verfassung des Kantons Basel-Landschaft betreffend Einführung einer Energieabgabe zur Finanzierung von Fördermassnahmen im Energiebereich",
+      "publisher": "Basel-Landschaft"
+    },
+    {
+      "id": "anderung-vom-16-juni-2016-des-energiegesetzes-basel-landschaft-betreffend-einfuhrung-einer-ener",
+      "identifier": "vote-anderung-vom-16-juni-2016-des-energiegesetzes-basel-landschaft-betreffend-einfuehrung-einer-energieabgabe-zur-finanzierung-von-foerdermassnahmen-im-energiebereich@kanton-basel-landschaft",
+      "title": "Änderung vom 16. Juni 2016 des Energiegesetzes Basel-Landschaft betreffend Einführung einer Energieabgabe zur Finanzierung von Fördermassnahmen im Energiebereich",
+      "publisher": "Basel-Landschaft"
+    },
+    {
+      "id": "anderung-vom-16-marz-2012-des-tierseuchengesetzes1",
+      "identifier": "vote-anderung-vom-16-maerz-2012-des-tierseuchengesetzes@kanton-basel-landschaft",
+      "title": "Änderung vom 16. März 2012 des Tierseuchengesetzes",
+      "publisher": "Basel-Landschaft"
+    }
+  ],
+  "total": 651
+}

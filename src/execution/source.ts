@@ -1,5 +1,5 @@
 import { featuresFingerprint } from '../fingerprint';
-import { asObject, odsFetch } from '../data/ods';
+import { asObject, odsBase, odsFetch } from '../data/ods';
 import type { FeatureCollection, GeoJsonFeature, GeometrySource, LoadedFeatures } from './types';
 
 /**
@@ -45,7 +45,7 @@ export class OdsGeoJsonSource implements GeometrySource {
       datasetId,
       features,
       retrievedAt: new Date().toISOString(),
-      sourceUrl: `https://data.bs.ch/api/explore/v2.1${path}?limit=${options.maxFeatures + 1}`,
+      sourceUrl: `${odsBase()}${path}?limit=${options.maxFeatures + 1}`,
       totalRecordCount: total ?? (truncated ? undefined : all.length),
       truncated,
       fingerprint: featuresFingerprint(features.map(f => f.geometry)),

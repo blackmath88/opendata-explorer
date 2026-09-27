@@ -1,0 +1,20 @@
+{
+  "module": "src/ui/icons.ts",
+  "allow": [
+    {
+      "file": "src/ui/icons.ts",
+      "glyph": "⌕",
+      "reason": "catalogue note text naming the glyphs the stage icons replace"
+    },
+    {
+      "file": "src/ui/icons.ts",
+      "glyph": "⌘",
+      "reason": "catalogue note text"
+    },
+    {
+      "file": "src/ui/icons.ts",
+      "glyph": "▣",
+      "reason": "catalogue note text"
+    }
+  ]
+}
