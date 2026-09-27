@@ -83,3 +83,13 @@ describe('Atlas category icons', () => {
     for (const node of buildAtlasHierarchy(fallbackDatasets, matches, 'time', new Set()).children!) expect(categoryIcon(node)).toBeUndefined();
   });
 });
+
+describe('topic rules', () => {
+  it('lets a specific subcategory win over an earlier category\'s "(other)" catch-all', () => {
+    const topic = (id: string) => atlasPath(fallbackDatasets.find(dataset => dataset.id === id)!, 'topic');
+    // Tagged only "Mobilität und Verkehr"; Environment's /umwelt|environment/ catch-all used to take it first.
+    expect(topic('100176').category).toBe('Mobility & Transport');
+    expect(topic('100125').category).toBe('People & Society'); // Wohnbevölkerung nach Bezirk
+    expect(topic('100201').subcategory).toBe('Planning & parcels'); // Liegenschaften: Parzellen
+  });
+});

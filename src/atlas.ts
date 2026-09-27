@@ -147,9 +147,17 @@ function labelText(dataset: DatasetRecord): string {
 function topicPath(dataset: DatasetRecord): AtlasPath {
   // Descriptions mention neighbouring topics ("near the park", "air quality
   // along the tram"), so they only decide when title and keywords are silent.
+  // Within each text, specific subcategories win over the "(other)" catch-alls: otherwise the
+  // first category's catch-all (Environment's /umwelt|environment/) swallows datasets that a
+  // later category names precisely ("Verkehr" -> Road traffic).
   for (const haystack of [labelText(dataset), text(dataset)]) {
-    for (const [category, subcategories] of TOPIC_RULES) {
-      for (const [subcategory, pattern] of subcategories) if (pattern.test(haystack)) return { category, subcategory, detail: topicDetail(subcategory, haystack) };
+    for (const catchAll of [false, true]) {
+      for (const [category, subcategories] of TOPIC_RULES) {
+        for (const [subcategory, pattern] of subcategories) {
+          if (subcategory.endsWith('(other)') !== catchAll) continue;
+          if (pattern.test(haystack)) return { category, subcategory, detail: topicDetail(subcategory, haystack) };
+        }
+      }
     }
   }
   return { category: 'Other / review needed', subcategory: 'Unclassified' };
