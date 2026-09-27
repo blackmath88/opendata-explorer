@@ -19,7 +19,7 @@ export const DOMAIN_CONCEPTS: DomainConcept[] = [
   {
     id: 'running',
     label: 'Running',
-    intentTerms: ['running', 'run', 'runner', 'jog', 'jogging', 'laufen', 'joggen', 'lauf'],
+    intentTerms: ['running', 'run', 'runner', 'jog', 'jogging', 'laufen', 'joggen', 'lauf', 'laufroute', 'laufstrecke', 'joggingroute'],
     catalogueTerms: ['sport', 'bewegung', 'laufen', 'joggen'],
   },
   {
@@ -61,7 +61,7 @@ export const DOMAIN_CONCEPTS: DomainConcept[] = [
   {
     id: 'noise',
     label: 'Noise',
-    intentTerms: ['noise', 'noisy', 'quiet', 'loud', 'lärm', 'laerm', 'ruhig', 'leise'],
+    intentTerms: ['noise', 'noisy', 'quiet', 'loud', 'lärm', 'laerm', 'ruhig', 'leise', 'laut', 'lautstärke', 'strassenlärm'],
     catalogueTerms: ['lärm', 'laerm', 'schall', 'akustik'],
   },
   {
@@ -79,7 +79,7 @@ export const DOMAIN_CONCEPTS: DomainConcept[] = [
   {
     id: 'safety',
     label: 'Safety & accidents',
-    intentTerms: ['dangerous', 'danger', 'safe', 'safety', 'unsafe', 'accident', 'accidents', 'crash', 'collision', 'risk', 'unfall', 'gefährlich', 'gefaehrlich', 'sicherheit'],
+    intentTerms: ['dangerous', 'danger', 'safe', 'safety', 'unsafe', 'accident', 'accidents', 'crash', 'collision', 'risk', 'unfall', 'gefährlich', 'gefaehrlich', 'sicherheit', 'sicher', 'unsicher'],
     catalogueTerms: ['unfall', 'unfälle', 'sicherheit', 'verkehrsunfall', 'kollision'],
   },
   {
@@ -98,18 +98,18 @@ export const DOMAIN_CONCEPTS: DomainConcept[] = [
     id: 'green_space',
     label: 'Green & public space',
     intentTerms: ['park', 'parks', 'green space', 'green spaces', 'greenery', 'garden', 'playground', 'grünfläche', 'gruenflaeche', 'park', 'spielplatz', 'öffentlicher raum', 'public space'],
-    catalogueTerms: ['grünfläche', 'gruenanlage', 'park', 'spielplatz', 'freiraum', 'öffentlicher raum', 'allmend'],
+    catalogueTerms: ['grünfläche', 'grünanlage', 'gruenanlage', 'parkanlage', 'pärke', 'stadtpark', 'spielplatz', 'freiraum', 'öffentlicher raum', 'allmend'],
   },
   {
     id: 'seating',
     label: 'Benches & seating',
-    intentTerms: ['bench', 'benches', 'seating', 'sitzbank', 'sitzgelegenheit', 'bank'],
+    intentTerms: ['bench', 'benches', 'seating', 'sitzbank', 'sitzbänke', 'sitzbaenke', 'bänke', 'sitzgelegenheit', 'bank'],
     catalogueTerms: ['sitzbank', 'sitzgelegenheit', 'bänke'],
   },
   {
     id: 'schools',
     label: 'Schools',
-    intentTerms: ['school', 'schools', 'pupil', 'pupils', 'classroom', 'kindergarten', 'schule', 'schulen', 'schüler', 'schueler'],
+    intentTerms: ['school', 'schools', 'pupil', 'pupils', 'classroom', 'kindergarten', 'schule', 'schulen', 'schüler', 'schueler', 'schulweg', 'schulwege'],
     catalogueTerms: ['schule', 'schulstandort', 'schulhaus', 'kindergarten', 'schulweg'],
   },
   {

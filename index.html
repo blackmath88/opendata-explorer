@@ -28,6 +28,9 @@
     .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; color: var(--navy); text-decoration: none; }
     .brand .mark { width: 30px; height: 30px; border-radius: 6px; background: var(--navy); color: #fff; display: grid; place-items: center; font-size: 12px; }
     .tag { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; font-weight: 600; padding: 4px 9px; border: 1px dashed var(--line); border-radius: 999px; color: var(--muted); }
+    .versions { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; font-size: 12px; font-weight: 600; }
+    .versions a { padding: 4px 10px; color: var(--muted); text-decoration: none; }
+    .versions a[aria-current] { background: var(--navy); color: #fff; }
     nav.top-links { display: flex; gap: 18px; font-size: 14px; flex-wrap: wrap; }
     nav.top-links a { color: var(--ink); text-decoration: none; }
     nav.top-links a:hover { color: var(--navy2); text-decoration: underline; }
@@ -100,6 +103,7 @@
       <nav class="top-links" aria-label="Seitennavigation">
         <a href="#heute">Heute</a><a href="#vorschlag">Vorschlag</a><a href="#uebernahme">Übernahme</a><a href="#kantone">Andere Kantone</a>
       </nav>
+      <nav class="versions" aria-label="Version des Vorschlags"><a href="/" aria-current="page">Version 1</a><a href="/v2/">Version 2 · Bibliothek</a></nav>
       <span class="tag" title="Unabhängiges Projekt, nicht vom Kanton Basel-Stadt betrieben oder unterstützt.">Inoffizieller Prototyp</span>
     </div>
   </header>
