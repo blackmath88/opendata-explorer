@@ -1,5 +1,7 @@
 import { BASEL_STADT, activePortal, portalFromSearch, setActivePortal } from './portal';
 import { topicProvenance } from './topic-provenance';
+import { loadUsage, type UsageIndex } from './usage';
+import { loadPortrait, renderPortrait } from './portrait';
 import './styles.css';
 import { openCatalogue } from './data/catalogue';
 import { parseUseCaseIntent } from './intent';
@@ -81,6 +83,10 @@ let analysing = false;
 /** Bumped on every workspace change so a stale in-flight analysis is discarded. */
 let analysisToken = 0;
 const structures = new Map<string, DatasetStructure>();
+/** Portrait HTML per dataset, or an error note; loaded on selection only. */
+const portraits = new Map<string, string>();
+/** Portal activity counters for doorways; null until loaded or where the portal has none. */
+let usage: UsageIndex | null = null;
 let inspectorOpen = false;
 /** Execution results keyed by the assessment they validated. */
 const executions = new Map<string, ExecutionResult>();
@@ -258,6 +264,23 @@ function showInLandscape(id: string): void {
   history.replaceState(null, '', formatDeepLink({ dataset: id, lens: atlas.lens }) || location.pathname);
   render();
   void loadStructure(id);
+  void loadPortraitFor(id);
+}
+
+async function loadPortraitFor(id: string): Promise<void> {
+  if (portraits.has(id)) return;
+  const dataset = catalog.datasets.find(item => item.id === id);
+  if (!dataset) return;
+  if (catalog.source !== 'live') {
+    portraits.set(id, renderPortrait({ kind: 'none', reason: 'Offline snapshot: previews need the live catalogue.' }));
+  } else {
+    try {
+      portraits.set(id, renderPortrait(await loadPortrait(dataset, portal)));
+    } catch (error) {
+      portraits.set(id, renderPortrait({ kind: 'none', reason: `No preview: ${error instanceof Error ? error.message : 'the source did not answer'}.` }));
+    }
+  }
+  if (selectedId === id) render();
 }
 
 function renderAtlas(): void {
@@ -267,7 +290,7 @@ function renderAtlas(): void {
   datasetCount.textContent = `${catalog.datasets.length} datasets in Atlas`;
   el<HTMLElement>('#landscapeCount').textContent = `${atlasRoot.children?.length ?? 0} ${ATLAS_LENS_LABEL[atlas.lens]} categories`;
   el<HTMLElement>('#landscapeTotal').textContent = catalogueQuery.trim() ? `${searchMatches.size} catalogue matches highlighted` : `${atlasRoot.total} datasets represented`;
-  renderGraph(atlasCanvas, { root: atlasRoot, matches, searchActive: Boolean(catalogueQuery.trim()) }, selectedId, workspace, atlasActions, atlasFocusId);
+  renderGraph(atlasCanvas, { root: atlasRoot, matches, searchActive: Boolean(catalogueQuery.trim()), usage }, selectedId, workspace, atlasActions, atlasFocusId);
 }
 
 function renderFilters(): void {
@@ -316,6 +339,7 @@ function renderInspector(): void {
 
   inspectorBody.innerHTML = `
     ${linkNotice ? `<div class="warning link-notice">${escapeHtml(linkNotice)}</div>` : ''}
+    ${selected ? renderDatasetDetail(selected, structures.get(selected.id), selectedMatch, plan, portraits.get(selected.id) ?? '<div class="portrait portrait-loading">Loading preview…</div>') : ''}
     ${renderSourceNotice(catalog)}
     ${renderSourceDiagnostics(catalog)}
     ${section(
@@ -331,7 +355,6 @@ function renderInspector(): void {
         : '<div class="quiet">Workspace · 0. Build can start from the question; manually adding datasets is an expert override.</div>',
     )}
     ${renderIntentSection(intent)}
-    ${selected ? renderDatasetDetail(selected, structures.get(selected.id), selectedMatch, plan) : ''}
     ${stage === 'discover' ? renderMatches(activeMatches().slice(0, 10), workspace, plan) : ''}
     `;
 
@@ -347,6 +370,10 @@ function renderInspector(): void {
   });
   inspectorBody.querySelector<HTMLButtonElement>('.compose-now')?.addEventListener('click', () => setStage('compose'));
   inspectorBody.querySelectorAll<HTMLButtonElement>('[data-locate]').forEach(button => button.addEventListener('click', () => showInLandscape(button.dataset.locate!)));
+  inspectorBody.querySelectorAll<HTMLButtonElement>('[data-copy-link]').forEach(button => button.addEventListener('click', () => {
+    const url = `${location.origin}${location.pathname}${location.search}${formatDeepLink({ dataset: button.dataset.copyLink!, lens: atlas.lens })}`;
+    void navigator.clipboard?.writeText(url).then(() => { button.textContent = 'Link copied'; }, () => { button.textContent = url; });
+  }));
 }
 
 function renderWorkbench(): void {
@@ -734,4 +761,5 @@ if (catalog.source === 'live' && portal.api.kind === 'ods') {
 renderExamples();
 render();
 applyDeepLink(location.hash);
+if (catalog.source === 'live') void loadUsage(portal).then(index => { usage = index; if (index) render(); });
 window.addEventListener('hashchange', () => applyDeepLink(location.hash));

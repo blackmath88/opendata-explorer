@@ -207,7 +207,7 @@ export function renderMatches(matches: DatasetMatch[], workspace: Set<string>, p
   );
 }
 
-export function renderDatasetDetail(dataset: DatasetRecord, structure?: DatasetStructure, match?: DatasetMatch, plan?: EvidencePlan): string {
+export function renderDatasetDetail(dataset: DatasetRecord, structure?: DatasetStructure, match?: DatasetMatch, plan?: EvidencePlan, portrait = ''): string {
   const characteristics = dataset.characteristics;
   const rows: Array<[string, string]> = [
     ['Dataset id', dataset.id],
@@ -229,8 +229,9 @@ export function renderDatasetDetail(dataset: DatasetRecord, structure?: DatasetS
   return section(
     'Dataset detail',
     `<div class="dataset-detail"><div class="detail-group"><span class="eyebrow">Overview</span><h3>${escapeHtml(dataset.title)}</h3>
-       <div class="detail-actions"><button class="small-btn" data-locate="${escapeHtml(dataset.id)}">${icon('landscape', { size: 14 })}Show in Landscape</button></div>
        <div class="role-ready">${readinessChips(dataset)}</div>
+       ${portrait}
+       <div class="detail-actions"><button class="small-btn" data-locate="${escapeHtml(dataset.id)}">${icon('landscape', { size: 14 })}Show in Landscape</button><button class="small-btn" data-copy-link="${escapeHtml(dataset.id)}" title="A link to exactly this dataset, to paste into an AI chat or a message">${icon('external', { size: 14 })}Copy link for an AI chat</button></div>
        <p>${escapeHtml(dataset.description || 'No catalogue description published.')}</p>
        <a href="${escapeHtml(dataset.sourceUrl)}" target="_blank" rel="noreferrer">Open source dataset ${icon('external', { size: 12 })}</a></div>
        <div class="detail-group"><span class="eyebrow">Catalogue</span>

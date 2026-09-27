@@ -1,11 +1,14 @@
 import * as d3 from 'd3';
 import { categoryIcon, type AtlasHierarchyDatum } from '../atlas';
+import { ATLAS_SPECS, dataForm, FORM_LABEL, FORM_MARK, subcategoryGlyph, type CategorySpec, type DataForm } from '../atlas-spec';
 import { CADENCES, CADENCE_LABEL, SHAPES, SHAPE_LABEL, profile, type Shape } from '../catalogue-profile';
-import type { DatasetMatch, EvidenceClass } from '../types';
+import { pickDoorway, type Doorway } from '../doorway';
+import type { DatasetMatch, DatasetRecord, EvidenceClass } from '../types';
+import type { UsageIndex } from '../usage';
 import { escapeHtml, formatCount } from './dom';
 import { icon } from './icons';
 
-export interface AtlasGraphData { root: AtlasHierarchyDatum; matches: DatasetMatch[]; searchActive: boolean; }
+export interface AtlasGraphData { root: AtlasHierarchyDatum; matches: DatasetMatch[]; searchActive: boolean; usage?: UsageIndex | null; }
 export interface AtlasGraphActions { onFocus: (path: string[], id: string) => void; onSelect: (id: string) => void; onWorkspace: (id: string) => void; }
 
 export interface AtlasTileRect { node: AtlasHierarchyDatum; x: number; y: number; width: number; height: number; }
@@ -95,9 +98,10 @@ function draw(animate: boolean): void {
     const focus = current.nodes.get(current.focusId)!;
     const children = focus.children ?? [];
     current.canvas.innerHTML = '';
-    current.canvas.classList.toggle('atlas-leaf', children.every(child => child.kind === 'dataset'));
+    current.canvas.classList.toggle('atlas-leaf', children.every(child => child.kind === 'dataset') || !!specFor(focus));
     if (!children.length) current.canvas.innerHTML = '<p class="atlas-empty">No datasets in this category.</p>';
     else if (children.every(child => child.kind === 'dataset')) drawCards(current, children);
+    else if (specFor(focus)) drawSections(current, focus, specFor(focus)!);
     else drawTiles(current, children);
     current.actions.onFocus(focusPath(current), current.focusId);
   };
@@ -119,16 +123,21 @@ function drawTiles(current: State, children: AtlasHierarchyDatum[]): void {
     const element = document.createElement('div');
     element.className = `atlas-tile size-${size} ${evidenceClassName(node)} ${data.searchActive && node.matching === 0 ? 'dim' : ''}`;
     Object.assign(element.style, { left: `${tile.x}px`, top: `${tile.y}px`, width: `${tile.width}px`, height: `${tile.height}px` });
+    const spec = size === 'lg' ? specFor(node) : undefined;
+    if (spec) element.classList.add('atlas-tile-spec');
+    const headIcon = spec ? spec.emblem : categoryIcon(node);
     element.innerHTML = `
       <button class="atlas-tile-head" title="${escapeHtml(tooltip(node))}">
-        ${categoryIcon(node) && iconFits(node.label, tile.width, size) ? icon(categoryIcon(node)!, { size: size === 'lg' ? 18 : 16 }) : ''}<span class="atlas-tile-title">${escapeHtml(node.label)}</span>
+        ${headIcon && iconFits(node.label, tile.width, size) ? icon(headIcon, { size: spec ? 22 : size === 'lg' ? 18 : 16 }) : ''}<span class="atlas-tile-title">${escapeHtml(node.label)}</span>
         <span class="atlas-tile-count">${data.searchActive ? `<em>${node.matching}</em> / ` : ''}${node.total}</span>
       </button>
       ${size === 'xs' ? '' : `<div class="atlas-tile-evidence">${evidenceBadges(node)}</div>`}
+      ${spec ? atlasCardBody(current, node, spec) : `
       ${node.kind === 'category' && (size === 'lg' || tile.height >= 96) ? profileRows(node, size === 'lg' ? 'full' : 'shape') : ''}
-      ${size === 'lg' ? '<div class="atlas-tile-body"></div>' : ''}`;
+      ${size === 'lg' ? '<div class="atlas-tile-body"></div>' : ''}`}`;
     if (node.kind === 'dataset') element.querySelector('button')!.addEventListener('click', () => current.actions.onSelect(node.dataset!.id));
     else element.addEventListener('click', () => focusOn(node.id));
+    if (spec) bindAtlasCard(current, element);
     canvas.append(element);
     const body = element.querySelector<HTMLElement>('.atlas-tile-body');
     if (body && node.children?.length) drawPreview(current, body, node.children);
@@ -203,7 +212,7 @@ function drawCards(current: State, children: AtlasHierarchyDatum[]): void {
       <button class="atlas-card-main" title="Inspect ${escapeHtml(dataset.title)}">
         <span class="atlas-card-evidence">${match ? `${match.evidenceClass} · ${match.relevance.score}` : 'catalogue'}</span>
         <span class="atlas-card-title">${escapeHtml(dataset.title)}</span>
-        <span class="atlas-card-meta">${escapeHtml(dataset.id)} · ${escapeHtml(dataset.publisher)} · ${formatCount(dataset.recordsCount)} records</span>
+        <span class="atlas-card-meta">${formMark(dataForm(dataset), 13)}${escapeHtml(dataset.id)} · ${escapeHtml(dataset.publisher)} · ${formatCount(dataset.recordsCount)} records</span>
       </button>
       <button class="atlas-card-add ${added ? 'added' : ''}" aria-label="${added ? 'Remove from' : 'Add to'} workspace" title="${added ? 'Remove from' : 'Add to'} workspace">${added ? icon('check', { size: 14 }) : icon('add', { size: 14 })}</button>
     </article>`;
@@ -282,4 +291,121 @@ function evidenceBadges(node: AtlasHierarchyDatum): string {
 function tooltip(node: AtlasHierarchyDatum): string {
   if (node.kind === 'dataset') return `${node.label}\n${node.dataset!.id}`;
   return `${node.label}\n${node.total} datasets\n${node.direct} direct · ${node.supporting} supporting · ${node.contextual} contextual`;
+}
+
+// ---------------------------------------------------------------------------
+// Atlas vocabulary (atlas-spec.ts): emblem, subcategory glyphs, data-form marks, doorways
+// ---------------------------------------------------------------------------
+
+function specFor(node: AtlasHierarchyDatum | undefined): CategorySpec | undefined {
+  if (!node || node.kind !== 'category' || node.depth !== 1 || !/^lens:topic\//.test(node.id)) return undefined;
+  return ATLAS_SPECS[node.label];
+}
+
+function formMark(form: DataForm, size = 12): string {
+  return `<span class="form-mark" title="${FORM_LABEL[form]}">${icon(FORM_MARK[form], { size, label: FORM_LABEL[form] })}</span>`;
+}
+
+/** The two or three most common forms in a group, as marks with counts. Sums are in the tooltip. */
+function formSummary(datasets: readonly DatasetRecord[], limit = 3): string {
+  const counts = new Map<DataForm, number>();
+  for (const dataset of datasets) counts.set(dataForm(dataset), (counts.get(dataForm(dataset)) ?? 0) + 1);
+  const ranked = [...counts].sort((a, b) => b[1] - a[1]);
+  const all = ranked.map(([form, n]) => `${n} ${FORM_LABEL[form]}`).join(', ');
+  const shown = ranked.slice(0, limit).map(([form, n]) => `<span class="fs-v">${icon(FORM_MARK[form], { size: 12 })}${n}</span>`).join('');
+  const rest = ranked.slice(limit).reduce((sum, [, n]) => sum + n, 0);
+  return `<span class="form-summary" title="${escapeHtml(all)}" aria-label="${escapeHtml(all)}">${shown}${rest ? `<span class="fs-v fs-rest">+${rest}</span>` : ''}</span>`;
+}
+
+const doorways = new Map<string, Doorway | null>();
+function doorwayFor(current: State, key: string, datasets: readonly DatasetRecord[]): Doorway | null {
+  const cacheKey = `${key}|${current.data.usage ? 'u' : 'm'}|${datasets.length}`;
+  if (!doorways.has(cacheKey)) doorways.set(cacheKey, pickDoorway(datasets, current.data.usage ?? null, new Date()));
+  return doorways.get(cacheKey)!;
+}
+
+function doorwayHtml(door: Doorway | null, compact: boolean): string {
+  if (!door) return '';
+  const label = door.basis === 'usage' ? 'Ready, rarely used' : 'Ready to explore';
+  return `<div class="doorway ${compact ? 'compact' : ''}"><span class="doorway-k">${label}</span>
+    <button class="doorway-title" data-id="${escapeHtml(door.dataset.id)}" title="${escapeHtml(door.reason)}">${formMark(dataForm(door.dataset), 13)}<span>${escapeHtml(door.dataset.title)}</span></button>
+    ${compact ? '' : `<span class="doorway-why">${escapeHtml(door.reason)}</span>`}</div>`;
+}
+
+/** Top-level card for a category with a spec: subcategory rows instead of nested boxes, one doorway. */
+function atlasCardBody(current: State, node: AtlasHierarchyDatum, spec: CategorySpec): string {
+  const subs = [...(node.children ?? [])].sort((a, b) => b.total - a.total || a.label.localeCompare(b.label));
+  const rows = subs.map(sub => `<button class="ac-sub ${current.data.searchActive && !sub.matching ? 'dim' : ''} ${evidenceClassName(sub)}" data-focus="${escapeHtml(sub.id)}" data-total="${sub.total}" data-label="${escapeHtml(sub.label)}" aria-label="${escapeHtml(`${sub.label}, ${sub.total} datasets`)}">
+      ${icon(subcategoryGlyph(spec, sub.label), { size: 17 })}<span class="ac-sub-label">${escapeHtml(sub.label)}</span>${formSummary(datasetsUnder(sub), 2)}<span class="ac-sub-count">${current.data.searchActive ? `<em>${sub.matching}</em>/` : ''}${sub.total}</span></button>`).join('');
+  return `<div class="ac-subs">${rows}</div>${doorwayHtml(doorwayFor(current, node.id, datasetsUnder(node)), true)}`;
+}
+
+/**
+ * Count conservation on the card: if the rows do not fit, the hidden ones fold into a final
+ * "+ N more" row carrying their dataset total, which opens the category. Run after layout.
+ */
+function foldOverflowingRows(element: HTMLElement): void {
+  const list = element.querySelector<HTMLElement>('.ac-subs');
+  if (!list) return;
+  // Start from the full list every time: an earlier measurement may predate fonts or layout.
+  list.querySelector('.ac-more')?.remove();
+  const rows = [...list.querySelectorAll<HTMLButtonElement>('.ac-sub')];
+  rows.forEach(row => { row.hidden = false; });
+  if (list.scrollHeight <= list.clientHeight + 1) return;
+  const more = document.createElement('button');
+  more.className = 'ac-sub ac-more';
+  list.append(more);
+  const hidden: HTMLButtonElement[] = [];
+  while (rows.length > 1 && list.scrollHeight > list.clientHeight + 1) {
+    const row = rows.pop()!;
+    row.hidden = true;
+    hidden.unshift(row);
+    const total = hidden.reduce((sum, item) => sum + Number(item.dataset.total), 0);
+    more.innerHTML = `<span></span><span class="ac-sub-label">+ ${hidden.length} more: ${hidden.map(item => item.dataset.label).join(', ')}</span><span></span><span class="ac-sub-count">${total}</span>`;
+  }
+}
+
+function bindAtlasCard(current: State, element: HTMLElement): void {
+  requestAnimationFrame(() => foldOverflowingRows(element));
+  void document.fonts?.ready.then(() => requestAnimationFrame(() => foldOverflowingRows(element)));
+  element.querySelector('.ac-subs')?.addEventListener('click', event => {
+    if ((event.target as HTMLElement).closest('.ac-more')) { event.stopPropagation(); const head = element.querySelector<HTMLButtonElement>('.atlas-tile-head'); head?.click(); }
+  });
+  element.querySelectorAll<HTMLButtonElement>('.ac-sub').forEach(button => button.addEventListener('click', event => {
+    event.stopPropagation();
+    focusOn(button.dataset.focus!);
+  }));
+  element.querySelectorAll<HTMLButtonElement>('.doorway-title').forEach(button => button.addEventListener('click', event => {
+    event.stopPropagation();
+    current.actions.onSelect(button.dataset.id!);
+  }));
+}
+
+/**
+ * An opened category with a spec: one section per subcategory, each with its doorway and the
+ * complete list of its datasets. The list order is stable (by title); a question marks matches
+ * but never reorders or hides them.
+ */
+function drawSections(current: State, focus: AtlasHierarchyDatum, spec: CategorySpec): void {
+  const subs = [...(focus.children ?? [])].sort((a, b) => b.total - a.total || a.label.localeCompare(b.label));
+  const wrap = document.createElement('div');
+  wrap.className = 'atlas-sections';
+  wrap.innerHTML = `<header class="as-head">${icon(spec.emblem, { size: 30 })}<div><h2>${escapeHtml(focus.label)}</h2><p>${focus.total} datasets in ${subs.length} groups · ${formSummary(datasetsUnder(focus), 8)}</p></div></header>
+    ${subs.map(sub => {
+      const datasets = datasetsUnder(sub).sort((a, b) => a.title.localeCompare(b.title, 'de'));
+      const door = doorwayFor(current, sub.id, datasets);
+      return `<section class="as-sec" aria-label="${escapeHtml(sub.label)}">
+        <div class="as-sec-head">${icon(subcategoryGlyph(spec, sub.label), { size: 26 })}<h3>${escapeHtml(sub.label)}</h3><span class="as-count">${sub.total}</span>${formSummary(datasets, 6)}</div>
+        ${doorwayHtml(door, false)}
+        <ul class="as-list">${datasets.map(dataset => {
+          const match = current.matchById.get(dataset.id);
+          const added = current.workspace.has(dataset.id);
+          return `<li class="${match ? `ev-${match.evidenceClass}` : ''} ${current.selectedId === dataset.id ? 'selected' : ''} ${door?.dataset.id === dataset.id ? 'is-door' : ''}">
+            <button class="as-item" data-id="${escapeHtml(dataset.id)}">${formMark(dataForm(dataset), 14)}<span class="as-title">${escapeHtml(dataset.title)}</span><small>${escapeHtml(dataset.id)} · ${formatCount(dataset.recordsCount)} records</small>${match && match.evidenceClass !== 'contextual' ? `<span class="as-ev">${escapeHtml(match.evidenceClass)}</span>` : ''}</button>
+            <button class="as-add ${added ? 'added' : ''}" data-add="${escapeHtml(dataset.id)}" aria-label="${added ? 'Remove from' : 'Add to'} workspace">${icon(added ? 'check' : 'add', { size: 13 })}</button></li>`;
+        }).join('')}</ul></section>`;
+    }).join('')}`;
+  wrap.querySelectorAll<HTMLButtonElement>('[data-id]').forEach(button => button.addEventListener('click', () => current.actions.onSelect(button.dataset.id!)));
+  wrap.querySelectorAll<HTMLButtonElement>('[data-add]').forEach(button => button.addEventListener('click', () => current.actions.onWorkspace(button.dataset.add!)));
+  current.canvas.append(wrap);
 }

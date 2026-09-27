@@ -38,6 +38,8 @@ export interface Portal {
   snapshot: boolean;
   /** For a portal of its own: the canton's publishers on opendata.swiss, where its datasets reappear. */
   nationalPublishers?: string[];
+  /** A dataset on the portal that publishes per-dataset activity counters (src/usage.ts). */
+  usageDataset?: string;
 }
 
 export const BASEL_STADT: Portal = {
@@ -60,6 +62,7 @@ export const BASEL_STADT: Portal = {
   verified: true,
   snapshot: true,
   nationalPublishers: ['kanton-basel-stadt'],
+  usageDataset: '100057',
 };
 
 /** Basel-Landschaft runs its own Opendatasoft portal (reachable, 184 datasets on 2026-09-27). */

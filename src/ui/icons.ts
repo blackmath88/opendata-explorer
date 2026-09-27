@@ -106,6 +106,17 @@ export const ICONS = {
   // tabler:scale (Tabler Icons 3.48.0, MIT): Government & Economy (via pikto, see .pikto/provenance.json)
   'topic-government': `<path d="M7 20h10M6 6l6-1 6 1m-6-3v17m-3-8L6 6l-3 6a3 3 0 0 0 6 0m12 0-3-6-3 6a3 3 0 0 0 6 0"/>`,
   // lucide:circle-ellipsis (Lucide 1.2.137, ISC): Other / review needed (via pikto, see .pikto/provenance.json)
+  // Mobility family (hand-drawn, docs/ICON_SPEC_MOBILITY.md). Shared motif: every glyph stands on
+  // the same ground line (y 20.5); the emblem is a route branching from it.
+  'mob-emblem': `<path d="M7 20.5h10"/><path d="M11 20.5c0-3 1-5 1-8M12 12.5c-.5-3-3.5-4-5-6.5M12 12.5c.5-3.5 2.5-6 5-7.5"/>${dot(6.5, 5, 1.75)}${dot(17.5, 4.5, 1.75)}`,
+  'mob-road': `<path d="M3.5 20.5h17"/><path d="M7.5 20.5l3-15.5M16.5 20.5l-3-15.5"/><path d="M12 17.5v-2M12 12v-2M12 7v-1"/>`,
+  'mob-cycling': `<path d="M3.5 20.5h17"/><circle cx="7" cy="15" r="3.5"/><circle cx="17" cy="15" r="3.5"/><path d="M7 15l3-6h5l2 6M10 9l2.5 6H7M13.5 6.5H16"/>`,
+  'mob-walking': `<path d="M3.5 20.5h17"/>${dot(13.5, 4.5, 1.75)}<path d="M13 7.5l-1.25 5.5M11.75 13l-3 7.5M11.75 13l3 3.5 1 4M9 11.5l3.25-3.25 3 2.5"/>`,
+  'mob-parking': `<path d="M3.5 20.5h17"/><rect x="6" y="3.5" width="12" height="13.5" rx="2"/><path d="M10.25 14V7h2.5a2.25 2.25 0 0 1 0 4.5h-2.5"/>`,
+  'mob-transit': `<path d="M3.5 20.5h17"/><rect x="7" y="5" width="10" height="11" rx="2.5"/><path d="M7 11.5h10M10 5l2-1.5L14 5M9.5 16l-1.5 4.5M14.5 16l1.5 4.5"/>${dot(9.75, 13.75, 0.9)}${dot(14.25, 13.75, 0.9)}`,
+  'mob-other': `<path d="M3.5 20.5h17"/><path d="M5 12.5h10"/>${dot(18, 12.5, 1.75)}`,
+  // Data form: what can be inspected, independent of topic. 'geo-*' and 'rep-time-series' cover the rest.
+  'form-unknown': `<rect x="4" y="4" width="16" height="16" rx="2" stroke-dasharray="2.5 2.6"/><path d="M10.25 10a1.75 1.75 0 1 1 2.5 1.6c-.45.25-.75.6-.75 1.15v.35"/>${dot(12, 15.6, 0.8)}`,
   'topic-other': `<circle cx="12" cy="12" r="10"/><path d="M17 12h.01M12 12h.01M7 12h.01"/>`,
   // tabler:leaf (Tabler Icons 3.48.0, MIT): Environment & Climate (via pikto, see .pikto/provenance.json)
   'topic-environment': `<path d="M5 21c.5-4.5 2.5-8 7-10"/><path d="M9 18c6.22 0 10.5-3.29 11-12V4h-4.01c-9 0-11.99 4-12 9 0 1 0 3 2 5z"/>`,
@@ -207,6 +218,16 @@ export const ICON_CATALOGUE: IconGroup[] = [
     { name: 'topic-culture', label: 'Culture', usage: 'Atlas card: Topic' },
     { name: 'topic-government', label: 'Government & Economy', usage: 'Atlas card: Topic' },
     { name: 'topic-other', label: 'Other / review needed', usage: 'Atlas card: Topic' },
+  ] },
+  { title: 'Mobility family', note: 'Atlas: Mobility & Transport. Hand-drawn; shared ground line. See docs/ICON_SPEC_MOBILITY.md.', icons: [
+    { name: 'mob-emblem', label: 'Mobility & Transport', usage: 'Category emblem: a route forking from the ground line to two destinations' },
+    { name: 'mob-road', label: 'Road traffic', usage: 'Subcategory: a road with lane marks' },
+    { name: 'mob-cycling', label: 'Cycling', usage: 'Subcategory: a bicycle' },
+    { name: 'mob-walking', label: 'Walking', usage: 'Subcategory: a person mid-stride' },
+    { name: 'mob-parking', label: 'Parking', usage: 'Subcategory: the parking sign' },
+    { name: 'mob-transit', label: 'Public transport', usage: 'Subcategory: a tram on its rails' },
+    { name: 'mob-other', label: 'Mobility (other)', usage: 'Subcategory fallback: a path to a destination' },
+    { name: 'form-unknown', label: 'Form unknown', usage: 'Data form not declared by the source' },
   ] },
   { title: 'Actions', note: 'Buttons and controls.', icons: [
     { name: 'search', label: 'Search', usage: 'Catalogue search' },
