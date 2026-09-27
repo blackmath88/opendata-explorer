@@ -22,5 +22,13 @@ describe('cantons', () => {
     expect(cantonOfPublisher('etat-de-geneve')).toMatchObject({ canton: { code: 'GE' }, level: 'canton' });
     expect(cantonOfPublisher('x', 'Appenzell Innerrhoden')?.canton.code).toBe('AI');
     expect(cantonOfPublisher('bundesamt-fuer-statistik')).toBeUndefined();
+    // Forms seen on opendata.swiss (2026-09-27)
+    expect(cantonOfPublisher('x', 'Amt für Geoinformation des Kantons Bern')).toMatchObject({ canton: { code: 'BE' }, level: 'canton' });
+    expect(cantonOfPublisher('staatskanzlei-zug', 'Staatskanzlei Zug')).toMatchObject({ canton: { code: 'ZG' }, level: 'canton' });
+    expect(cantonOfPublisher('buwd-rawi', 'Luzern: Dienststelle Raum und Wirtschaft')).toMatchObject({ canton: { code: 'LU' }, level: 'canton' });
+    expect(cantonOfPublisher('administration-cantonale-geneve', 'Kantonale Verwaltung Genf')).toMatchObject({ canton: { code: 'GE' }, level: 'canton' });
+    expect(cantonOfPublisher('ville-geneve', 'Stadt Genf')).toMatchObject({ canton: { code: 'GE' }, level: 'municipal' });
+    // Institutions named after a place are not the canton: a person decides.
+    expect(cantonOfPublisher('eth-zuerich', 'ETH Zürich')).toMatchObject({ canton: { code: 'ZH' }, level: 'unclear' });
   });
 });

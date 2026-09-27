@@ -33,8 +33,20 @@ export async function openCatalogue(portal: Portal = activePortal()): Promise<Ca
       },
     };
   } catch (error) {
-    // The only snapshot is Basel-Stadt's; another portal must not silently show Basel data.
-    if (!portal.snapshot) throw error;
+    // The only shipped snapshot is Basel-Stadt's; another portal must not silently show Basel
+    // data. It gets an empty catalogue that says why, rather than a page stuck on "Loading".
+    if (!portal.snapshot) {
+      return {
+        adapter: live,
+        state: {
+          source: 'fallback',
+          loadedAt: loadedAt(),
+          datasets: [],
+          error: error instanceof Error ? error.message : 'Unknown catalogue error',
+          notes: [`${portal.shortLabel} could not be loaded and has no offline snapshot, so no datasets are shown.`],
+        },
+      };
+    }
     const fallback = new FallbackCatalogueAdapter();
     return {
       adapter: fallback,

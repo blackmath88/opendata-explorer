@@ -9,7 +9,7 @@ export type Rule = readonly [string, RegExp];
 
 export const TOPIC_RULES: ReadonlyArray<readonly [string, ReadonlyArray<Rule>]> = [
   ['Environment & Climate', [
-    ['Urban nature', /baum|tree|grün|gruen|green|\bnatur|biodiv|wald|forest|\bparks?\b|parkanlage|vegetation|flora|fauna/],
+    ['Urban nature', /baum|tree|grün|gruen|green|\bnatur|biodiv|wald|forests?\b|\bparks?\b|parkanlage|vegetation|flora|fauna/],
     ['Air & emissions', /luft|air quality|emission|co2|stickstoff|feinstaub|ozon/],
     ['Climate / heat', /klima|climate|temperatur|temperature|hitze|heat|wetter|weather/],
     ['Water', /wasser|water|rhein|rhine|brunnen|fountain|gewässer|gewaesser|grundwasser/],

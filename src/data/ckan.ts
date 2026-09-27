@@ -165,7 +165,12 @@ export async function ckanFetch<T>(portal: Portal, action: string, params: Recor
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
-    const response = await fetch(url, { headers: { Accept: 'application/json' }, signal: controller.signal });
+    // opendata.swiss answers nginx 403 to curl/node default User-Agents and to agents that do not
+    // start with "Mozilla/5.0" (observed 2026-09-27). The crawler convention below still names us.
+    // Browsers send their own and do not allow overriding it, so only scripts (Node) set one.
+    const headers: Record<string, string> = { Accept: 'application/json' };
+    if (typeof window === 'undefined') headers['User-Agent'] = 'Mozilla/5.0 (compatible; DataFit/0.1; +https://github.com/blackmath88/opendata-explorer)';
+    const response = await fetch(url, { headers, signal: controller.signal });
     const text = await response.text();
     let body: CkanResponse<T>;
     try {

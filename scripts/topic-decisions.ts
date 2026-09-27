@@ -4,6 +4,8 @@
  *   requests [out.json]                 datasets the rules cannot settle, as model requests
  *   apply <answers.json> --by <source> [--kind model|human]
  *                                       validate answers, store the accepted ones
+ *   rebase                              carry stale decisions over to changed metadata where their
+ *                                       evidence still holds (see rebaseDecision)
  *   eval                                rules (first hit) vs scored rules vs scored + decisions,
  *                                       measured on src/data/portals/<portal>/topic-gold.json
  *
@@ -19,7 +21,7 @@ import { portalById, setActivePortal } from '../src/portal';
 import { TOPIC_RULES } from '../src/topic-rules';
 import { assessTopic } from '../src/topic-scoring';
 import {
-  TAXONOMY_VERSION, TOPIC_PROMPT_VERSION, buildTopicRequest, indexDecisions, metadataHash, needsDecision, resolveTopic, validateDecision,
+  TAXONOMY_VERSION, TOPIC_PROMPT_VERSION, buildTopicRequest, rebaseDecision, indexDecisions, metadataHash, needsDecision, resolveTopic, validateDecision,
   type TopicDecision, type TopicDecisionFile,
 } from '../src/topic-decisions';
 import { labelText, datasetText } from '../src/topic-rules';
@@ -61,6 +63,21 @@ if (command === 'requests') {
   mkdirSync(dirname(DECISIONS), { recursive: true });
   writeFileSync(DECISIONS, JSON.stringify(file, null, 2) + '\n');
   console.log(`accepted ${accepted} of ${answers.length}`);
+} else if (command === 'rebase') {
+  const file = load();
+  const today = new Date().toISOString().slice(0, 10);
+  let rebased = 0;
+  file.decisions = file.decisions.map(decision => {
+    const dataset = datasets.find(item => item.id === decision.datasetId);
+    if (!dataset) { console.log(`KEEP ${decision.datasetId}: not in the catalogue`); return decision; }
+    if (validateDecision(decision, dataset).ok) return decision;
+    const result = rebaseDecision(decision, dataset, today);
+    if ('reasons' in result) { console.log(`STALE ${decision.datasetId}: ${result.reasons.join('; ')}`); return decision; }
+    rebased++;
+    return result.decision;
+  });
+  writeFileSync(DECISIONS, JSON.stringify(file, null, 2) + '\n');
+  console.log(`rebased ${rebased} of ${file.decisions.length}`);
 } else if (command === 'eval') {
   if (!existsSync(GOLD)) {
     console.log(`no gold labels for ${portal.shortLabel} (${GOLD}): label a sample of ~40 datasets first; accuracy cannot be claimed without them`);

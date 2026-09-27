@@ -5,7 +5,7 @@ import { buildEvidencePlan, gapFor } from './evidence';
 import { fallbackDatasets } from './data/fallback';
 import { parseUseCaseIntent } from './intent';
 import { normalizeOdsDataset } from './data/normalize';
-import { BASEL_STADT, activePortal, portalFromSearch, setActivePortal, type Portal } from './portal';
+import { BASEL_STADT, PORTALS, activePortal, portalFromSearch, setActivePortal, type Portal } from './portal';
 
 /**
  * Files allowed to name Basel in code. Everything else must read the portal, so that a second
@@ -97,5 +97,22 @@ describe('portal', () => {
     for (const role of unchecked) {
       expect(role.gap!.kind === 'not_in_catalogue' ? role.candidates.length : 0).toBe(0);
     }
+  });
+});
+
+describe('portal entries', () => {
+  it('have unique ids, a bbox inside Switzerland and at least one place name', () => {
+    expect(new Set(PORTALS.map(portal => portal.id)).size).toBe(PORTALS.length);
+    for (const portal of PORTALS) {
+      const [minLon, minLat, maxLon, maxLat] = portal.bbox;
+      expect([portal.id, minLon >= 5.9 && maxLon <= 10.5 && minLat >= 45.8 && maxLat <= 47.9 && minLon < maxLon && minLat < maxLat]).toEqual([portal.id, true]);
+      expect(portal.places.length).toBeGreaterThan(0);
+      if (portal.api.kind === 'ckan') expect(portal.api.organizations.length).toBeGreaterThan(0);
+    }
+  });
+
+  it('only Basel-Stadt is verified and ships a snapshot so far', () => {
+    expect(PORTALS.filter(portal => portal.verified).map(portal => portal.id)).toEqual(['bs']);
+    expect(PORTALS.filter(portal => portal.snapshot).map(portal => portal.id)).toEqual(['bs']);
   });
 });

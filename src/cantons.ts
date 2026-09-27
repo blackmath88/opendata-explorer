@@ -44,7 +44,8 @@ export function slug(text: string): string {
     .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 }
 
-const CANTON_WORD = /\b(kanton|canton|cantone|etat|republique|stato)\b/;
+/** Words that mark a cantonal office. "des Kantons Bern", "Staatskanzlei Zug", "Luzern: Dienststelle …". */
+const CANTON_WORD = /\b(kantons?|kantonale?|canton|cantonale?|cantone|etat|republique|stato|staatskanzlei|standeskanzlei|dienststelle|staatsarchiv)\b/;
 const MUNICIPAL_WORD = /\b(stadt|ville|citta|gemeinde|commune|comune)\b/;
 
 export type PublisherLevel = 'canton' | 'municipal' | 'unclear';

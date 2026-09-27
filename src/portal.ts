@@ -36,6 +36,8 @@ export interface Portal {
   verified: boolean;
   /** Whether an offline snapshot ships with the app. */
   snapshot: boolean;
+  /** For a portal of its own: the canton's publishers on opendata.swiss, where its datasets reappear. */
+  nationalPublishers?: string[];
 }
 
 export const BASEL_STADT: Portal = {
@@ -57,9 +59,56 @@ export const BASEL_STADT: Portal = {
   ],
   verified: true,
   snapshot: true,
+  nationalPublishers: ['kanton-basel-stadt'],
 };
 
-export const PORTALS: readonly Portal[] = [BASEL_STADT];
+/** Basel-Landschaft runs its own Opendatasoft portal (reachable, 184 datasets on 2026-09-27). */
+export const BASEL_LANDSCHAFT: Portal = {
+  id: 'bl',
+  canton: 'BL',
+  label: 'Basel-Landschaft Open Government Data',
+  shortLabel: 'Basel-Landschaft OGD',
+  place: 'Basel-Landschaft',
+  languages: ['de'],
+  api: { kind: 'ods', base: 'https://data.bl.ch/api/explore/v2.1', site: 'https://data.bl.ch' },
+  // swisstopo SearchServer, canton boundary box (WGS84), 2026-09-27
+  bbox: [7.324906, 47.337222, 7.963223, 47.564362],
+  places: [
+    ['Liestal', /\bliestal\b/], ['Allschwil', /\ballschwil\b/], ['Reinach', /\breinach\b/], ['Muttenz', /\bmuttenz\b/],
+    ['Pratteln', /\bpratteln\b/], ['Binningen', /\bbinningen\b/], ['Münchenstein', /\bm(ü|ue)nchenstein\b/], ['Laufen', /\blaufen\b/],
+    ['Basel-Landschaft', /\b(basel[- ]landschaft|baselland|baselbiet)\b/],
+  ],
+  verified: false,
+  snapshot: false,
+  nationalPublishers: ['kanton-basel-landschaft'],
+};
+
+/** Geneva publishes through opendata.swiss (French); publishers from `portals.ts discover`, 2026-09-27. */
+export const GENEVE: Portal = {
+  id: 'ge',
+  canton: 'GE',
+  label: 'Canton de Genève on opendata.swiss',
+  shortLabel: 'Genève (opendata.swiss)',
+  place: 'Genève',
+  languages: ['fr', 'de', 'en'],
+  api: {
+    kind: 'ckan',
+    base: 'https://ckan.opendata.swiss',
+    site: 'https://opendata.swiss/fr',
+    // Not included, awaiting a decision: geneve-aeroport, hes-so-geneve, services-industriels-geneve, fti-ge, sitg (0 datasets).
+    organizations: ['canton-geneve', 'administration-cantonale-geneve', 'chancellerie-etat-geneve'],
+  },
+  bbox: [5.94964, 46.128531, 6.312594, 46.365919],
+  places: [
+    ['Carouge', /carouge/], ['Vernier', /vernier/], ['Lancy', /lancy/], ['Meyrin', /meyrin/], ['Onex', /(?<!\p{L})onex(?!\p{L})/u],
+    ['Thônex', /th[oô]nex/], ['Plainpalais', /plainpalais/], ['Eaux-Vives', /eaux-vives/],
+    ['Genève', /gen[eè]ve|geneva|genf/],
+  ],
+  verified: false,
+  snapshot: false,
+};
+
+export const PORTALS: readonly Portal[] = [BASEL_STADT, BASEL_LANDSCHAFT, GENEVE];
 
 export function portalById(id: string | null | undefined): Portal | undefined {
   return PORTALS.find(portal => portal.id === id);

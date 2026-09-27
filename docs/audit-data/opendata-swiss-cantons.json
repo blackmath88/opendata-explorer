@@ -1,0 +1,1397 @@
+{
+  "source": "https://ckan.opendata.swiss organization_list",
+  "takenAt": "2026-09-27T10:58:14.521Z",
+  "cantons": [
+    {
+      "canton": "ZH",
+      "name": "Zürich",
+      "datasets": 736,
+      "draftPortal": {
+        "id": "zh-ods-swiss",
+        "label": "Kanton Zürich on opendata.swiss",
+        "languages": [
+          "de"
+        ],
+        "api": {
+          "kind": "ckan",
+          "base": "https://ckan.opendata.swiss",
+          "site": "https://opendata.swiss/de",
+          "organizations": [
+            "geoinformation-kanton-zuerich",
+            "statistisches-amt-kanton-zuerich",
+            "awel-kanton-zuerich",
+            "gesundheitsdirektion-kanton-zuerich",
+            "fachstelle-ogd-kanton-zuerich",
+            "bildungsstatistik-kanton-zuerich",
+            "staatsarchiv-kanton-zuerich",
+            "are-kanton-zuerich",
+            "kantonspolizei-kanton-zuerich",
+            "staatskanzlei-kanton-zuerich",
+            "tiefbauamt-kanton-zuerich",
+            "afm-kanton-zuerich",
+            "ekz",
+            "finanzverwaltung-kanton-zuerich",
+            "gemeindeamt-kanton-zuerich",
+            "handelsregisteramt-kanton-zuerich",
+            "ima-kanton-zuerich",
+            "oberjugendanwaltschaft-kanton-zuerich",
+            "personalamt-kanton-zuerich",
+            "volksschulamt-kanton-zuerich",
+            "kanton-zuerich"
+          ]
+        },
+        "verified": false,
+        "todo": [
+          "decide on zb_zuerich, eth-zuerich",
+          "bbox from swissBOUNDARIES3D",
+          "place names for questions"
+        ]
+      },
+      "publishers": [
+        {
+          "name": "stadt-zurich",
+          "title": "Stadt Zürich",
+          "datasets": 692,
+          "level": "municipal"
+        },
+        {
+          "name": "geoinformation-kanton-zuerich",
+          "title": "Geoinformation Kanton Zürich",
+          "datasets": 404,
+          "level": "canton"
+        },
+        {
+          "name": "statistisches-amt-kanton-zuerich",
+          "title": "Amt für Statistik und Daten Kanton Zürich",
+          "datasets": 257,
+          "level": "canton"
+        },
+        {
+          "name": "awel-kanton-zuerich",
+          "title": "Amt für Abfall, Wasser, Energie und Luft Kanton Zürich",
+          "datasets": 13,
+          "level": "canton"
+        },
+        {
+          "name": "gesundheitsdirektion-kanton-zuerich",
+          "title": "Gesundheitsdirektion Kanton Zürich",
+          "datasets": 13,
+          "level": "canton"
+        },
+        {
+          "name": "fachstelle-ogd-kanton-zuerich",
+          "title": "Fach- und Koordinationsstelle Open Government Data Kanton Zürich",
+          "datasets": 12,
+          "level": "canton"
+        },
+        {
+          "name": "bildungsstatistik-kanton-zuerich",
+          "title": "Bildungsstatistik Kanton Zürich",
+          "datasets": 11,
+          "level": "canton"
+        },
+        {
+          "name": "zb_zuerich",
+          "title": "Zentralbibliothek Zürich",
+          "datasets": 10,
+          "level": "unclear"
+        },
+        {
+          "name": "staatsarchiv-kanton-zuerich",
+          "title": "Staatsarchiv Kanton Zürich",
+          "datasets": 8,
+          "level": "canton"
+        },
+        {
+          "name": "are-kanton-zuerich",
+          "title": "Amt für Raumentwicklung Kanton Zürich",
+          "datasets": 3,
+          "level": "canton"
+        },
+        {
+          "name": "kantonspolizei-kanton-zuerich",
+          "title": "Kantonspolizei Zürich",
+          "datasets": 2,
+          "level": "canton"
+        },
+        {
+          "name": "staatskanzlei-kanton-zuerich",
+          "title": "Staatskanzlei Kanton Zürich",
+          "datasets": 2,
+          "level": "canton"
+        },
+        {
+          "name": "tiefbauamt-kanton-zuerich",
+          "title": "Tiefbauamt Kanton Zürich",
+          "datasets": 2,
+          "level": "canton"
+        },
+        {
+          "name": "afm-kanton-zuerich",
+          "title": "Amt für Mobilität des Kantons Zürich",
+          "datasets": 1,
+          "level": "canton"
+        },
+        {
+          "name": "ekz",
+          "title": "Elektrizitätswerke des Kantons Zürich EKZ",
+          "datasets": 1,
+          "level": "canton"
+        },
+        {
+          "name": "finanzverwaltung-kanton-zuerich",
+          "title": "Finanzverwaltung Kanton Zürich",
+          "datasets": 1,
+          "level": "canton"
+        },
+        {
+          "name": "gemeindeamt-kanton-zuerich",
+          "title": "Gemeindeamt Kanton Zürich",
+          "datasets": 1,
+          "level": "canton"
+        },
+        {
+          "name": "handelsregisteramt-kanton-zuerich",
+          "title": "Handelsregisteramt Kanton Zürich",
+          "datasets": 1,
+          "level": "canton"
+        },
+        {
+          "name": "ima-kanton-zuerich",
+          "title": "Immobilienamt des Kantons Zürich",
+          "datasets": 1,
+          "level": "canton"
+        },
+        {
+          "name": "oberjugendanwaltschaft-kanton-zuerich",
+          "title": "Oberjugendanwaltschaft Kanton Zürich",
+          "datasets": 1,
+          "level": "canton"
+        },
+        {
+          "name": "personalamt-kanton-zuerich",
+          "title": "Personalamt Kanton Zürich",
+          "datasets": 1,
+          "level": "canton"
+        },
+        {
+          "name": "volksschulamt-kanton-zuerich",
+          "title": "Volksschulamt Kanton Zürich",
+          "datasets": 1,
+          "level": "canton"
+        },
+        {
+          "name": "kanton-zuerich",
+          "title": "Kanton Zürich",
+          "datasets": 0,
+          "level": "canton"
+        },
+        {
+          "name": "eth-zuerich",
+          "title": "ETH Zürich",
+          "datasets": 0,
+          "level": "unclear"
+        }
+      ]
+    },
+    {
+      "canton": "BE",
+      "name": "Bern",
+      "datasets": 232,
+      "draftPortal": {
+        "id": "be-ods-swiss",
+        "label": "Kanton Bern on opendata.swiss",
+        "languages": [
+          "de",
+          "fr"
+        ],
+        "api": {
+          "kind": "ckan",
+          "base": "https://ckan.opendata.swiss",
+          "site": "https://opendata.swiss/de",
+          "organizations": [
+            "amt-fuer-geoinformation-des-kantons-bern",
+            "kanton-bern-2"
+          ]
+        },
+        "verified": false,
+        "todo": [
+          "decide on stadtarchiv-bern, stadtrat-bern",
+          "bbox from swissBOUNDARIES3D",
+          "place names for questions"
+        ]
+      },
+      "publishers": [
+        {
+          "name": "amt-fuer-geoinformation-des-kantons-bern",
+          "title": "Amt für Geoinformation des Kantons Bern",
+          "datasets": 210,
+          "level": "canton"
+        },
+        {
+          "name": "geoinformation-der-stadt-bern",
+          "title": "Geoinformation Stadt Bern",
+          "datasets": 209,
+          "level": "municipal"
+        },
+        {
+          "name": "immobilien-stadt-bern",
+          "title": "Immobilien Stadt Bern",
+          "datasets": 28,
+          "level": "municipal"
+        },
+        {
+          "name": "kanton-bern-2",
+          "title": "Kanton Bern",
+          "datasets": 22,
+          "level": "canton"
+        },
+        {
+          "name": "stadtarchiv-bern",
+          "title": "Stadtarchiv Bern",
+          "datasets": 12,
+          "level": "unclear"
+        },
+        {
+          "name": "finanzverwaltung-der-stadt-bern",
+          "title": "Finanzverwaltung der Stadt Bern",
+          "datasets": 3,
+          "level": "municipal"
+        },
+        {
+          "name": "stadtrat-bern",
+          "title": "Stadtrat Bern",
+          "datasets": 3,
+          "level": "unclear"
+        },
+        {
+          "name": "statistik-stadt-bern",
+          "title": "Statistik Stadt Bern",
+          "datasets": 1,
+          "level": "municipal"
+        },
+        {
+          "name": "stadt-bern",
+          "title": "Stadt Bern",
+          "datasets": 0,
+          "level": "municipal"
+        }
+      ]
+    },
+    {
+      "canton": "LU",
+      "name": "Luzern",
+      "datasets": 264,
+      "draftPortal": {
+        "id": "lu-ods-swiss",
+        "label": "Kanton Luzern on opendata.swiss",
+        "languages": [
+          "de"
+        ],
+        "api": {
+          "kind": "ckan",
+          "base": "https://ckan.opendata.swiss",
+          "site": "https://opendata.swiss/de",
+          "organizations": [
+            "buwd-rawi",
+            "buwd-lawa",
+            "buwd-uwe",
+            "buwd-vif",
+            "jsd-handelsregister-und-staatsarchiv",
+            "lu-mzj",
+            "bkd-kultur",
+            "gsd-gesundheit",
+            "immobilien-lu",
+            "finanzen-lu",
+            "staatskanzlei-luzern",
+            "fd-steuern",
+            "kanton_luzern"
+          ]
+        },
+        "verified": false,
+        "todo": [
+          "decide on lustat, buwd-departementssekretariat, buwd-vvl, jsd-gvl",
+          "bbox from swissBOUNDARIES3D",
+          "place names for questions"
+        ]
+      },
+      "publishers": [
+        {
+          "name": "stadt-luzern",
+          "title": "Stadt Luzern",
+          "datasets": 218,
+          "level": "municipal"
+        },
+        {
+          "name": "buwd-rawi",
+          "title": "Luzern: Dienststelle Raum und Wirtschaft",
+          "datasets": 140,
+          "level": "canton"
+        },
+        {
+          "name": "buwd-lawa",
+          "title": "Luzern: Dienststelle Landwirtschaft und Wald",
+          "datasets": 50,
+          "level": "canton"
+        },
+        {
+          "name": "buwd-uwe",
+          "title": "Luzern: Dienststelle Umwelt und Energie",
+          "datasets": 38,
+          "level": "canton"
+        },
+        {
+          "name": "buwd-vif",
+          "title": "Luzern: Dienststelle Verkehr und Infrastruktur",
+          "datasets": 21,
+          "level": "canton"
+        },
+        {
+          "name": "lustat",
+          "title": "Luzern: LUSTAT Statistik Luzern",
+          "datasets": 7,
+          "level": "unclear"
+        },
+        {
+          "name": "jsd-handelsregister-und-staatsarchiv",
+          "title": "Luzern: Dienststelle Handelsregister und Staatsarchiv",
+          "datasets": 5,
+          "level": "canton"
+        },
+        {
+          "name": "buwd-departementssekretariat",
+          "title": "Luzern: Departementssekretariat BUWD",
+          "datasets": 3,
+          "level": "unclear"
+        },
+        {
+          "name": "lu-mzj",
+          "title": "Luzern: Dienststelle Militär, Zivilschutz und Justizvollzug, Zivilschutz",
+          "datasets": 3,
+          "level": "canton"
+        },
+        {
+          "name": "buwd-vvl",
+          "title": "Luzern: Verkehrsverbund Luzern",
+          "datasets": 3,
+          "level": "unclear"
+        },
+        {
+          "name": "jsd-gvl",
+          "title": "Luzern: Gebäudeversicherung Luzern",
+          "datasets": 2,
+          "level": "unclear"
+        },
+        {
+          "name": "bkd-kultur",
+          "title": "Luzern: Dienststelle Kultur",
+          "datasets": 2,
+          "level": "canton"
+        },
+        {
+          "name": "gsd-gesundheit",
+          "title": "Luzern: Dienststelle Gesundheit und Sport",
+          "datasets": 1,
+          "level": "canton"
+        },
+        {
+          "name": "immobilien-lu",
+          "title": "Luzern: Dienststelle Immobilien",
+          "datasets": 1,
+          "level": "canton"
+        },
+        {
+          "name": "finanzen-lu",
+          "title": "Luzern: Dienststelle Finanzen",
+          "datasets": 1,
+          "level": "canton"
+        },
+        {
+          "name": "staatskanzlei-luzern",
+          "title": "Luzern: Staatskanzlei Luzern",
+          "datasets": 1,
+          "level": "canton"
+        },
+        {
+          "name": "fd-steuern",
+          "title": "Luzern: Dienststelle Steuern",
+          "datasets": 1,
+          "level": "canton"
+        },
+        {
+          "name": "kanton_luzern",
+          "title": "Kanton Luzern",
+          "datasets": 0,
+          "level": "canton"
+        }
+      ]
+    },
+    {
+      "canton": "UR",
+      "name": "Uri",
+      "datasets": 193,
+      "draftPortal": {
+        "id": "ur-ods-swiss",
+        "label": "Kanton Uri on opendata.swiss",
+        "languages": [
+          "de"
+        ],
+        "api": {
+          "kind": "ckan",
+          "base": "https://ckan.opendata.swiss",
+          "site": "https://opendata.swiss/de",
+          "organizations": [
+            "geoinformation-kanton-uri",
+            "kanton-uri"
+          ]
+        },
+        "verified": false,
+        "todo": [
+          "bbox from swissBOUNDARIES3D",
+          "place names for questions"
+        ]
+      },
+      "publishers": [
+        {
+          "name": "geoinformation-kanton-uri",
+          "title": "Geoinformation Kanton Uri",
+          "datasets": 189,
+          "level": "canton"
+        },
+        {
+          "name": "kanton-uri",
+          "title": "Kanton Uri",
+          "datasets": 4,
+          "level": "canton"
+        }
+      ]
+    },
+    {
+      "canton": "SZ",
+      "name": "Schwyz",
+      "datasets": 249,
+      "draftPortal": {
+        "id": "sz-ods-swiss",
+        "label": "Kanton Schwyz on opendata.swiss",
+        "languages": [
+          "de"
+        ],
+        "api": {
+          "kind": "ckan",
+          "base": "https://ckan.opendata.swiss",
+          "site": "https://opendata.swiss/de",
+          "organizations": [
+            "amt-geoinformation-sz",
+            "kanton-schwyz"
+          ]
+        },
+        "verified": false,
+        "todo": [
+          "bbox from swissBOUNDARIES3D",
+          "place names for questions"
+        ]
+      },
+      "publishers": [
+        {
+          "name": "amt-geoinformation-sz",
+          "title": "Amt für Geoinformation Kanton Schwyz",
+          "datasets": 249,
+          "level": "canton"
+        },
+        {
+          "name": "kanton-schwyz",
+          "title": "Kanton Schwyz",
+          "datasets": 0,
+          "level": "canton"
+        }
+      ]
+    },
+    {
+      "canton": "OW",
+      "name": "Obwalden",
+      "datasets": 0,
+      "draftPortal": {
+        "id": "ow-ods-swiss",
+        "label": "Kanton Obwalden on opendata.swiss",
+        "languages": [
+          "de"
+        ],
+        "api": {
+          "kind": "ckan",
+          "base": "https://ckan.opendata.swiss",
+          "site": "https://opendata.swiss/de",
+          "organizations": []
+        },
+        "verified": false,
+        "todo": [
+          "bbox from swissBOUNDARIES3D",
+          "place names for questions"
+        ]
+      },
+      "publishers": []
+    },
+    {
+      "canton": "NW",
+      "name": "Nidwalden",
+      "datasets": 0,
+      "draftPortal": {
+        "id": "nw-ods-swiss",
+        "label": "Kanton Nidwalden on opendata.swiss",
+        "languages": [
+          "de"
+        ],
+        "api": {
+          "kind": "ckan",
+          "base": "https://ckan.opendata.swiss",
+          "site": "https://opendata.swiss/de",
+          "organizations": []
+        },
+        "verified": false,
+        "todo": [
+          "bbox from swissBOUNDARIES3D",
+          "place names for questions"
+        ]
+      },
+      "publishers": []
+    },
+    {
+      "canton": "GL",
+      "name": "Glarus",
+      "datasets": 131,
+      "draftPortal": {
+        "id": "gl-ods-swiss",
+        "label": "Kanton Glarus on opendata.swiss",
+        "languages": [
+          "de"
+        ],
+        "api": {
+          "kind": "ckan",
+          "base": "https://ckan.opendata.swiss",
+          "site": "https://opendata.swiss/de",
+          "organizations": [
+            "staatskanzlei-glarus",
+            "fachstelle-geoinformation-des-kantons-glarus",
+            "kanton-glarus"
+          ]
+        },
+        "verified": false,
+        "todo": [
+          "bbox from swissBOUNDARIES3D",
+          "place names for questions"
+        ]
+      },
+      "publishers": [
+        {
+          "name": "staatskanzlei-glarus",
+          "title": "Staatskanzlei Glarus",
+          "datasets": 72,
+          "level": "canton"
+        },
+        {
+          "name": "fachstelle-geoinformation-des-kantons-glarus",
+          "title": "Fachstelle Geoinformation des Kantons Glarus",
+          "datasets": 59,
+          "level": "canton"
+        },
+        {
+          "name": "kanton-glarus",
+          "title": "Kanton Glarus",
+          "datasets": 0,
+          "level": "canton"
+        }
+      ]
+    },
+    {
+      "canton": "ZG",
+      "name": "Zug",
+      "datasets": 485,
+      "draftPortal": {
+        "id": "zg-ods-swiss",
+        "label": "Kanton Zug on opendata.swiss",
+        "languages": [
+          "de"
+        ],
+        "api": {
+          "kind": "ckan",
+          "base": "https://ckan.opendata.swiss",
+          "site": "https://opendata.swiss/de",
+          "organizations": [
+            "staatskanzlei-zug",
+            "kanton-zug"
+          ]
+        },
+        "verified": false,
+        "todo": [
+          "bbox from swissBOUNDARIES3D",
+          "place names for questions"
+        ]
+      },
+      "publishers": [
+        {
+          "name": "staatskanzlei-zug",
+          "title": "Staatskanzlei Zug",
+          "datasets": 261,
+          "level": "canton"
+        },
+        {
+          "name": "kanton-zug",
+          "title": "Kanton Zug",
+          "datasets": 224,
+          "level": "canton"
+        },
+        {
+          "name": "stadt-zug",
+          "title": "Stadt Zug",
+          "datasets": 25,
+          "level": "municipal"
+        }
+      ]
+    },
+    {
+      "canton": "FR",
+      "name": "Fribourg",
+      "datasets": 220,
+      "draftPortal": {
+        "id": "fr-ods-swiss",
+        "label": "Kanton Fribourg on opendata.swiss",
+        "languages": [
+          "fr",
+          "de"
+        ],
+        "api": {
+          "kind": "ckan",
+          "base": "https://ckan.opendata.swiss",
+          "site": "https://opendata.swiss/de",
+          "organizations": [
+            "geoinformation_kanton_freiburg",
+            "kanton_freiburg"
+          ]
+        },
+        "verified": false,
+        "todo": [
+          "decide on ssd",
+          "bbox from swissBOUNDARIES3D",
+          "place names for questions"
+        ]
+      },
+      "publishers": [
+        {
+          "name": "geoinformation_kanton_freiburg",
+          "title": "Geoinformation Kanton Freiburg",
+          "datasets": 220,
+          "level": "canton"
+        },
+        {
+          "name": "ssd",
+          "title": "Amt für Statistik und Daten Freiburg",
+          "datasets": 122,
+          "level": "unclear"
+        },
+        {
+          "name": "kanton_freiburg",
+          "title": "Kanton Freiburg",
+          "datasets": 0,
+          "level": "canton"
+        }
+      ]
+    },
+    {
+      "canton": "SO",
+      "name": "Solothurn",
+      "datasets": 50,
+      "draftPortal": {
+        "id": "so-ods-swiss",
+        "label": "Kanton Solothurn on opendata.swiss",
+        "languages": [
+          "de"
+        ],
+        "api": {
+          "kind": "ckan",
+          "base": "https://ckan.opendata.swiss",
+          "site": "https://opendata.swiss/de",
+          "organizations": [
+            "kanton_solothurn"
+          ]
+        },
+        "verified": false,
+        "todo": [
+          "bbox from swissBOUNDARIES3D",
+          "place names for questions"
+        ]
+      },
+      "publishers": [
+        {
+          "name": "kanton_solothurn",
+          "title": "Kanton Solothurn",
+          "datasets": 50,
+          "level": "canton"
+        }
+      ]
+    },
+    {
+      "canton": "BS",
+      "name": "Basel-Stadt",
+      "datasets": 770,
+      "draftPortal": {
+        "id": "bs-ods-swiss",
+        "label": "Kanton Basel-Stadt on opendata.swiss",
+        "languages": [
+          "de"
+        ],
+        "api": {
+          "kind": "ckan",
+          "base": "https://ckan.opendata.swiss",
+          "site": "https://opendata.swiss/de",
+          "organizations": [
+            "kanton-basel-stadt"
+          ]
+        },
+        "verified": false,
+        "todo": [
+          "bbox from swissBOUNDARIES3D",
+          "place names for questions"
+        ]
+      },
+      "publishers": [
+        {
+          "name": "kanton-basel-stadt",
+          "title": "Kanton Basel-Stadt",
+          "datasets": 770,
+          "level": "canton"
+        }
+      ]
+    },
+    {
+      "canton": "BL",
+      "name": "Basel-Landschaft",
+      "datasets": 599,
+      "draftPortal": {
+        "id": "bl-ods-swiss",
+        "label": "Kanton Basel-Landschaft on opendata.swiss",
+        "languages": [
+          "de"
+        ],
+        "api": {
+          "kind": "ckan",
+          "base": "https://ckan.opendata.swiss",
+          "site": "https://opendata.swiss/de",
+          "organizations": [
+            "kanton-basel-landschaft"
+          ]
+        },
+        "verified": false,
+        "todo": [
+          "bbox from swissBOUNDARIES3D",
+          "place names for questions"
+        ]
+      },
+      "publishers": [
+        {
+          "name": "kanton-basel-landschaft",
+          "title": "Kanton Basel-Landschaft",
+          "datasets": 599,
+          "level": "canton"
+        }
+      ]
+    },
+    {
+      "canton": "SH",
+      "name": "Schaffhausen",
+      "datasets": 112,
+      "draftPortal": {
+        "id": "sh-ods-swiss",
+        "label": "Kanton Schaffhausen on opendata.swiss",
+        "languages": [
+          "de"
+        ],
+        "api": {
+          "kind": "ckan",
+          "base": "https://ckan.opendata.swiss",
+          "site": "https://opendata.swiss/de",
+          "organizations": [
+            "amt-geoinformation-kanton-schaffhausen",
+            "kanton-schaffhausen"
+          ]
+        },
+        "verified": false,
+        "todo": [
+          "bbox from swissBOUNDARIES3D",
+          "place names for questions"
+        ]
+      },
+      "publishers": [
+        {
+          "name": "amt-geoinformation-kanton-schaffhausen",
+          "title": "Amt für Geoinformation Kanton Schaffhausen",
+          "datasets": 112,
+          "level": "canton"
+        },
+        {
+          "name": "kanton-schaffhausen",
+          "title": "Kanton Schaffhausen",
+          "datasets": 0,
+          "level": "canton"
+        }
+      ]
+    },
+    {
+      "canton": "AR",
+      "name": "Appenzell Ausserrhoden",
+      "datasets": 0,
+      "draftPortal": {
+        "id": "ar-ods-swiss",
+        "label": "Kanton Appenzell Ausserrhoden on opendata.swiss",
+        "languages": [
+          "de"
+        ],
+        "api": {
+          "kind": "ckan",
+          "base": "https://ckan.opendata.swiss",
+          "site": "https://opendata.swiss/de",
+          "organizations": []
+        },
+        "verified": false,
+        "todo": [
+          "bbox from swissBOUNDARIES3D",
+          "place names for questions"
+        ]
+      },
+      "publishers": []
+    },
+    {
+      "canton": "AI",
+      "name": "Appenzell Innerrhoden",
+      "datasets": 0,
+      "draftPortal": {
+        "id": "ai-ods-swiss",
+        "label": "Kanton Appenzell Innerrhoden on opendata.swiss",
+        "languages": [
+          "de"
+        ],
+        "api": {
+          "kind": "ckan",
+          "base": "https://ckan.opendata.swiss",
+          "site": "https://opendata.swiss/de",
+          "organizations": []
+        },
+        "verified": false,
+        "todo": [
+          "bbox from swissBOUNDARIES3D",
+          "place names for questions"
+        ]
+      },
+      "publishers": []
+    },
+    {
+      "canton": "SG",
+      "name": "St. Gallen",
+      "datasets": 206,
+      "draftPortal": {
+        "id": "sg-ods-swiss",
+        "label": "Kanton St. Gallen on opendata.swiss",
+        "languages": [
+          "de"
+        ],
+        "api": {
+          "kind": "ckan",
+          "base": "https://ckan.opendata.swiss",
+          "site": "https://opendata.swiss/de",
+          "organizations": [
+            "amt-fuer-raumentwicklung-und-geoinformation-areg-kanton-st-gallen",
+            "kanton-st-gallen",
+            "fachstelle-fur-statistik-kanton-st-gallen",
+            "staatskanzlei-kanton-st-gallen"
+          ]
+        },
+        "verified": false,
+        "todo": [
+          "bbox from swissBOUNDARIES3D",
+          "place names for questions"
+        ]
+      },
+      "publishers": [
+        {
+          "name": "amt-fuer-raumentwicklung-und-geoinformation-areg-kanton-st-gallen",
+          "title": "Amt für Raumentwicklung und Geoinformation (AREG) Kanton St. Gallen",
+          "datasets": 179,
+          "level": "canton"
+        },
+        {
+          "name": "stadt-st-gallen",
+          "title": "Stadt St.Gallen",
+          "datasets": 116,
+          "level": "municipal"
+        },
+        {
+          "name": "kanton-st-gallen",
+          "title": "Kanton St. Gallen",
+          "datasets": 24,
+          "level": "canton"
+        },
+        {
+          "name": "fachstelle-fur-statistik-kanton-st-gallen",
+          "title": "Fachstelle für Statistik Kanton St. Gallen",
+          "datasets": 3,
+          "level": "canton"
+        },
+        {
+          "name": "staatskanzlei-kanton-st-gallen",
+          "title": "Staatskanzlei Kanton St.Gallen",
+          "datasets": 0,
+          "level": "canton"
+        }
+      ]
+    },
+    {
+      "canton": "GR",
+      "name": "Graubünden",
+      "datasets": 247,
+      "draftPortal": {
+        "id": "gr-ods-swiss",
+        "label": "Kanton Graubünden on opendata.swiss",
+        "languages": [
+          "de",
+          "it"
+        ],
+        "api": {
+          "kind": "ckan",
+          "base": "https://ckan.opendata.swiss",
+          "site": "https://opendata.swiss/de",
+          "organizations": [
+            "standeskanzlei-graubuenden",
+            "kanton-graubuenden",
+            "geoinformation-kt-gr"
+          ]
+        },
+        "verified": false,
+        "todo": [
+          "bbox from swissBOUNDARIES3D",
+          "place names for questions"
+        ]
+      },
+      "publishers": [
+        {
+          "name": "standeskanzlei-graubuenden",
+          "title": "Standeskanzlei Graubünden",
+          "datasets": 233,
+          "level": "canton"
+        },
+        {
+          "name": "kanton-graubuenden",
+          "title": "Kanton Graubünden",
+          "datasets": 9,
+          "level": "canton"
+        },
+        {
+          "name": "geoinformation-kt-gr",
+          "title": "Geoinformation Kanton Graubünden",
+          "datasets": 5,
+          "level": "canton"
+        }
+      ]
+    },
+    {
+      "canton": "AG",
+      "name": "Aargau",
+      "datasets": 772,
+      "draftPortal": {
+        "id": "ag-ods-swiss",
+        "label": "Kanton Aargau on opendata.swiss",
+        "languages": [
+          "de"
+        ],
+        "api": {
+          "kind": "ckan",
+          "base": "https://ckan.opendata.swiss",
+          "site": "https://opendata.swiss/de",
+          "organizations": [
+            "agis_service_center",
+            "ag"
+          ]
+        },
+        "verified": false,
+        "todo": [
+          "bbox from swissBOUNDARIES3D",
+          "place names for questions"
+        ]
+      },
+      "publishers": [
+        {
+          "name": "agis_service_center",
+          "title": "AGIS Service Center Kanton Aargau",
+          "datasets": 772,
+          "level": "canton"
+        },
+        {
+          "name": "ag",
+          "title": "Kanton Aargau",
+          "datasets": 0,
+          "level": "canton"
+        }
+      ]
+    },
+    {
+      "canton": "TG",
+      "name": "Thurgau",
+      "datasets": 431,
+      "draftPortal": {
+        "id": "tg-ods-swiss",
+        "label": "Kanton Thurgau on opendata.swiss",
+        "languages": [
+          "de"
+        ],
+        "api": {
+          "kind": "ckan",
+          "base": "https://ckan.opendata.swiss",
+          "site": "https://opendata.swiss/de",
+          "organizations": [
+            "kanton-thurgau"
+          ]
+        },
+        "verified": false,
+        "todo": [
+          "bbox from swissBOUNDARIES3D",
+          "place names for questions"
+        ]
+      },
+      "publishers": [
+        {
+          "name": "kanton-thurgau",
+          "title": "Kanton Thurgau",
+          "datasets": 431,
+          "level": "canton"
+        }
+      ]
+    },
+    {
+      "canton": "TI",
+      "name": "Ticino",
+      "datasets": 30,
+      "draftPortal": {
+        "id": "ti-ods-swiss",
+        "label": "Kanton Ticino on opendata.swiss",
+        "languages": [
+          "it"
+        ],
+        "api": {
+          "kind": "ckan",
+          "base": "https://ckan.opendata.swiss",
+          "site": "https://opendata.swiss/de",
+          "organizations": [
+            "ustat",
+            "ti"
+          ]
+        },
+        "verified": false,
+        "todo": [
+          "bbox from swissBOUNDARIES3D",
+          "place names for questions"
+        ]
+      },
+      "publishers": [
+        {
+          "name": "ustat",
+          "title": "Ufficio di statistica del Canton Ticino (Ustat)",
+          "datasets": 30,
+          "level": "canton"
+        },
+        {
+          "name": "ti",
+          "title": "Cantone Ticino",
+          "datasets": 0,
+          "level": "canton"
+        }
+      ]
+    },
+    {
+      "canton": "VD",
+      "name": "Vaud",
+      "datasets": 0,
+      "draftPortal": {
+        "id": "vd-ods-swiss",
+        "label": "Kanton Vaud on opendata.swiss",
+        "languages": [
+          "fr"
+        ],
+        "api": {
+          "kind": "ckan",
+          "base": "https://ckan.opendata.swiss",
+          "site": "https://opendata.swiss/de",
+          "organizations": []
+        },
+        "verified": false,
+        "todo": [
+          "bbox from swissBOUNDARIES3D",
+          "place names for questions"
+        ]
+      },
+      "publishers": []
+    },
+    {
+      "canton": "VS",
+      "name": "Valais",
+      "datasets": 68,
+      "draftPortal": {
+        "id": "vs-ods-swiss",
+        "label": "Kanton Valais on opendata.swiss",
+        "languages": [
+          "fr",
+          "de"
+        ],
+        "api": {
+          "kind": "ckan",
+          "base": "https://ckan.opendata.swiss",
+          "site": "https://opendata.swiss/de",
+          "organizations": [
+            "canton-du-valais-cc-geo",
+            "kanton-wallis"
+          ]
+        },
+        "verified": false,
+        "todo": [
+          "bbox from swissBOUNDARIES3D",
+          "place names for questions"
+        ]
+      },
+      "publishers": [
+        {
+          "name": "canton-du-valais-cc-geo",
+          "title": "Kanton Wallis - CC GEO",
+          "datasets": 68,
+          "level": "canton"
+        },
+        {
+          "name": "kanton-wallis",
+          "title": "Kanton Wallis",
+          "datasets": 0,
+          "level": "canton"
+        }
+      ]
+    },
+    {
+      "canton": "NE",
+      "name": "Neuchâtel",
+      "datasets": 0,
+      "draftPortal": {
+        "id": "ne-ods-swiss",
+        "label": "Kanton Neuchâtel on opendata.swiss",
+        "languages": [
+          "fr"
+        ],
+        "api": {
+          "kind": "ckan",
+          "base": "https://ckan.opendata.swiss",
+          "site": "https://opendata.swiss/de",
+          "organizations": []
+        },
+        "verified": false,
+        "todo": [
+          "bbox from swissBOUNDARIES3D",
+          "place names for questions"
+        ]
+      },
+      "publishers": []
+    },
+    {
+      "canton": "GE",
+      "name": "Genève",
+      "datasets": 1048,
+      "draftPortal": {
+        "id": "ge-ods-swiss",
+        "label": "Kanton Genève on opendata.swiss",
+        "languages": [
+          "fr"
+        ],
+        "api": {
+          "kind": "ckan",
+          "base": "https://ckan.opendata.swiss",
+          "site": "https://opendata.swiss/de",
+          "organizations": [
+            "canton-geneve",
+            "administration-cantonale-geneve",
+            "chancellerie-etat-geneve"
+          ]
+        },
+        "verified": false,
+        "todo": [
+          "decide on geneve-aeroport, hes-so-geneve, services-industriels-geneve, fti-ge, sitg-systeme-dinformation-du-territoire-a-geneve",
+          "bbox from swissBOUNDARIES3D",
+          "place names for questions"
+        ]
+      },
+      "publishers": [
+        {
+          "name": "canton-geneve",
+          "title": "Kanton Genf",
+          "datasets": 1019,
+          "level": "canton"
+        },
+        {
+          "name": "ville-geneve",
+          "title": "Stadt Genf",
+          "datasets": 48,
+          "level": "municipal"
+        },
+        {
+          "name": "administration-cantonale-geneve",
+          "title": "Kantonale Verwaltung Genf",
+          "datasets": 27,
+          "level": "canton"
+        },
+        {
+          "name": "geneve-aeroport",
+          "title": "Genève Aéroport",
+          "datasets": 8,
+          "level": "unclear"
+        },
+        {
+          "name": "hes-so-geneve",
+          "title": "Haute école spécialisée de Suisse occidentale HES-SO Genève",
+          "datasets": 7,
+          "level": "unclear"
+        },
+        {
+          "name": "chancellerie-etat-geneve",
+          "title": "Chancellerie d’État de Genève",
+          "datasets": 2,
+          "level": "canton"
+        },
+        {
+          "name": "services-industriels-geneve",
+          "title": "Services industriels Genève SIG",
+          "datasets": 2,
+          "level": "unclear"
+        },
+        {
+          "name": "fti-ge",
+          "title": "Fondation pour les terrains industriels de Genève FTI",
+          "datasets": 1,
+          "level": "unclear"
+        },
+        {
+          "name": "sitg-systeme-dinformation-du-territoire-a-geneve",
+          "title": "SITG - Genfer Geoinformationssystem",
+          "datasets": 0,
+          "level": "unclear"
+        }
+      ]
+    },
+    {
+      "canton": "JU",
+      "name": "Jura",
+      "datasets": 118,
+      "draftPortal": {
+        "id": "ju-ods-swiss",
+        "label": "Kanton Jura on opendata.swiss",
+        "languages": [
+          "fr"
+        ],
+        "api": {
+          "kind": "ckan",
+          "base": "https://ckan.opendata.swiss",
+          "site": "https://opendata.swiss/de",
+          "organizations": [
+            "canton-du-jura"
+          ]
+        },
+        "verified": false,
+        "todo": [
+          "bbox from swissBOUNDARIES3D",
+          "place names for questions"
+        ]
+      },
+      "publishers": [
+        {
+          "name": "canton-du-jura",
+          "title": "Kanton Jura",
+          "datasets": 118,
+          "level": "canton"
+        }
+      ]
+    }
+  ],
+  "unassigned": [
+    "agroscope",
+    "amt-fuer-statistik-fl",
+    "amt-fuer-tiefbau-und-geoinformation-fl",
+    "basisdaten-biel-bienne",
+    "bernmobil",
+    "bkb",
+    "bibliothek-am-guisanplatz-big",
+    "bundesamt-fur-bevolkerungsschutz-babs",
+    "bundesamt-fur-energie-bfe",
+    "bundesamt-fur-gesundheit-bag",
+    "bundesamt_fuer_justiz",
+    "bundesamt-fur-kommunikation-bakom",
+    "bundesamt-fur-kultur-bak",
+    "bundesamt-fur-landestopografie-swisstopo",
+    "bundesamt-fur-lebensmittelsicherheit-und-veterinaerwesen-blv",
+    "bundesamt-fur-meteorologie-und-klimatologie-meteoschweiz",
+    "bundesamt-fur-raumentwicklung-are",
+    "bundesamt-fur-statistik-bfs",
+    "bundesamt-fur-strassen-astra",
+    "bundesamt-fur-verkehr-bav",
+    "bundesamt-fur-zivilluftfahrt-bazl",
+    "eidgenoessische_zollverwaltung_ezv",
+    "dienst-ueberwachung-post-und-fernmeldeverkehr-uepf",
+    "dienstzweig-geomatik-gemeinde-koeniz",
+    "direktion-fur-entwicklung-und-zusammenarbeit-deza",
+    "elcom",
+    "eidgenossische-finanzverwaltung-efv",
+    "eidgenoessisches_amt_fuer_das_handelsregister_ehra",
+    "lausanne",
+    "envidat",
+    "eth-bibliothek",
+    "finanzmarktaufsicht-fl",
+    "efv_finanzstatistik",
+    "liechtenstein",
+    "gemeinde_emmen",
+    "gemeinde_koeniz",
+    "geoimpact",
+    "oevch",
+    "identitas",
+    "infrastruktur-mobilitaet-biel-bienne",
+    "public-sector-transformation",
+    "kof-konjunkturforschungsstelle",
+    "leben-in-biel-bienne",
+    "openglam",
+    "ostschweiz_tourismus",
+    "parlamentsdienste-pd",
+    "participatory-image-archives",
+    "planung-umwelt-biel-bienne",
+    "schweizerische-bundesbahnen-sbb",
+    "schweizerische-nationalbibliothek-nb",
+    "schweizerischer-nationalfonds-zur-forderung-der-wissenschaftlichen-forschung-snf",
+    "schweizerisches-bundesarchiv-bar",
+    "sik-isea",
+    "schweizer-radio-und-fernsehen-srg",
+    "sbfi",
+    "staatssekretariat-fuer-migration-sem",
+    "biel-bienne",
+    "morges",
+    "stadt-uster",
+    "stadt-winterthur",
+    "swiss-emobility",
+    "digitale_medien_der_armee_dma",
+    "abteilung-uebertragbare-krankheiten",
+    "bundesamt-fur-zivildienst-zivi",
+    "gruppe-verteidigung",
+    "imad-ge",
+    "tpg",
+    "eth-domain",
+    "cern",
+    "bundesamt-fur-landwirtschaft-blw",
+    "bundesamt-fur-wirtschaftliche-landesversorgung-bwl",
+    "bundesamt-fur-umwelt-bafu",
+    "direktionsbereich-kranken-und-unfallversicherung",
+    "unabhangige-expertenkommission-uek-administrative-versorgungen",
+    "materialscloud",
+    "fondation-modus",
+    "psi",
+    "psi_data_catalog",
+    "efk",
+    "wsl",
+    "swissmedic",
+    "schweizerisches-nationalmuseum-snm"
+  ]
+}

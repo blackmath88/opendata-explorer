@@ -1,0 +1,277 @@
+{
+  "portal": "bs",
+  "primarySource": "src/data/portals/bs/snapshot.json.gz (2026-09-27)",
+  "takenAt": "2026-09-27T11:03:25.990Z",
+  "primary": 363,
+  "national": 770,
+  "linked": 350,
+  "primaryOnly": [
+    "100051",
+    "100077",
+    "100085",
+    "100094",
+    "100110",
+    "100116",
+    "100243",
+    "100244",
+    "100254",
+    "100271",
+    "100272",
+    "100508",
+    "100549"
+  ],
+  "nationalOnly": 420,
+  "nationalOnlyKinds": {
+    "uuid (geodata catalogue)": 408,
+    "other identifier": 12
+  },
+  "nationalOnlyShapes": {
+    "unknown": 286,
+    "table": 5,
+    "raster": 129
+  },
+  "nationalOnlyDownloadable": 291,
+  "nationalOnlySample": [
+    {
+      "id": "abfuhrzonen-gemeinden-riehen-und-bettingen",
+      "identifier": "933f5967-a7fc-4ed0-9af2-3747588ce5cd@kanton-basel-stadt",
+      "title": "Abfuhrzonen (Gemeinden Riehen und Bettingen)",
+      "publisher": "Weitere öffentliche Stellen/Gemeindebehörden/Einwohnergemeinde Riehen/Gemeindeverwaltung/Werkdienste"
+    },
+    {
+      "id": "abfuhrzonen-stadt-basel",
+      "identifier": "2f93b0ed-165b-4e46-9c9a-d04011d40eeb@kanton-basel-stadt",
+      "title": "Abfuhrzonen Stadt Basel",
+      "publisher": "Regierung und Verwaltung/Bau- und Verkehrsdepartement/Tiefbauamt/Stadtreinigung (SR)"
+    },
+    {
+      "id": "abgabestellen-der-tigermuckenbekampfung",
+      "identifier": "cd1c745f-9647-4ead-aa3a-e42907d55ba5@kanton-basel-stadt",
+      "title": "Abgabestellen der Tigermückenbekämpfung",
+      "publisher": "Regierung und Verwaltung/Gesundheitsdepartement/Kantonales Laboratorium/Kontrollstelle für Chemie- und Biosicherheit"
+    },
+    {
+      "id": "abstimmungen-kanton-basel-stadt_03-2015_-_02-2020",
+      "identifier": "opendata-stk-BS-Abstimmungen@kanton-basel-stadt",
+      "title": "Eidgenössische und kantonale Abstimmungen Kanton Basel-Stadt 8.3.2015 - 9.2.2020",
+      "publisher": "Staatskanzlei Kanton Basel-Stadt"
+    },
+    {
+      "id": "allmendverwaltung-gebuhrenzonen",
+      "identifier": "0392cc51-6630-474c-8992-615f97b3e6b8@kanton-basel-stadt",
+      "title": "Allmendverwaltung Gebührenzonen",
+      "publisher": "Regierung und Verwaltung/Bau- und Verkehrsdepartement/Tiefbauamt/Leitung/Dokumentation (DOK)"
+    },
+    {
+      "id": "alterspflegeheime1",
+      "identifier": "192dec59-d533-4a50-bfea-23b3f5fb65b9@kanton-basel-stadt",
+      "title": "Alterspflegeheime",
+      "publisher": "Regierung und Verwaltung/Gesundheitsdepartement/Bereich Gesundheitsversorgung/Geschäftsstelle"
+    },
+    {
+      "id": "amtliche-vermessung-basel-stadt-interlis",
+      "identifier": "ff2d249f-8de2-4fb8-9dae-7995e3598cd7@kanton-basel-stadt",
+      "title": "Amtliche Vermessung Basel-Stadt (Interlis)",
+      "publisher": "Regierung und Verwaltung/Bau- und Verkehrsdepartement/Grundbuch- und Vermessungsamt/Kantonsvermessung"
+    },
+    {
+      "id": "amtliche-vermessung-bodenbedeckung-einzelobjekte",
+      "identifier": "4b92a7c1-4a8b-4981-a86b-ec4d619873cd@kanton-basel-stadt",
+      "title": "Amtliche Vermessung Bodenbedeckung & Einzelobjekte",
+      "publisher": "Regierung und Verwaltung/Bau- und Verkehrsdepartement/Grundbuch- und Vermessungsamt/Kantonsvermessung"
+    },
+    {
+      "id": "amtliche-vermessung-fixpunkte-hohen",
+      "identifier": "3574ad9d-b5ca-47c1-9b3a-21e7e98c3c5c@kanton-basel-stadt",
+      "title": "Amtliche Vermessung Fixpunkte & Höhen",
+      "publisher": "Regierung und Verwaltung/Bau- und Verkehrsdepartement/Grundbuch- und Vermessungsamt/Kantonsvermessung"
+    },
+    {
+      "id": "amtliche-vermessung-gebaudeadressen-plz",
+      "identifier": "a144107c-05cf-4a1b-beb3-1b15149fe52f@kanton-basel-stadt",
+      "title": "Amtliche Vermessung Gebäudeadressen & PLZ",
+      "publisher": "Regierung und Verwaltung/Bau- und Verkehrsdepartement/Grundbuch- und Vermessungsamt/Kantonsvermessung"
+    },
+    {
+      "id": "amtliche-vermessung-kilometereinteilung1",
+      "identifier": "9448db35-b880-43d6-84a2-634657157b4e@kanton-basel-stadt",
+      "title": "Amtliche Vermessung Kilometereinteilung",
+      "publisher": "Regierung und Verwaltung/Bau- und Verkehrsdepartement/Grundbuch- und Vermessungsamt/Kantonsvermessung"
+    },
+    {
+      "id": "amtliche-vermessung-nomenklatur",
+      "identifier": "07ebd56c-8ebd-460d-97c6-33090b7ccde1@kanton-basel-stadt",
+      "title": "Amtliche Vermessung Nomenklatur",
+      "publisher": "Regierung und Verwaltung/Bau- und Verkehrsdepartement/Grundbuch- und Vermessungsamt/Kantonsvermessung"
+    },
+    {
+      "id": "amtliche-vermessung-parzellen-und-andere-rechtliche-abgrenzungen",
+      "identifier": "dfec5b4a-b6f0-4cc2-91e5-5d05cd07eae9@kanton-basel-stadt",
+      "title": "Amtliche Vermessung Parzellen und andere rechtliche Abgrenzungen",
+      "publisher": "Regierung und Verwaltung/Bau- und Verkehrsdepartement/Grundbuch- und Vermessungsamt/Kantonsvermessung"
+    },
+    {
+      "id": "amtliche-vermessung-rohrleitungen",
+      "identifier": "cf5ac009-3d6d-44b5-97a9-26c5f29cb974@kanton-basel-stadt",
+      "title": "Amtliche Vermessung Rohrleitungen",
+      "publisher": "Regierung und Verwaltung/Bau- und Verkehrsdepartement/Grundbuch- und Vermessungsamt/Kantonsvermessung"
+    },
+    {
+      "id": "archaologische-informationsstellen",
+      "identifier": "41b09c52-e63b-4902-b724-0583c0ad2fd3@kanton-basel-stadt",
+      "title": "Archäologische Informationsstellen",
+      "publisher": "Regierung und Verwaltung/Präsidialdepartement/Abteilung Kultur/Archäologische Bodenforschung/Abteilung Vermittlung"
+    },
+    {
+      "id": "archaologische-zonen",
+      "identifier": "9514f6f1-13cf-4f47-9f1d-e01ca4bd8ecd@kanton-basel-stadt",
+      "title": "Archäologische Zonen",
+      "publisher": "Regierung und Verwaltung/Präsidialdepartement/Abteilung Kultur/Archäologische Bodenforschung/Abteilung Fundbearbeitung"
+    },
+    {
+      "id": "archaologischer-zonenplan",
+      "identifier": "f6b1b847-2333-4084-8073-9200b2865a6c@kanton-basel-stadt",
+      "title": "Archäologischer Zonenplan",
+      "publisher": "Regierung und Verwaltung/Präsidialdepartement/Abteilung Kultur/Archäologische Bodenforschung/Abteilung Fundbearbeitung"
+    },
+    {
+      "id": "arealentwicklungen",
+      "identifier": "948e95be-a6d3-4171-b273-88c4622c7b2e@kanton-basel-stadt",
+      "title": "Arealentwicklungen",
+      "publisher": "Regierung und Verwaltung/Bau- und Verkehrsdepartement/Städtebau & Architektur/Raumplanung"
+    },
+    {
+      "id": "arealperimeter",
+      "identifier": "da947282-fccc-4f9a-b6f5-8ec35badaba3@kanton-basel-stadt",
+      "title": "Arealperimeter",
+      "publisher": "Regierung und Verwaltung/Bau- und Verkehrsdepartement/Städtebau & Architektur/Raumplanung"
+    },
+    {
+      "id": "aufstellflache-fur-velos",
+      "identifier": "81fe4ebe-5941-4d3f-91a2-842e07dec4a1@kanton-basel-stadt",
+      "title": "Aufstellfläche für Velos",
+      "publisher": "Regierung und Verwaltung/Bau- und Verkehrsdepartement/Mobilität/Mobilitätsstrategie"
+    },
+    {
+      "id": "ausnahmetransportrouten5",
+      "identifier": "4f333a9e-a975-40ee-bb67-0d8ac245ef99@kanton-basel-stadt",
+      "title": "Ausnahmetransportrouten",
+      "publisher": "Regierung und Verwaltung/Bau- und Verkehrsdepartement/Tiefbauamt/Leitung/Dokumentation (DOK)"
+    },
+    {
+      "id": "baaderkarte-1836",
+      "identifier": "5b8c3804-3ac6-4bee-93bc-1fe7aea24441@kanton-basel-stadt",
+      "title": "Baaderkarte 1836",
+      "publisher": "Kanton Basel-Stadt"
+    },
+    {
+      "id": "bahnlarmkataster",
+      "identifier": "2d1ffab9-decf-4d55-8102-d9c9d94f37c5@kanton-basel-stadt",
+      "title": "Bahnlärmkataster",
+      "publisher": "Kanton Basel-Stadt"
+    },
+    {
+      "id": "basel-info-autobahnkonturen",
+      "identifier": "fb0fa28e-d258-4b23-86b1-829dff5ee5a9@kanton-basel-stadt",
+      "title": "Basel Info Autobahnkonturen",
+      "publisher": "Regierung und Verwaltung/Bau- und Verkehrsdepartement/Grundbuch- und Vermessungsamt/Geoinformation/Kartografie"
+    },
+    {
+      "id": "basel-info-autobahnnetz",
+      "identifier": "0d959aa3-b06e-43e4-9ac9-85e9789f20e4@kanton-basel-stadt",
+      "title": "Basel Info Autobahnnetz",
+      "publisher": "Regierung und Verwaltung/Bau- und Verkehrsdepartement/Grundbuch- und Vermessungsamt/Geoinformation/Kartografie"
+    },
+    {
+      "id": "basel-info-bahnlinien",
+      "identifier": "f0f2a3b6-755a-4dfd-93d1-167a9e299967@kanton-basel-stadt",
+      "title": "Basel Info Bahnlinien",
+      "publisher": "Regierung und Verwaltung/Bau- und Verkehrsdepartement/Grundbuch- und Vermessungsamt/Geoinformation/Kartografie"
+    },
+    {
+      "id": "basel-info-bebauung",
+      "identifier": "b26898b9-d2b5-4dfa-98b2-b58fed0cd081@kanton-basel-stadt",
+      "title": "Basel Info Bebauung",
+      "publisher": "Regierung und Verwaltung/Bau- und Verkehrsdepartement/Grundbuch- und Vermessungsamt/Geoinformation/Kartografie"
+    },
+    {
+      "id": "basel-info-beschriftung-flachen",
+      "identifier": "1ac57964-7f02-4065-afa2-ae983ea5061c@kanton-basel-stadt",
+      "title": "Basel Info Beschriftung Flächen",
+      "publisher": "Regierung und Verwaltung/Bau- und Verkehrsdepartement/Grundbuch- und Vermessungsamt/Geoinformation/Kartografie"
+    },
+    {
+      "id": "basel-info-beschriftung-linien",
+      "identifier": "7b3ddac0-ab1b-466f-bc83-54b8c26cbb15@kanton-basel-stadt",
+      "title": "Basel Info Beschriftung Linien",
+      "publisher": "Regierung und Verwaltung/Bau- und Verkehrsdepartement/Grundbuch- und Vermessungsamt/Geoinformation/Kartografie"
+    },
+    {
+      "id": "basel-info-beschriftung-punkte",
+      "identifier": "85a999e0-5c23-4df4-80db-284b7d64e2df@kanton-basel-stadt",
+      "title": "Basel Info Beschriftung Punkte",
+      "publisher": "Regierung und Verwaltung/Bau- und Verkehrsdepartement/Grundbuch- und Vermessungsamt/Geoinformation/Kartografie"
+    },
+    {
+      "id": "basel-info-detaillinien",
+      "identifier": "129d050d-243c-4c59-b6f4-d5a220f74c2d@kanton-basel-stadt",
+      "title": "Basel Info Detaillinien",
+      "publisher": "Regierung und Verwaltung/Bau- und Verkehrsdepartement/Grundbuch- und Vermessungsamt/Geoinformation/Kartografie"
+    },
+    {
+      "id": "basel-info-gewasserflachen",
+      "identifier": "f4ed7e17-57a8-4c7c-b73f-0bb6a2386a8d@kanton-basel-stadt",
+      "title": "Basel Info Gewässerflächen",
+      "publisher": "Regierung und Verwaltung/Bau- und Verkehrsdepartement/Grundbuch- und Vermessungsamt/Geoinformation/Kartografie"
+    },
+    {
+      "id": "basel-info-gewasserlinien",
+      "identifier": "ad21fed5-2e5f-4328-8d06-5bf2d1053144@kanton-basel-stadt",
+      "title": "Basel Info Gewässerlinien",
+      "publisher": "Regierung und Verwaltung/Bau- und Verkehrsdepartement/Grundbuch- und Vermessungsamt/Geoinformation/Kartografie"
+    },
+    {
+      "id": "basel-info-grenzlinien",
+      "identifier": "24490cd9-a82c-496a-b061-3916a6e89cc4@kanton-basel-stadt",
+      "title": "Basel Info Grenzlinien",
+      "publisher": "Regierung und Verwaltung/Bau- und Verkehrsdepartement/Grundbuch- und Vermessungsamt/Geoinformation/Kartografie"
+    },
+    {
+      "id": "basel-info-grundkarte",
+      "identifier": "2ecd7ffa-0732-4dcc-b629-d2f352a71c9e@kanton-basel-stadt",
+      "title": "Basel Info Grundkarte",
+      "publisher": "Regierung und Verwaltung/Bau- und Verkehrsdepartement/Grundbuch- und Vermessungsamt/Geoinformation/Kartografie"
+    },
+    {
+      "id": "basel-info-grunflachen",
+      "identifier": "23b9bc3b-74fe-400e-846b-185f00455570@kanton-basel-stadt",
+      "title": "Basel Info Grünflächen",
+      "publisher": "Regierung und Verwaltung/Bau- und Verkehrsdepartement/Grundbuch- und Vermessungsamt/Geoinformation/Kartografie"
+    },
+    {
+      "id": "basel-info-hauptankunftsorte",
+      "identifier": "1a3c2f1f-0357-4993-9694-f66533c8949d@kanton-basel-stadt",
+      "title": "Basel Info Hauptankunftsorte",
+      "publisher": "Regierung und Verwaltung/Bau- und Verkehrsdepartement/Grundbuch- und Vermessungsamt/Geoinformation/Kartografie"
+    },
+    {
+      "id": "basel-info-hintergrund",
+      "identifier": "ed605433-4c82-4c16-a1d2-eea09992c49d@kanton-basel-stadt",
+      "title": "Basel Info Hintergrund",
+      "publisher": "Regierung und Verwaltung/Bau- und Verkehrsdepartement/Grundbuch- und Vermessungsamt/Geoinformation/Kartografie"
+    },
+    {
+      "id": "basel-info-kabinenschifffahrt",
+      "identifier": "8ce0b3bc-3eb8-4c91-a9d3-ee116e1c9f73@kanton-basel-stadt",
+      "title": "Basel Info Kabinenschifffahrt",
+      "publisher": "Regierung und Verwaltung/Bau- und Verkehrsdepartement/Grundbuch- und Vermessungsamt/Geoinformation/Kartografie"
+    },
+    {
+      "id": "basel-info-kirchenkreuze",
+      "identifier": "e5607915-c914-493e-8e50-a0aaa947d7f5@kanton-basel-stadt",
+      "title": "Basel Info Kirchenkreuze",
+      "publisher": "Regierung und Verwaltung/Bau- und Verkehrsdepartement/Grundbuch- und Vermessungsamt/Geoinformation/Kartografie"
+    }
+  ],
+  "total": 783
+}

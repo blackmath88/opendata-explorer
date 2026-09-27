@@ -3,7 +3,7 @@ import { fallbackDatasets } from './data/fallback';
 import decisionFile from './data/portals/bs/topic-decisions.json';
 import gold from './data/portals/bs/topic-gold.json';
 import {
-  TAXONOMY_VERSION, TOPIC_PROMPT_VERSION, buildTopicRequest, indexDecisions, metadataHash, needsDecision, resolveTopic, validateDecision,
+  TAXONOMY_VERSION, TOPIC_PROMPT_VERSION, buildTopicRequest, rebaseDecision, indexDecisions, metadataHash, needsDecision, resolveTopic, validateDecision,
   type TopicDecision, type TopicDecisionFile,
 } from './topic-decisions';
 import { assessTopic } from './topic-scoring';
@@ -105,5 +105,31 @@ describe('topic decisions: requests and evaluation', () => {
     expect(regressions).toEqual([]);
     const correct = ids.filter(id => labels[id].includes(resolveTopic(dataset(id), index).subcategory)).length;
     expect(correct).toBeGreaterThanOrEqual(42);
+  });
+});
+
+describe('topic decisions: rebase', () => {
+  // Basel's 2026 edit: French theme names appended, nothing about the topic changed.
+  const edited = { ...dataset('100176'), themes: [...dataset('100176').themes, 'Mobilité et transports'] };
+
+  it('carries a decision over when its evidence still holds, and remembers where it came from', () => {
+    expect(validateDecision(decision('100176'), edited).ok).toBe(false);
+    const result = rebaseDecision(decision('100176'), edited, '2026-09-27');
+    expect('decision' in result).toBe(true);
+    const rebased = (result as { decision: TopicDecision }).decision;
+    expect(validateDecision(rebased, edited)).toEqual({ ok: true });
+    expect(validateDecision(rebased, dataset('100176'))).toEqual({ ok: true });
+    expect(rebased.rebasedFrom).toEqual([{ metadataHash: metadataHash(dataset('100176')), on: '2026-09-27' }]);
+  });
+
+  it('does not rebase when a quote disappeared or only prose supports it', () => {
+    const retitled = { ...edited, title: 'Smarte Strasse: Sensoren' };
+    expect(rebaseDecision(decision('100176'), retitled, 'x')).toMatchObject({ reasons: [expect.stringContaining('does not appear in title')] });
+    const proseOnly = decision('100176', { evidence: [{ field: 'description', quote: 'Parkplätze' }] });
+    expect(rebaseDecision(proseOnly, edited, 'x')).toEqual({ reasons: ['no title or keyword evidence to anchor a rebase'] });
+  });
+
+  it('never rebases across a taxonomy change', () => {
+    expect(rebaseDecision(decision('100176', { taxonomyVersion: 'old' }), edited, 'x')).toMatchObject({ reasons: ['stale: taxonomy changed since the decision'] });
   });
 });

@@ -33,6 +33,8 @@ export interface TopicDecision {
   rationale: string;
   decidedBy: { kind: 'model' | 'human'; source: string; promptVersion: string };
   decidedAt: string;
+  /** Earlier metadata this decision was carried over from by `rebaseDecision`, oldest first. */
+  rebasedFrom?: Array<{ metadataHash: string; on: string }>;
 }
 
 export interface TopicDecisionFile { version: 1; decisions: TopicDecision[] }
@@ -54,7 +56,9 @@ export type DecisionCheck = { ok: true } | { ok: false; reasons: string[] };
 export function validateDecision(decision: TopicDecision, dataset: DatasetRecord): DecisionCheck {
   const reasons: string[] = [];
   if (decision.datasetId !== dataset.id) reasons.push(`decision is for ${decision.datasetId}, not ${dataset.id}`);
-  if (decision.metadataHash !== metadataHash(dataset)) reasons.push('stale: dataset metadata changed since the decision');
+  // A rebased decision stays valid for the metadata it was carried over from.
+  const hash = metadataHash(dataset);
+  if (decision.metadataHash !== hash && !decision.rebasedFrom?.some(item => item.metadataHash === hash)) reasons.push('stale: dataset metadata changed since the decision');
   if (decision.taxonomyVersion !== TAXONOMY_VERSION) reasons.push('stale: taxonomy changed since the decision');
   if (decision.subcategory !== null && !SUBCATEGORY_CATEGORY.has(decision.subcategory)) reasons.push(`"${decision.subcategory}" is not a subcategory of the taxonomy`);
   if (!CONFIDENCES.includes(decision.confidence)) reasons.push(`confidence "${decision.confidence}" is not high|medium|low`);
@@ -67,6 +71,30 @@ export function validateDecision(decision: TopicDecision, dataset: DatasetRecord
   }
   if (decision.rationale.length > 300) reasons.push('rationale longer than 300 characters');
   return reasons.length ? { ok: false, reasons } : { ok: true };
+}
+
+/**
+ * Carry a decision over to changed metadata, when what it rests on did not change.
+ *
+ * Publishers edit metadata for reasons unrelated to topic (Basel added French theme names to
+ * every dataset in 2026), and a plain hash check then throws away every decision. A decision
+ * is rebased only if its metadata hash is the one problem, every quote is still verbatim in its
+ * field, and at least one quote comes from the title or keywords (what the dataset is, not prose
+ * around it). Otherwise it stays stale and the dataset goes back to `requests`.
+ */
+export function rebaseDecision(decision: TopicDecision, dataset: DatasetRecord, on: string): { decision: TopicDecision } | { reasons: string[] } {
+  const check = validateDecision(decision, dataset);
+  if (check.ok) return { decision };
+  const other = check.reasons.filter(reason => reason !== 'stale: dataset metadata changed since the decision');
+  if (other.length) return { reasons: other };
+  if (!decision.evidence.some(item => item.field === 'title' || item.field === 'keywords')) return { reasons: ['no title or keyword evidence to anchor a rebase'] };
+  return {
+    decision: {
+      ...decision,
+      metadataHash: metadataHash(dataset),
+      rebasedFrom: [...(decision.rebasedFrom ?? []), { metadataHash: decision.metadataHash, on }],
+    },
+  };
 }
 
 export type TopicSource = 'human' | 'model' | 'rules';

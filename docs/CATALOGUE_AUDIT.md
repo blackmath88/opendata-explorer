@@ -1,8 +1,39 @@
 # Catalogue metadata audit (slice 1 of KNOWLEDGE_DISCOVERY.md)
 
-Status, 2026-09-27: **offline snapshot audited; live catalogue and usage fields pending.** The build environment could not reach `data.bs.ch`, so everything below comes from the 44-dataset fallback snapshot that DataFit ships, not from the live catalogue. No figure here is a claim about Basel-Stadt OGD as a whole.
+Status, 2026-09-27: **live catalogue and usage fields audited.** The live figures below come from `data.bs.ch` (snapshot in `src/data/portals/bs/snapshot.json.gz`, regenerate with `npx tsx scripts/portals.ts audit --portal bs`). The older 44-dataset offline section follows, because the app's fallback still uses that set.
 
-## What the Landscape can rely on (snapshot, n = 44)
+## Live catalogue (n = 363)
+
+| Signal | Coverage |
+|---|---|
+| Declared geometry | 358 of 363 classified: 83 point, 9 line, 30 area, 19 mixed, 3 raster/external, **214 non-spatial**, 5 unknown |
+| Declared update frequency | 348 of 363: 65 frequent, 100 periodic, 107 irregular, **76 no updates**, 15 unknown |
+| Record count | 363 of 363, median 684 |
+| Readable records | 360 of 363 |
+| Topic (rules) | 188 clear, 148 conflict, 25 weak, 2 none: **175 need a decision** |
+
+- **The offline snapshot is not representative.** It holds 6 non-spatial datasets out of 44 (14%), while the live catalogue has 214 of 363 (59%). The snapshot also has 2 datasets with no updates, against 76 live. Anything tuned on the 44 (layout weights, card profiles) should be re-checked on the 363.
+- **Denominator resolved.** The catalogue reports 363 and 363 load. *OGD Datensätze* (100057) lists 362: every catalogue dataset except the newest (100549, created after 100057's last refresh). 100057 lists itself.
+- **Stored topic decisions all went stale, then were rebased.** Basel added French theme names and edited descriptions on every dataset, so all 23 metadata hashes changed. `topic-decisions.ts rebase` carried each one forward, because its quotes still appear verbatim in its title or keywords. The old hash stays recorded, so the offline fallback remains covered.
+
+## Usage fields (dataset 100057, n = 362)
+
+Saved in `docs/audit-data/bs-usage-100057.json`.
+
+| Field | Missing | Zero | Median | p90 | Max |
+|---|---|---|---|---|---|
+| download_count | 0 | 0 | 11 326 | 31 504 | 841 947 |
+| api_call_count | 0 | 0 | 45 506 | 850 607 | 20 945 541 |
+| popularity_score | 0 | 0 | 13.3 | 37.8 | 157.7 |
+| reuse_count | 0 | **337** | 0 | 0 | 3 |
+
+- **No dataset looks unused by these counters.** The minimum is 187 downloads and 321 API calls, so the counters include automated traffic.
+- **Low counts mostly mean "new".** The least-used datasets were created in 2025–2026. Any activity signal has to be normalised by age (per month since `created`) before it says anything.
+- **Documented reuse is the rare, meaningful signal:** 25 of 362 datasets have one or more reuses. "No documented reuse" is a fair statement; "unused" is not.
+
+## Offline snapshot (n = 44)
+
+### What the Landscape can rely on
 
 | Signal | Coverage | Notes |
 |---|---|---|
@@ -43,14 +74,6 @@ These drive the card profile (`src/catalogue-profile.ts`). Each dataset falls in
    | 100151 (Sport- und Bewegungsanlagen) | Utilities | Sports | Built City's `netz` rule is tried before Public Space's `sport` |
    | 100018 (Allmendbewilligungen) | Housing | Construction / public space | |
 
-## Pending: needs live access to `data.bs.ch`
+## Formerly pending
 
-- **Denominator.** The live catalogue reported 361 datasets on 2026-09-02, while *OGD Datensätze* (dataset **100057**, the catalogue of the catalogue) listed **362** records. Resolve before showing any live total: is the extra one 100057 itself, a restricted dataset, or a duplicate?
-- **Usage fields from 100057.** Reuse count, API-call count, download count and popularity score, joined by `dataset_id`.
-  - Measure how many are missing and how values are distributed before designing anything on top.
-  - Wording: these are *portal activity* counters. They miss use through opendata.swiss, bulk exports and mirrors, and they include automated traffic. Low activity is a weak signal, never "unused".
-- **Rerun this audit on the live catalogue.** Geometry, cadence and record-count coverage at 361, plus the topic distribution after the rule fix.
-
-The tables above can now be regenerated with `npx tsx scripts/portals.ts audit --portal bs` (and for any other portal; see MULTI_CANTON.md).
-
-To unblock: allow `data.bs.ch` in the environment's network settings, or commit exports of `catalog/datasets` (all pages, `order_by=dataset_id`) and of dataset 100057 under `docs/audit-data/`.
+Resolved on 2026-09-27; see "Live catalogue" and "Usage fields" above. The denominator, the usage fields and the live rerun are all done. What's still open is age-normalising the activity counters before any UI uses them.

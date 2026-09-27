@@ -1,6 +1,6 @@
 # From Basel to every canton
 
-Status, 2026-09-27: **groundwork built, no second canton loaded yet.** The code no longer assumes Basel (a test enforces it), and it can read opendata.swiss. The build environment could not reach any portal, so every canton-specific number below still has to be measured.
+Status, 2026-09-27: **three portals live (BS, BL, GE), all at L1.** Measured findings are under "Live findings"; earlier sections describe the design.
 
 ## The problem, restated for 26 cantons
 
@@ -25,6 +25,51 @@ DataFit's goal is to surface free datasets that exist but aren't used. Basel was
 | `src/cantons.ts` | The 26 cantons with names in each language, plus `cantonOfPublisher()`, which assigns opendata.swiss publishers to cantons and separates city publishers such as `stadt-zuerich`. |
 | `scripts/portals.ts` | `discover`: publishers per canton, as draft portal entries. `snapshot --portal`: freezes a catalogue. `audit --portal`: coverage table. It reproduces the Basel audit exactly. |
 | Per-portal data | `src/data/portals/<id>/`: snapshot, topic decisions, gold labels. Dataset ids are unique only within a portal. |
+
+## Live findings, 2026-09-27
+
+**Who publishes where** (`docs/audit-data/opendata-swiss-cantons.json`, from `portals.ts discover`):
+- opendata.swiss has 176 publishers.
+- 20 cantons publish there under their own name. The largest are GE (1048 datasets), AG (772), BS (770) and ZH (736).
+- **OW, NW, AR, AI, VD and NE publish nothing there under their own name.**
+- Only publishers that call themselves cantonal count towards a canton. Universities, utilities, airports and cities named after the place are listed for review, not counted.
+
+**Own portals reachable** (Opendatasoft): BS (363), BL (184), SG (221), TG (456).
+
+**A canton's own portal shows less than half of what it publishes** (`portals.ts duplicates`):
+
+| | Basel-Stadt | Basel-Landschaft |
+|---|---|---|
+| Own portal | 363 | 184 |
+| On opendata.swiss | 770 | 599 |
+| Same dataset, linked by identifier | 350 | 132 |
+| Only on opendata.swiss | 420: 408 geodata (geocat UUIDs), 291 with a downloadable file | 467: 364 are one dataset per ballot |
+| Only on the own portal | 13 | 52 |
+| **Distinct datasets** | **783** | **651** |
+
+Basel's geodata layer (official survey, collection zones, care homes, …) is invisible on data.bs.ch. That's exactly the "free but unseen" data DataFit is for, so a canton view must merge both sources. Basel-Landschaft's ballots also show that some national-only material is a *series*: one dataset per vote. A series should appear as one entry with a count, not 364 cards.
+
+**Rollout status:**
+
+| Portal | Level | Notes |
+|---|---|---|
+| BS | L1 (L2 once rebased decisions are reviewed and the 175 open requests decided) | live 363/363; the gold set is still a draft |
+| BL | L1 | own portal, live 184/184 in the app; 93 topic decisions open |
+| GE | L1 | opendata.swiss, French; live 1048/1048 in the app (8 s, 14 MB); 653 decisions open, 50% weak |
+
+**What the real data changed in the code:**
+- **opendata.swiss blocks some user agents.** It answers 403 to curl, Node and headless browsers, and to any user agent not starting with "Mozilla/5.0". Scripts identify themselves as `Mozilla/5.0 (compatible; DataFit/0.1; +repo)`. Real browsers are unaffected.
+- **Node needs the proxy flag.** Node's `fetch` ignores `HTTPS_PROXY`, so scripts run with `NODE_USE_ENV_PROXY=1`.
+- **Organisation listing is paged.** With `all_fields`, `organization_list` returns at most 25 publishers per call, so `discover` pages through them.
+- **Keywords arrive lowercased and without umlauts** ("grüngut" becomes "grungut"). Quotes still validate, because they are checked against the same text.
+- **Rule bug fixed.** The English theme "Agriculture, fisheries, **forestry** and food" matched `forest` and put 196 Geneva datasets into Urban nature. Now `forests?\b`; Basel's eval is unchanged.
+- **Unreachable portals.** A portal without a snapshot that fails to load now shows an empty catalogue with the reason, not a page stuck on "Loading".
+- **Snapshots are gzipped.** Geneva is 13 MB as JSON and 0.9 MB compressed.
+
+**Open design points from the real data:**
+1. **Taxonomy gaps.** Agriculture and wine (GE: "Cadastre des appellations des vins") and waste/cleanliness (BS 100288) have no subcategory. They belong in the batched taxonomy review.
+2. **Browser loading of large metadata-only portals.** Geneva's full `package_search` is 14 MB and uncompressed. CKAN's `fl` makes it small but drops keywords, formats and frequency, which would misstate every dataset. Proposal: a build-time normalised snapshot per CKAN portal, refreshed by script and labelled with its date.
+3. **Series.** Collapse "one dataset per ballot / per year" into one entry with a count.
 
 ## Built offline since (feat/canton-readiness)
 

@@ -1,4 +1,4 @@
-import { activePortal, portalFromSearch, setActivePortal } from './portal';
+import { BASEL_STADT, activePortal, portalFromSearch, setActivePortal } from './portal';
 import { topicProvenance } from './topic-provenance';
 import './styles.css';
 import { openCatalogue } from './data/catalogue';
@@ -49,7 +49,9 @@ import { icon } from './ui/icons';
 setActivePortal(portalFromSearch(location.search));
 const portal = activePortal();
 
-const DEFAULT_QUERY = BENCHMARK_USE_CASES[0].prompt;
+/** Benchmark questions were written for Basel-Stadt; elsewhere they ask about the portal's own place. */
+const localPrompt = (prompt: string): string => prompt.split(BASEL_STADT.place).join(portal.place);
+const DEFAULT_QUERY = localPrompt(BENCHMARK_USE_CASES[0].prompt);
 
 const app = document.querySelector<HTMLDivElement>('#app')!;
 
@@ -286,13 +288,14 @@ function renderExamples(): void {
   };
   const demoLabels: Record<string, string> = { cycling_safety: 'Cycling comfort' };
   examples.innerHTML = BENCHMARK_USE_CASES.filter(useCase => demoIds.includes(useCase.id)).map(
-    useCase => `<button class="example" data-id="${escapeHtml(useCase.id)}" data-prompt="${escapeHtml(useCase.prompt)}"><b>${escapeHtml(demoLabels[useCase.id] ?? useCase.label)}</b><span>${escapeHtml(demoSubtitles[useCase.id])}</span></button>`,
+    useCase => `<button class="example" data-id="${escapeHtml(useCase.id)}" data-prompt="${escapeHtml(localPrompt(useCase.prompt))}"><b>${escapeHtml(demoLabels[useCase.id] ?? useCase.label)}</b><span>${escapeHtml(demoSubtitles[useCase.id])}</span></button>`,
   ).join('');
   examples.querySelectorAll<HTMLButtonElement>('button').forEach(button =>
     button.addEventListener('click', () => {
       const prompt = button.dataset.prompt ?? '';
       workspace.clear();
-      for (const id of demoWorkspaces[button.dataset.id ?? ''] ?? []) {
+      // The demo workspaces are Basel-Stadt dataset ids.
+      for (const id of portal.id === BASEL_STADT.id ? demoWorkspaces[button.dataset.id ?? ''] ?? [] : []) {
         if (catalog.datasets.some(dataset => dataset.id === id)) workspace.add(id);
       }
       el<HTMLInputElement>('#promptInput').value = prompt;
