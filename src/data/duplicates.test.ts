@@ -31,6 +31,14 @@ describe('duplicate linking', () => {
     expect(merge.nationalOnly).toEqual(['s1', 's3']);
   });
 
+  it('links by package name when identifiers do not carry the portal id (St. Gallen)', () => {
+    const merge = mergeCatalogues(primary, [copy(a, 'uuid-1@kanton-x')], ['kanton-x']);
+    expect([...merge.linked]).toEqual([[a, a]]);
+    expect(merge.linkedBy.get(a)).toBe('name');
+    // Same name under a foreign publisher is not ours: it stays separate, and here collides.
+    expect(() => mergeCatalogues(primary, [copy(b, 'uuid-2@someone-else')], ['kanton-x'])).toThrow(/collide/);
+  });
+
   it('refuses an id collision instead of silently shadowing a dataset', () => {
     expect(() => mergeCatalogues(primary, [copy(a, 'x@other')], ['kanton-x'])).toThrow(/collide/);
   });

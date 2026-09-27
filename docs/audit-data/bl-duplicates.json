@@ -1,10 +1,14 @@
 {
   "portal": "bl",
   "primarySource": "src/data/portals/bl/snapshot.json.gz (2026-09-27)",
-  "takenAt": "2026-09-27T11:03:33.056Z",
+  "takenAt": "2026-09-27T11:53:37.593Z",
   "primary": 184,
   "national": 599,
   "linked": 132,
+  "linkedBy": {
+    "identifier": 132,
+    "name": 0
+  },
   "primaryOnly": [
     "10060",
     "10070",

@@ -174,14 +174,14 @@ if (command === 'discover') {
   const primaryOnly = primary.filter(dataset => !merge.linked.has(dataset.id)).map(dataset => dataset.id);
   const report = {
     portal: portal.id, primarySource: source, takenAt: new Date().toISOString(),
-    primary: primary.length, national: national.length, linked: merge.linked.size,
+    primary: primary.length, national: national.length, linked: merge.linked.size, linkedBy: Object.fromEntries(['identifier', 'name'].map(method => [method, [...merge.linkedBy.values()].filter(value => value === method).length])),
     primaryOnly, nationalOnly: merge.nationalOnly.length, nationalOnlyKinds: kinds, nationalOnlyShapes: shapes, nationalOnlyDownloadable: downloadable,
     nationalOnlySample: merge.nationalOnly.slice(0, 40).map(id => ({ id, identifier: byId.get(id)?.identifier, title: byId.get(id)?.title, publisher: byId.get(id)?.publisher })),
     total: merge.datasets.length,
   };
   if (positional) writeFileSync(positional, JSON.stringify(report, null, 2) + '\n');
   console.log(`${portal.shortLabel}: ${primary.length} on the portal, ${national.length} on opendata.swiss`);
-  console.log(`  linked by identifier: ${merge.linked.size}; portal only: ${primaryOnly.length}; opendata.swiss only: ${merge.nationalOnly.length} ${JSON.stringify(kinds)}`);
+  console.log(`  linked: ${merge.linked.size} (identifier ${[...merge.linkedBy.values()].filter(v => v === 'identifier').length}, name ${[...merge.linkedBy.values()].filter(v => v === 'name').length}); portal only: ${primaryOnly.length}; opendata.swiss only: ${merge.nationalOnly.length} ${JSON.stringify(kinds)}`);
   console.log(`  opendata.swiss only, by shape: ${JSON.stringify(shapes)}; with a downloadable file: ${downloadable}`);
   console.log(`  distinct datasets: ${merge.datasets.length}`);
 } else {

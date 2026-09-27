@@ -48,6 +48,8 @@ import { icon } from './ui/icons';
 // One portal per page load (`?portal=bs`). Set before anything parses a question.
 setActivePortal(portalFromSearch(location.search));
 const portal = activePortal();
+// Portal-specific look (src/styles.css, :root[data-portal=...]). Style only: never the portal's logo or name as sender.
+document.documentElement.dataset.portal = portal.id;
 
 /** Benchmark questions were written for Basel-Stadt; elsewhere they ask about the portal's own place. */
 const localPrompt = (prompt: string): string => prompt.split(BASEL_STADT.place).join(portal.place);
@@ -95,7 +97,7 @@ app.innerHTML = `
   <header class="header">
     <div class="brand">
       <div class="logo">DF</div><h1>DataFit</h1>
-      <div class="brand-meta">${escapeHtml(portal.label)}</div>
+      <div class="brand-meta">${escapeHtml(portal.label)}</div><span class="unofficial" title="An independent prototype built on the public API of this portal. Not operated or endorsed by the portal owner.">Unofficial prototype</span>
     </div>
     <div class="header-right">
       <button class="source-pill" id="sourcePill" aria-label="Show catalogue source diagnostics">Loading catalogue…</button>

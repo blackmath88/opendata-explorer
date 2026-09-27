@@ -1,0 +1,265 @@
+{
+  "portal": "sg",
+  "primarySource": "src/data/portals/sg/snapshot.json.gz (2026-09-27)",
+  "takenAt": "2026-09-27T11:53:27.637Z",
+  "primary": 221,
+  "national": 206,
+  "linked": 174,
+  "linkedBy": {
+    "identifier": 24,
+    "name": 150
+  },
+  "primaryOnly": [
+    "artengliederung-erfolgsrechnung-hrm1-und-rmsg-kanton-stgallen",
+    "aufgaben-und-finanzplan-kanton-stgallen",
+    "ausnahmetransportrouten",
+    "budget-2021-kanton-stgallen-institutionelle-gliederung",
+    "budget-2022-kanton-stgallen-institutionelle-gliederung",
+    "budget-kanton-stgallen",
+    "budget-kanton-stgallen-institutionelle-gliederung",
+    "covid_19-fallzahlen-kanton-stgallen-total",
+    "erlebnisse-in-der-ostschweiz",
+    "fruchtfolgeflachen",
+    "funktionale-gliederung-hrm1-und-rmsg-kanton-stgallen",
+    "gastronomie-in-der-ostschweiz",
+    "geodaten-areg-metadaten-von-opendataswiss",
+    "gewassernetz-110000",
+    "gewasserraum-grundlagen",
+    "grundwasserqualitat",
+    "grundwasservorkommen",
+    "haltestellen-des-oeffentlichen-verkehrs-im-kanton-st-gallen",
+    "jahresrechnung-kanton-stgallen",
+    "kantonaler-ubersichtsplan-15000",
+    "kataster-der-belasteten-standorte",
+    "kunstbauten",
+    "ladestationen-fur-elektroautos-im-kanton-stgallen",
+    "larmbelastung-kanton-stgallen",
+    "larmemission-kanton-stgallen",
+    "linie",
+    "luftqualitat-der-ostschweiz-ostluft",
+    "motorisierter-individualverkehr-miv-kanton-stgallen",
+    "paket-und-logistikzentren-der-schweizerischen-post",
+    "paketlieferungen-adressen-und-zustelltage-schweizerische-post",
+    "paketsendungen-pro-plz-und-produkte-schweizerische-post",
+    "paketzustellungen-schweizerische-post-nach-tour-plz",
+    "passagierfrequenz",
+    "plz-verzeichnis-kanton-st-gallen",
+    "sammelstellen-siedlungsabfalle-des-zweckverband-abfallverwertung-bazenheid-zab",
+    "sbb-mitarbeitende-nach-arbeitskanton",
+    "schutzwald",
+    "stationsbasierte-shared-mobility-angebote-im-kanton-stgallen",
+    "statistikdatenbank-stada",
+    "statistikdatenbank-stada2-fachstelle-fur-statistik-kanton-stgallen",
+    "statistikportal-kanton-stgallen",
+    "strassenverkehrsunfallorte",
+    "unterkunfte-in-der-ostschweiz",
+    "verkehrszahlen-velo-kanton-stgallen",
+    "vernetzungsplattform-matchd-match-und-klickzahlen",
+    "wanderwege",
+    "wetterdaten-klimamessnetz-kanton-stgallen-tageswerte"
+  ],
+  "nationalOnly": 32,
+  "nationalOnlyKinds": {
+    "uuid (geodata catalogue)": 28,
+    "other identifier": 4
+  },
+  "nationalOnlyShapes": {
+    "raster": 32
+  },
+  "nationalOnlyDownloadable": 0,
+  "nationalOnlySample": [
+    {
+      "id": "abwasserreinigungsanlagen-standorte-wms",
+      "identifier": "ee9a27ce-01b5-4ce0-8aeb-96e2b6d47f40@amt-fuer-raumentwicklung-und-geoinformation-areg-kanton-st-gallen",
+      "title": "Abwasserreinigungsanlagen, Standorte (WMS)",
+      "publisher": "Amt für Raumentwicklung und Geoinformation"
+    },
+    {
+      "id": "amphibienvorkommen-wms",
+      "identifier": "f8c68f65-11f3-41ae-ae1e-f41f93059900@amt-fuer-raumentwicklung-und-geoinformation-areg-kanton-st-gallen",
+      "title": "Amphibienvorkommen (WMS)",
+      "publisher": "Amt für Raumentwicklung und Geoinformation"
+    },
+    {
+      "id": "ausnahmetransportrouten2",
+      "identifier": "14df339e-0b4e-4c37-96b0-5ae94272dba0-8371@amt-fuer-raumentwicklung-und-geoinformation-areg-kanton-st-gallen",
+      "title": "Ausnahmetransportrouten",
+      "publisher": "Amt für Raumentwicklung und Geoinformation"
+    },
+    {
+      "id": "flachmoore",
+      "identifier": "61a45a65-a702-4a37-ab18-8ea5e405dc97-8371@amt-fuer-raumentwicklung-und-geoinformation-areg-kanton-st-gallen",
+      "title": "Flachmoore",
+      "publisher": "Amt für Raumentwicklung und Geoinformation"
+    },
+    {
+      "id": "fruchtfolgeflachen1",
+      "identifier": "e51dcd1b-162c-4265-bffb-9b24e46a1524@amt-fuer-raumentwicklung-und-geoinformation-areg-kanton-st-gallen",
+      "title": "Fruchtfolgeflächen",
+      "publisher": "Amt für Raumentwicklung und Geoinformation"
+    },
+    {
+      "id": "gemeindestrassenplan-wfs",
+      "identifier": "285604ba-3b7e-4d67-9836-d006b5e8cad7-8371@amt-fuer-raumentwicklung-und-geoinformation-areg-kanton-st-gallen",
+      "title": "Gemeindestrassenplan (WFS)",
+      "publisher": "Amt für Raumentwicklung und Geoinformation"
+    },
+    {
+      "id": "gewassernetz-1-10000",
+      "identifier": "ABCD@amt-fuer-raumentwicklung-und-geoinformation-areg-kanton-st-gallen",
+      "title": "Gewässernetz 1:10'000",
+      "publisher": "Amt für Raumentwicklung und Geoinformation"
+    },
+    {
+      "id": "gewasserraum-grundlagen1",
+      "identifier": "c5acd7c7-807a-4710-828e-70f4ec58f603-8371@amt-fuer-raumentwicklung-und-geoinformation-areg-kanton-st-gallen",
+      "title": "Gewässerraum Grundlagen",
+      "publisher": "Amt für Raumentwicklung und Geoinformation"
+    },
+    {
+      "id": "grundwasserinventar",
+      "identifier": "cbbe6893-dde8-43ab-860a-1c122b0f680b-8371@amt-fuer-raumentwicklung-und-geoinformation-areg-kanton-st-gallen",
+      "title": "Grundwasserinventar",
+      "publisher": "Amt für Raumentwicklung und Geoinformation"
+    },
+    {
+      "id": "grundwasservorkommen2",
+      "identifier": "7d57fc55-626d-42bb-86af-6561f63afbd4@amt-fuer-raumentwicklung-und-geoinformation-areg-kanton-st-gallen",
+      "title": "Grundwasservorkommen",
+      "publisher": "Amt für Raumentwicklung und Geoinformation"
+    },
+    {
+      "id": "heftikarte",
+      "identifier": "e52a8081-b31b-46c2-9794-55839353a7a7-8371@amt-fuer-raumentwicklung-und-geoinformation-areg-kanton-st-gallen",
+      "title": "Heftikarte",
+      "publisher": "Amt für Raumentwicklung und Geoinformation"
+    },
+    {
+      "id": "kantonaler-ubersichtsplan-1-5000",
+      "identifier": "00e83ac5-6aee-4974-9a2e-2742a28ab25c-8371@amt-fuer-raumentwicklung-und-geoinformation-areg-kanton-st-gallen",
+      "title": "Kantonaler Übersichtsplan 1:5'000",
+      "publisher": "Amt für Raumentwicklung und Geoinformation"
+    },
+    {
+      "id": "kantonsstrassenplan-wms",
+      "identifier": "fadfd32f-8f28-476f-952d-8fe7809b02d6-8371@amt-fuer-raumentwicklung-und-geoinformation-areg-kanton-st-gallen",
+      "title": "Kantonsstrassenplan (WMS)",
+      "publisher": "Amt für Raumentwicklung und Geoinformation"
+    },
+    {
+      "id": "kataster-der-belasteten-standorte1",
+      "identifier": "ef8fd14e-c77b-4f3d-a8a8-65f08073d925-8371@amt-fuer-raumentwicklung-und-geoinformation-areg-kanton-st-gallen",
+      "title": "Kataster der belasteten Standorte",
+      "publisher": "Amt für Raumentwicklung und Geoinformation"
+    },
+    {
+      "id": "kunstbauten1",
+      "identifier": "1c48ac53-c8b5-4ae6-b262-7d8e8d77d351-8371@amt-fuer-raumentwicklung-und-geoinformation-areg-kanton-st-gallen",
+      "title": "Kunstbauten",
+      "publisher": "Amt für Raumentwicklung und Geoinformation"
+    },
+    {
+      "id": "messstellen-grundwasser-hydrometrie",
+      "identifier": "db8d61f0-5078-456c-ac6f-c3203698d45e-8371@amt-fuer-raumentwicklung-und-geoinformation-areg-kanton-st-gallen",
+      "title": "Messstellen Grundwasser Hydrometrie",
+      "publisher": "Amt für Raumentwicklung und Geoinformation"
+    },
+    {
+      "id": "messstellen-oberflachengewasser-hydrometrie",
+      "identifier": "c0853c70-c16b-4e60-b877-a72d14c84bcd-8371@amt-fuer-raumentwicklung-und-geoinformation-areg-kanton-st-gallen",
+      "title": "Messstellen Oberflächengewässer Hydrometrie",
+      "publisher": "Amt für Raumentwicklung und Geoinformation"
+    },
+    {
+      "id": "messstellen-oberflaechengewaesser-chemie-biologie-wms",
+      "identifier": "df886b65-2856-4e5b-9628-89ea75ac9e5b@amt-fuer-raumentwicklung-und-geoinformation-areg-kanton-st-gallen",
+      "title": "Messstellen Oberflaechengewaesser, Chemie Biologie (WMS)",
+      "publisher": "Amt für Raumentwicklung und Geoinformation"
+    },
+    {
+      "id": "oberflachengewasserqualitat",
+      "identifier": "dffd3fc3-920b-4d69-9df1-84320d9828ac-8371@amt-fuer-raumentwicklung-und-geoinformation-areg-kanton-st-gallen",
+      "title": "Oberflächengewässerqualität",
+      "publisher": "Amt für Raumentwicklung und Geoinformation"
+    },
+    {
+      "id": "prufgebiete-bodenverschiebung",
+      "identifier": "ebb70d6d-0abf-46a6-8109-3ce9ce1f5da9-8371@amt-fuer-raumentwicklung-und-geoinformation-areg-kanton-st-gallen",
+      "title": "Prüfgebiete Bodenverschiebung",
+      "publisher": "Amt für Raumentwicklung und Geoinformation"
+    },
+    {
+      "id": "radwege-wms",
+      "identifier": "9c500d26-fa3f-44e6-a526-212152bfd596@amt-fuer-raumentwicklung-und-geoinformation-areg-kanton-st-gallen",
+      "title": "Radwege (WMS)",
+      "publisher": "Amt für Raumentwicklung und Geoinformation"
+    },
+    {
+      "id": "rohwasserpumpwerke",
+      "identifier": "96e3287c-1eb2-4e00-859d-3389a84bd267-8371@amt-fuer-raumentwicklung-und-geoinformation-areg-kanton-st-gallen",
+      "title": "Rohwasserpumpwerke",
+      "publisher": "Amt für Raumentwicklung und Geoinformation"
+    },
+    {
+      "id": "schutzwald1",
+      "identifier": "ad2becd1-bf1e-4f89-9a53-54df075b102d-8371@amt-fuer-raumentwicklung-und-geoinformation-areg-kanton-st-gallen",
+      "title": "Schutzwald",
+      "publisher": "Amt für Raumentwicklung und Geoinformation"
+    },
+    {
+      "id": "siegfriedkarte-19-jhd-wms",
+      "identifier": "b6c9fcd1-dea5-4873-b995-ba6507efe382@amt-fuer-raumentwicklung-und-geoinformation-areg-kanton-st-gallen",
+      "title": "Siegfriedkarte, 19. Jhd. (WMS)",
+      "publisher": "Amt für Raumentwicklung und Geoinformation"
+    },
+    {
+      "id": "statistikdatenbank-stada-fachstelle-fur-statistik-kanton-st-gallen",
+      "identifier": "stada@fachstelle-fur-statistik-kanton-st-gallen",
+      "title": "Statistikdatenbank STADA Fachstelle für Statistik Kanton St.Gallen",
+      "publisher": "Fachstelle für Statistik Kanton St.Gallen"
+    },
+    {
+      "id": "statistikdatenbank-stada2-der-fachstelle-fur-statistik-des-kantons-st-gallen",
+      "identifier": "STADA2@fachstelle-fur-statistik-kanton-st-gallen",
+      "title": "Statistikdatenbank STADA2 Fachstelle für Statistik Kanton St.Gallen",
+      "publisher": "Fachstelle für Statistik Kanton St.Gallen"
+    },
+    {
+      "id": "stauanlagen-wms",
+      "identifier": "5ee61320-e40e-49d5-9646-9f3867bf2b80@amt-fuer-raumentwicklung-und-geoinformation-areg-kanton-st-gallen",
+      "title": "Stauanlagen (WMS)",
+      "publisher": "Amt für Raumentwicklung und Geoinformation"
+    },
+    {
+      "id": "strassenlaermbelastungskataster-wms",
+      "identifier": "f6ee7513-dcf1-441d-a428-2897a26ee237-8371@amt-fuer-raumentwicklung-und-geoinformation-areg-kanton-st-gallen",
+      "title": "Strassenlaermbelastungskataster (WMS)",
+      "publisher": "Amt für Raumentwicklung und Geoinformation"
+    },
+    {
+      "id": "suchdialog_statistikportal_kanton_st_gallen",
+      "identifier": "statistikportal_sg@fachstelle-fur-statistik-kanton-st-gallen",
+      "title": "Suchdialog Statistikportal Kanton St.Gallen",
+      "publisher": "Fachstelle für Statistik Kanton St.Gallen"
+    },
+    {
+      "id": "waldreservate-wms",
+      "identifier": "ccae20dc-c2c3-48e6-9bc1-a5335679ef1c@amt-fuer-raumentwicklung-und-geoinformation-areg-kanton-st-gallen",
+      "title": "Waldreservate (WMS)",
+      "publisher": "Amt für Raumentwicklung und Geoinformation"
+    },
+    {
+      "id": "wanderwege1",
+      "identifier": "afd211be-ca8a-40ab-b664-52dbcb4ef444-8371@amt-fuer-raumentwicklung-und-geoinformation-areg-kanton-st-gallen",
+      "title": "Wanderwege",
+      "publisher": "Amt für Raumentwicklung und Geoinformation"
+    },
+    {
+      "id": "zonenplan",
+      "identifier": "a0a16787-f861-4814-964f-b687c6b634b0-8371@amt-fuer-raumentwicklung-und-geoinformation-areg-kanton-st-gallen",
+      "title": "Zonenplan",
+      "publisher": "Amt für Raumentwicklung und Geoinformation"
+    }
+  ],
+  "total": 253
+}

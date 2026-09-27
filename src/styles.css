@@ -200,3 +200,16 @@ button.atlas-sub-more{cursor:pointer;font:inherit}button.atlas-sub-more:hover{bo
 /* breadcrumb: wraps onto a second line when deep instead of truncating every level */
 .atlas-breadcrumb{flex-wrap:wrap;row-gap:0}
 .atlas-breadcrumb button,.atlas-breadcrumb>span{flex:none;overflow:visible;text-overflow:clip;white-space:nowrap}
+
+/* Portal looks. Basel-Stadt: measured from data.bs.ch (2026-09-27): Inter, nav #ddecde,
+   headings #1e4557, borders #cbd2db, 6px radius. Style only: no logo, no official sender. */
+.unofficial{margin-left:12px;font-size:9px;letter-spacing:.06em;text-transform:uppercase;font-weight:650;padding:3px 7px;border-radius:999px;border:1px dashed var(--border);color:var(--muted);white-space:nowrap}
+:root[data-portal="bs"]{color:#1f2933;background:#fff;--bg:#fff;--panel:#f7f9fa;--surface:#fff;--surface2:#eef2f4;--border:#cbd2db;--divider:#e3e8ec;--primary:#1e4557;--primary2:#2b6178;--accent:#ddecde;--muted:#52606d}
+:root[data-portal="bs"] .header{background:#fff;border-bottom:0;box-shadow:inset 0 -6px 0 #ddecde}
+:root[data-portal="bs"] .logo{border-radius:6px}
+:root[data-portal="bs"] .brand h1{color:#1e4557}
+:root[data-portal="bs"] .main{background-image:none;background:#fff}
+:root[data-portal="bs"] .card,:root[data-portal="bs"] .prompt{border-radius:6px}
+:root[data-portal="bs"] .canvas-toolbar,:root[data-portal="bs"] .atlas-nav{background:#fff}
+:root[data-portal="bs"] .source-pill.live{border-color:#b9d3bd}
+@media(max-width:640px){.unofficial{display:none}}

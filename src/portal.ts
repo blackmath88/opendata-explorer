@@ -108,7 +108,28 @@ export const GENEVE: Portal = {
   snapshot: false,
 };
 
-export const PORTALS: readonly Portal[] = [BASEL_STADT, BASEL_LANDSCHAFT, GENEVE];
+/** St. Gallen runs its own Opendatasoft portal (221 datasets on 2026-09-27); ids are slugs, not numbers. */
+export const ST_GALLEN: Portal = {
+  id: 'sg',
+  canton: 'SG',
+  label: 'Kanton St. Gallen Open Government Data',
+  shortLabel: 'St. Gallen OGD',
+  place: 'St. Gallen',
+  languages: ['de'],
+  api: { kind: 'ods', base: 'https://daten.sg.ch/api/explore/v2.1', site: 'https://daten.sg.ch' },
+  // swisstopo SearchServer, canton boundary box (WGS84), 2026-09-27
+  bbox: [8.786604, 46.869125, 9.680754, 47.560163],
+  places: [
+    ['Rapperswil-Jona', /rapperswil|jona/], ['Wil', /\bwil\b/], ['Gossau', /\bgossau\b/], ['Rorschach', /rorschach/],
+    ['Buchs', /\bbuchs\b/], ['Uzwil', /uzwil/], ['Toggenburg', /toggenburg/], ['Rheintal', /rheintal/],
+    ['St. Gallen', /\bst\.? ?gallen|sankt gallen\b/],
+  ],
+  verified: false,
+  snapshot: false,
+  nationalPublishers: ['amt-fuer-raumentwicklung-und-geoinformation-areg-kanton-st-gallen', 'kanton-st-gallen', 'fachstelle-fur-statistik-kanton-st-gallen', 'staatskanzlei-kanton-st-gallen'],
+};
+
+export const PORTALS: readonly Portal[] = [BASEL_STADT, BASEL_LANDSCHAFT, ST_GALLEN, GENEVE];
 
 export function portalById(id: string | null | undefined): Portal | undefined {
   return PORTALS.find(portal => portal.id === id);
