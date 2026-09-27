@@ -42,3 +42,15 @@ Samples are static (`src/data/portals/bs/cover-samples.json`, ~330 KB for 58 dat
 - Spine titles at 6.4 px are for the sheet; a 3D view must use HTML labels on hover/focus.
 - One cloth colour per category makes a single shelf monochrome; variety comes from the art. Other categories get their own cloth.
 - Only Mobility has a glyph family; other categories fall back to the topic icon until their subcategories are checked.
+
+## Where the covers are used
+
+- `/library/`: the 3D shelf (docs/LIBRARY.md).
+- The proposal page, section "Unentdeckt": the doorway volumes of the three largest Mobility
+  groups.
+  - `npx tsx scripts/proposal-hero.ts` rewrites that block in `index.html`, between its markers.
+    It is static HTML, needs no script, and makes no request.
+  - The German reason text is built from the doorway's figures (`downloadsPerMonth`, `reuses`).
+    It is not a translation of the English sentence.
+  - The heading says "least used in its group", not "rarely used": the Parking pick still has
+    about 169 downloads a month.
