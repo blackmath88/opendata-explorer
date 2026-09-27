@@ -283,6 +283,37 @@ function patina(level: number, w: number, h: number, id: string): string {
   return `<defs><linearGradient id="pat-${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e8d9b0" stop-opacity="${(0.05 + level * 0.25).toFixed(2)}"/><stop offset="1" stop-color="#6b5a3a" stop-opacity="${(0.1 + level * 0.35).toFixed(2)}"/></linearGradient></defs><rect width="${w}" height="${h}" rx="3" fill="url(#pat-${id})"/>`;
 }
 
+/** A stable small number per dataset, so the print texture differs per book but never between renders. */
+export function printSeed(id: string): number {
+  let h = 2166136261;
+  for (const char of id) h = Math.imul(h ^ char.charCodeAt(0), 16777619) >>> 0;
+  return h % 997;
+}
+
+/**
+ * The print look (docs/COVERS.md): a linocut feel from two SVG filters, applied to the true
+ * drawing. `ink` roughens edges by at most about one unit, too little to move a point, a bar or
+ * a line in a way anyone could misread. `grain` lets the paper show through the cloth in specks.
+ * No shape is added, removed or moved; text stays crisp and is never filtered.
+ */
+function printDefs(id: string, w: number, h: number): string {
+  const seed = printSeed(id);
+  return `<defs>
+    <filter id="ink-${id}" x="-4%" y="-4%" width="108%" height="108%"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="1" seed="${seed}" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="0.8" xChannelSelector="R" yChannelSelector="G"/></filter>
+    <filter id="grain-${id}" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="1.9" numOctaves="1" seed="${seed + 1}"/><feColorMatrix values="0 0 0 0 0.957  0 0 0 0 0.941  0 0 0 0 0.902  0 0 0 -4.2 2.35"/></filter>
+    <filter id="wear-${id}" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="0.035 0.6" numOctaves="2" seed="${seed + 2}"/><feColorMatrix values="0 0 0 0 0.957  0 0 0 0 0.941  0 0 0 0 0.902  0 0 0 -2.6 1.35"/></filter>
+  </defs>
+  <rect width="${w}" height="${h}" rx="3" filter="url(#grain-${id})" opacity=".16"/>
+  <rect width="${w}" height="${h}" rx="3" filter="url(#wear-${id})" opacity=".07"/>`;
+}
+
+/** The art under the ink filter, its text (years, column names) kept out of it and crisp. */
+function inkedArt(art: string, id: string): string {
+  const texts = art.match(/<text[\s\S]*?<\/text>/g) ?? [];
+  const shapes = art.replace(/<text[\s\S]*?<\/text>/g, '');
+  return `<g opacity=".92" filter="url(#ink-${id})">${shapes}</g><g opacity=".92">${texts.join('')}</g>`;
+}
+
 function ribbon(reuses: number, x: number): string {
   if (!reuses) return '';
   const notches = Math.min(reuses, 5);
@@ -303,10 +334,11 @@ export function coverSvg(input: CoverInput): string {
   return `<svg class="cover" xmlns="http://www.w3.org/2000/svg" viewBox="0 -10 ${COVER_W} ${COVER_H + 10}" width="${COVER_W}" height="${COVER_H + 10}" role="img" aria-label="${esc(label)}">
     ${signals.doorway ? `<path d="M10 -7h48a2 2 0 0 1 2 2v7H8v-7a2 2 0 0 1 2-2z" fill="${PAPER}" stroke="${cloth}" stroke-width=".8"/><text x="34" y="-1" text-anchor="middle" font-size="5.2" font-weight="700" letter-spacing=".4" fill="${cloth}">READY · RARE</text>` : ''}
     <rect width="${COVER_W}" height="${COVER_H}" rx="3" fill="${cloth}"/>
-    <rect x="3" y="3" width="${COVER_W - 6}" height="${COVER_H - 6}" rx="2" fill="none" stroke="${PAPER}" stroke-opacity=".28" stroke-width=".6"/>
-    ${glyph(motif(input), 9, 9, 22)}
+    ${printDefs(id, COVER_W, COVER_H)}
+    <rect x="3" y="3" width="${COVER_W - 6}" height="${COVER_H - 6}" rx="2" fill="none" stroke="${PAPER}" stroke-opacity=".28" stroke-width=".6" filter="url(#ink-${id})"/>
+    <g filter="url(#ink-${id})">${glyph(motif(input), 9, 9, 22)}</g>
     <text x="${COVER_W - 10}" y="16" text-anchor="end" font-size="6" fill="${PAPER}" fill-opacity=".75" font-family="ui-monospace,Menlo,monospace">${esc(dataset.id)}</text>
-    <g opacity=".92">${coverArt(input, { x: 12, y: 40, w: COVER_W - 24, h: 70 })}</g>
+    ${inkedArt(coverArt(input, { x: 12, y: 40, w: COVER_W - 24, h: 70 }), id)}
     <text x="10" y="128" font-size="${Math.max(...lines.map(line => line.length)) > 15 ? 8.2 : 9.2}" font-weight="650" fill="${PAPER}" font-family="Inter,system-ui,sans-serif">${title}</text>
     <g transform="translate(10 ${COVER_H - 15})">${glyph(FORM_MARK[form], 0, 0, 9, PAPER, 1.6)}<text x="12" y="7" font-size="6" fill="${PAPER}" fill-opacity=".85" font-family="Inter,system-ui,sans-serif">${esc(FORM_LABEL[form])} · ${esc(BAND_SHORT[recordBand(dataset.recordsCount)])} records</text></g>
     ${patina(signals.overdue, COVER_W, COVER_H, id)}
@@ -325,8 +357,9 @@ export function spineSvg(input: CoverInput): string {
   return `<svg class="spine" xmlns="http://www.w3.org/2000/svg" viewBox="0 -10 ${w} ${COVER_H + 10}" width="${w}" height="${COVER_H + 10}" role="img" aria-label="${esc(dataset.title)}">
     ${signals.doorway ? `<rect x="1" y="-7" width="${w - 2}" height="8" rx="1.5" fill="${PAPER}" stroke="${cloth}" stroke-width=".8"/>` : ''}
     <rect width="${w}" height="${COVER_H}" rx="1.5" fill="${cloth}"/>
-    <path d="M0 3.5h${w}M0 ${COVER_H - 3.5}h${w}" stroke="${PAPER}" stroke-opacity=".35" stroke-width=".6"/>
-    ${glyph(motif(input), (w - icon) / 2, 7, icon, PAPER, 1.8)}
+    ${printDefs(id, w, COVER_H)}
+    <path d="M0 3.5h${w}M0 ${COVER_H - 3.5}h${w}" stroke="${PAPER}" stroke-opacity=".35" stroke-width=".6" filter="url(#ink-${id})"/>
+    <g filter="url(#ink-${id})">${glyph(motif(input), (w - icon) / 2, 7, icon, PAPER, 1.8)}</g>
     <text transform="translate(${(w / 2 + 2.3).toFixed(1)} ${22 + icon}) rotate(90)" font-size="6.4" font-weight="600" fill="${PAPER}" font-family="Inter,system-ui,sans-serif">${esc(title)}</text>
     ${glyph(FORM_MARK[form], (w - Math.min(w - 3, 9)) / 2, COVER_H - 15, Math.min(w - 3, 9), PAPER, 1.8)}
     ${patina(signals.overdue, w, COVER_H, id)}
