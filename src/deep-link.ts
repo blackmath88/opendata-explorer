@@ -4,6 +4,7 @@
  * point here with the same dataset ID the app, the inspector and Build use.
  */
 import type { AtlasLens } from './atlas';
+import { activePortal } from './portal';
 
 const LENSES: readonly AtlasLens[] = ['topic', 'space', 'time', 'readiness'];
 
@@ -27,6 +28,6 @@ export function formatDeepLink(link: DeepLink): string {
 /** What to say when a linked dataset is not loaded: a snapshot gap is not a global absence. */
 export function missingLinkNotice(id: string, source: 'live' | 'fallback', loaded: number): string {
   return source === 'fallback'
-    ? `Dataset ${id} is not in the offline snapshot (${loaded} datasets). The live Basel-Stadt catalogue may contain it; the live catalogue is unavailable right now.`
+    ? `Dataset ${id} is not in the offline snapshot (${loaded} datasets). The live ${activePortal().shortLabel} catalogue may contain it; the live catalogue is unavailable right now.`
     : `Dataset ${id} is not in the live catalogue as loaded (${loaded} datasets). It may have been withdrawn or renamed at the source.`;
 }

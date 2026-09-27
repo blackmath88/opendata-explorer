@@ -1,6 +1,7 @@
 import type { McpServer } from '@modelcontextprotocol/server';
 import * as z from 'zod/v4';
 import type { DataFitOrchestrator } from '../core/orchestrator';
+import { activePortal } from '../portal';
 import { datasetIdSchema, envelopeSchema, planSchema, questionSchema, representationTypeSchema, resolutionSchema } from './schemas';
 
 const reply = (orchestrator: DataFitOrchestrator, data: unknown) => {
@@ -10,8 +11,8 @@ const reply = (orchestrator: DataFitOrchestrator, data: unknown) => {
 
 export function registerDataFitTools(server: McpServer, orchestrator: DataFitOrchestrator): void {
   server.registerTool('search_datasets', {
-    title: 'Search Basel datasets',
-    description: 'Finds relevant Basel-Stadt datasets through DataFit deterministic ranking. Returns local catalogue evidence only; it does not search the web or prove compatibility.',
+    title: `Search ${activePortal().place} datasets`,
+    description: `Finds relevant ${activePortal().shortLabel} datasets through DataFit deterministic ranking. Returns local catalogue evidence only; it does not search the web or prove compatibility.`,
     inputSchema: z.object({ query: questionSchema, limit: z.number().int().min(1).max(50).default(10) }),
     outputSchema: envelopeSchema(z.object({ matches: z.array(z.object({ datasetId: z.string(), title: z.string(), provider: z.string(), relevance: z.unknown(), evidenceClass: z.string(), roleIds: z.array(z.string()), scope: z.literal('local'), sourceUrl: z.string(), availability: z.string() })) })),
   }, async ({ query, limit }) => reply(orchestrator, { matches: orchestrator.searchDatasets(query, limit) }));
@@ -31,7 +32,7 @@ export function registerDataFitTools(server: McpServer, orchestrator: DataFitOrc
 
   server.registerTool('inspect_dataset', {
     title: 'Inspect dataset',
-    description: 'Reads a Basel dataset schema and optionally bounded records through the existing adapter. The returned observation level states whether evidence is metadata, schema, or sample based.',
+    description: `Reads a ${activePortal().place} dataset schema and optionally bounded records through the existing adapter. The returned observation level states whether evidence is metadata, schema, or sample based.`,
     inputSchema: z.object({ dataset_id: datasetIdSchema, sample: z.boolean().default(false) }),
     outputSchema: envelopeSchema(z.object({ dataset: z.object({ id: z.string(), title: z.string(), publisher: z.string(), sourceUrl: z.string() }), structure: z.object({ datasetId: z.string(), observedFrom: z.string(), fields: z.array(z.unknown()), notes: z.array(z.string()) }).loose() })),
   }, async ({ dataset_id, sample }) => reply(orchestrator, await orchestrator.inspectDataset(dataset_id, sample)));

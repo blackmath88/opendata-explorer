@@ -1,3 +1,4 @@
+import { activePortal } from '../portal';
 import type {
   CatalogState,
   CompatibilityAssessment,
@@ -93,7 +94,7 @@ export function renderSourceDiagnostics(catalog: CatalogState): string {
   const complete = catalog.reportedTotal === undefined || catalog.reportedTotal === catalog.datasets.length;
   return section('Catalogue source', `<dl class="source-diagnostics">
     <div><dt>Mode</dt><dd>${catalog.source === 'live' ? 'Live' : 'Fallback cache'}</dd></div>
-    <div><dt>Source</dt><dd>Basel-Stadt OGD</dd></div>
+    <div><dt>Source</dt><dd>${escapeHtml(activePortal().shortLabel)}</dd></div>
     <div><dt>Datasets loaded</dt><dd>${formatCount(catalog.datasets.length)}${catalog.reportedTotal !== undefined ? ` / ${formatCount(catalog.reportedTotal)} reported` : ''}</dd></div>
     <div><dt>Completeness</dt><dd>${complete ? 'Complete' : 'Partial'}</dd></div>
     <div><dt>Last loaded</dt><dd>${escapeHtml(new Date(catalog.loadedAt).toLocaleString('de-CH'))}</dd></div>
@@ -109,7 +110,7 @@ export function renderEvidenceSummary(plan: EvidencePlan, datasets: DatasetRecor
     else if (role.roleType === 'context' || role.roleType === 'constraint') counts.contextual += 1;
     else counts.supporting += 1;
   }
-  const context = [plan.intent.spatialNeed ? 'Spatial' : '', plan.intent.temporalNeed ? `${plan.intent.temporalNeed} conditions` : '', plan.intent.geographicScope ?? 'Basel'].filter(Boolean).join(' · ');
+  const context = [plan.intent.spatialNeed ? 'Spatial' : '', plan.intent.temporalNeed ? `${plan.intent.temporalNeed} conditions` : '', plan.intent.geographicScope ?? activePortal().place].filter(Boolean).join(' · ');
   // Each role reads as: need -> the dataset that fills it -> why it matched -> what it is -> its limitation.
   const roles = plan.roles.map(role => {
     const fit = roleFit(role);

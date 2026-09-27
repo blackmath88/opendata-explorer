@@ -5,13 +5,16 @@
  *   apply <answers.json> --by <source> [--kind model|human]
  *                                       validate answers, store the accepted ones
  *   eval                                rules (first hit) vs scored rules vs scored + decisions,
- *                                       measured on src/data/topic-gold.json
+ *                                       measured on src/data/portals/<portal>/topic-gold.json
+ *
+ * --portal <id> picks the portal (default bs). Decisions and gold labels live per portal.
  *
  * answers.json: [{ "datasetId", "subcategory", "confidence", "evidence": [{ "field", "quote" }], "rationale" }]
  * The same file shape is what a model returns for TOPIC_INSTRUCTIONS + a request.
  */
 import { readFileSync, writeFileSync } from 'node:fs';
 import { fallbackDatasets } from '../src/data/fallback';
+import { portalById, setActivePortal } from '../src/portal';
 import { TOPIC_RULES } from '../src/topic-rules';
 import { assessTopic } from '../src/topic-scoring';
 import {
@@ -20,12 +23,16 @@ import {
 } from '../src/topic-decisions';
 import { labelText, datasetText } from '../src/topic-rules';
 
-const DECISIONS = 'src/data/topic-decisions.json';
-const GOLD = 'src/data/topic-gold.json';
 const [command, ...rest] = process.argv.slice(2);
 const flag = (name: string) => { const i = rest.indexOf(`--${name}`); return i >= 0 ? rest[i + 1] : undefined; };
+const portal = portalById(flag('portal') ?? 'bs');
+if (!portal) throw new Error(`unknown portal "${flag('portal')}"`);
+if (!portal.snapshot) throw new Error(`${portal.label} has no snapshot yet; export its catalogue first`);
+setActivePortal(portal);
+const DECISIONS = `src/data/portals/${portal.id}/topic-decisions.json`;
+const GOLD = `src/data/portals/${portal.id}/topic-gold.json`;
 const load = (): TopicDecisionFile => JSON.parse(readFileSync(DECISIONS, 'utf8'));
-const datasets = fallbackDatasets; // the live catalogue slots in here once reachable
+const datasets = fallbackDatasets; // the only snapshot is Basel-Stadt's; the live catalogue slots in here once reachable
 
 if (command === 'requests') {
   const index = indexDecisions(load());

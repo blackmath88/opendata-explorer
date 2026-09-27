@@ -219,6 +219,6 @@ export const ICON_CATALOGUE: IconGroup[] = [
     { name: 'panel', label: 'Panel', usage: 'Toggle the inspector' },
     { name: 'filter', label: 'Filter', usage: 'Narrow a list' },
     { name: 'workspace', label: 'Workspace', usage: 'Selected evidence tray' },
-    { name: 'external', label: 'Open source', usage: 'Link to data.bs.ch' },
+    { name: 'external', label: 'Open source', usage: 'Link to the source portal' },
   ] },
 ];

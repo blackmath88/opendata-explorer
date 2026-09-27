@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { fallbackDatasets } from './data/fallback';
-import decisionFile from './data/topic-decisions.json';
-import gold from './data/topic-gold.json';
+import decisionFile from './data/portals/bs/topic-decisions.json';
+import gold from './data/portals/bs/topic-gold.json';
 import {
   TAXONOMY_VERSION, TOPIC_PROMPT_VERSION, buildTopicRequest, indexDecisions, metadataHash, needsDecision, resolveTopic, validateDecision,
   type TopicDecision, type TopicDecisionFile,

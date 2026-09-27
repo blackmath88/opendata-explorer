@@ -1,3 +1,4 @@
+import { activePortal, datasetPageUrl, type Portal } from '../portal';
 import type { DatasetFormat, DatasetRecord } from '../types';
 import {
   asNumber,
@@ -8,7 +9,7 @@ import {
   collectLocalized,
   Json,
   normalizeFrequency,
-  ODS_BASE,
+  odsBase,
   stripHtml,
 } from './ods';
 
@@ -64,7 +65,7 @@ const TOPIC_HINTS: ReadonlyArray<readonly [string, RegExp]> = [
  * `publisher`, `license`, `theme` and `description` on all 361 datasets today,
  * but the normalizer must not depend on that.
  */
-export function normalizeOdsDataset(value: unknown): DatasetRecord | null {
+export function normalizeOdsDataset(value: unknown, portal: Portal = activePortal()): DatasetRecord | null {
   const raw = asObject(value);
   const metas = asObject(raw.metas);
   const defaults = asObject(metas.default);
@@ -134,8 +135,8 @@ export function normalizeOdsDataset(value: unknown): DatasetRecord | null {
     licenseUrl,
     modified,
     recordsCount,
-    sourceUrl: `https://data.bs.ch/explore/dataset/${encodeURIComponent(id)}/information/`,
-    apiUrl: hasRecords ? `${ODS_BASE}/catalog/datasets/${encodeURIComponent(id)}/records` : undefined,
+    sourceUrl: datasetPageUrl(portal, id),
+    apiUrl: hasRecords ? `${odsBase(portal)}/catalog/datasets/${encodeURIComponent(id)}/records` : undefined,
     formats: inferFormats(raw, geospatial, hasRecords),
     characteristics: {
       geospatial,

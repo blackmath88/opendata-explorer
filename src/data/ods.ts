@@ -4,7 +4,8 @@
  * Everything in this module is source-specific and must not be imported
  * outside `src/data/`.
  *
- * Observed behaviour of `https://data.bs.ch/api/explore/v2.1` (2026-09):
+ * Observed behaviour of the Basel-Stadt portal (`data.bs.ch/api/explore/v2.1`, 2026-09);
+ * other Opendatasoft portals run the same API but have not been checked:
  *  - `access-control-allow-origin: *` on every endpoint, so the browser can
  *    call it directly with no proxy.
  *  - `limit` is capped at 100 on both `/catalog/datasets` and `/records`.
@@ -16,7 +17,13 @@
  *    `group_by`, which gives real observed values far more cheaply than paging.
  */
 
-export const ODS_BASE = 'https://data.bs.ch/api/explore/v2.1';
+import { activePortal, type Portal } from '../portal';
+
+/** The Explore API base of an Opendatasoft portal. */
+export function odsBase(portal: Portal = activePortal()): string {
+  if (portal.api.kind !== 'ods') throw new Error(`${portal.label} is not an Opendatasoft portal`);
+  return portal.api.base;
+}
 
 /** Both the catalog and the records endpoint reject `limit` above this. */
 export const ODS_MAX_LIMIT = 100;
@@ -112,6 +119,8 @@ export interface OdsFetchOptions {
   timeoutMs?: number;
   /** Extra attempts after a transport-level failure. */
   retries?: number;
+  /** Which portal to ask. Defaults to the active one. */
+  portal?: Portal;
 }
 
 /**
@@ -129,7 +138,7 @@ export async function odsFetch<T>(
   params: Record<string, string | number> = {},
   options: OdsFetchOptions = {},
 ): Promise<T> {
-  const url = new URL(`${ODS_BASE}${path}`);
+  const url = new URL(`${odsBase(options.portal)}${path}`);
   for (const [key, value] of Object.entries(params)) url.searchParams.set(key, String(value));
 
   const attempts = (options.retries ?? 2) + 1;

@@ -1,3 +1,4 @@
+import { activePortal, portalFromSearch, setActivePortal } from './portal';
 import './styles.css';
 import { openCatalogue } from './data/catalogue';
 import { parseUseCaseIntent } from './intent';
@@ -43,6 +44,10 @@ import type {
 } from './types';
 import { icon } from './ui/icons';
 
+// One portal per page load (`?portal=bs`). Set before anything parses a question.
+setActivePortal(portalFromSearch(location.search));
+const portal = activePortal();
+
 const DEFAULT_QUERY = BENCHMARK_USE_CASES[0].prompt;
 
 const app = document.querySelector<HTMLDivElement>('#app')!;
@@ -87,7 +92,7 @@ app.innerHTML = `
   <header class="header">
     <div class="brand">
       <div class="logo">DF</div><h1>DataFit</h1>
-      <div class="brand-meta">Basel-Stadt Open Data</div>
+      <div class="brand-meta">${escapeHtml(portal.label)}</div>
     </div>
     <div class="header-right">
       <button class="source-pill" id="sourcePill" aria-label="Show catalogue source diagnostics">Loading catalogue…</button>
@@ -417,7 +422,7 @@ function renderTrustedEvidence(resolution: EvidenceResolution): string {
   const missingRows = resolution.unresolved.length
     ? resolution.unresolved.map(role => `<li><span class="source-state missing">${icon('evidence-missing', { size: 14 })}</span><b>${escapeHtml(role.label)}</b><span>${escapeHtml(role.localReason)}</span></li>`).join('')
     : '<li><span class="source-state ready">' + icon('confirmed', { size: 14 }) + '</span><span>No unresolved roles without a known source.</span></li>';
-  return `<section class="trusted-evidence"><div><span class="eyebrow">Local Basel evidence</span><ul>${localRows}</ul></div><div><span class="eyebrow">Swiss public data · proposed gap-fill</span><ul>${externalRows}</ul></div><div><span class="eyebrow">Still missing</span><ul>${missingRows}</ul></div></section>`;
+  return `<section class="trusted-evidence"><div><span class="eyebrow">Local ${escapeHtml(portal.place)} evidence</span><ul>${localRows}</ul></div><div><span class="eyebrow">Swiss public data · proposed gap-fill</span><ul>${externalRows}</ul></div><div><span class="eyebrow">Still missing</span><ul>${missingRows}</ul></div></section>`;
 }
 
 function renderBuildProposal(spec: RepresentationSpec, recommendations: RepresentationSpec[], covered: number, totalRoles: number, missing: number, next: string, currentAnalysis: WorkspaceAnalysis | null, executable: Set<string>): string {
@@ -504,7 +509,7 @@ function render(): void {
   composeBtn.disabled = false;
   composeBtn.classList.toggle('active', stage === 'compose');
   discoverBtn.classList.toggle('active', stage === 'discover');
-  stageTitle.textContent = stage === 'discover' ? 'Basel-Stadt dataset catalogue' : 'Build';
+  stageTitle.textContent = stage === 'discover' ? `${portal.shortLabel} dataset catalogue` : 'Build';
   el<HTMLElement>('#inspectorTitle').textContent = stage === 'discover' ? 'Discover' : 'Build';
   el<HTMLElement>('#inspectorSub').textContent =
     stage === 'discover' ? 'Evidence shortlist and dataset detail' : 'Selected evidence and its structure';
@@ -715,7 +720,7 @@ sourcePill.title =
 // Execution needs live geometry; the frozen snapshot has none, so in fallback
 // mode the engine stays null and the UI says why rather than offering a button
 // that cannot work.
-if (catalog.source === 'live') {
+if (catalog.source === 'live' && portal.api.kind === 'ods') {
   previewSource = new OdsGeoJsonSource(new Map(catalog.datasets.map(dataset => [dataset.id, dataset.recordsCount])));
   engine = new GeoJsonExecutionEngine(previewSource);
 }

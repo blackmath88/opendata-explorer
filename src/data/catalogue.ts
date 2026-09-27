@@ -1,5 +1,6 @@
 import type { CatalogState, CatalogueAdapter } from '../types';
-import { BaselOpendatasoftAdapter } from './basel';
+import { activePortal, type Portal } from '../portal';
+import { OpendatasoftAdapter } from './ods-adapter';
 import { FallbackCatalogueAdapter } from './fallback';
 
 export interface CatalogueSession {
@@ -14,8 +15,8 @@ export interface CatalogueSession {
  * The distinction is deliberately loud: `state.source` drives a persistent
  * badge, and fallback data is never described as live anywhere in the UI.
  */
-export async function openCatalogue(): Promise<CatalogueSession> {
-  const live = new BaselOpendatasoftAdapter();
+export async function openCatalogue(portal: Portal = activePortal()): Promise<CatalogueSession> {
+  const live = new OpendatasoftAdapter(portal);
   const loadedAt = () => new Date().toISOString();
 
   try {
@@ -31,6 +32,8 @@ export async function openCatalogue(): Promise<CatalogueSession> {
       },
     };
   } catch (error) {
+    // The only snapshot is Basel-Stadt's; another portal must not silently show Basel data.
+    if (!portal.snapshot) throw error;
     const fallback = new FallbackCatalogueAdapter();
     return {
       adapter: fallback,
@@ -40,7 +43,7 @@ export async function openCatalogue(): Promise<CatalogueSession> {
         datasets: await fallback.listDatasets(),
         error: error instanceof Error ? error.message : 'Unknown catalogue error',
         notes: [
-          'Showing a frozen offline snapshot of a small Basel dataset set.',
+          `Showing a frozen offline snapshot of a small ${portal.shortLabel} dataset set.`,
           'Sample-level evidence is unavailable in fallback mode.',
         ],
       },

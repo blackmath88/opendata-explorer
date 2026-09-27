@@ -1,10 +1,17 @@
 import type { DatasetMatch, DatasetRecord, EvidenceClass } from './types';
 import type { IconName } from './ui/icons';
 import { OTHER_TOPIC, TOPIC_RULES, datasetText, labelText, type Rule } from './topic-rules';
-import { indexDecisions, resolveTopic, type TopicDecisionFile } from './topic-decisions';
-import decisionFile from './data/topic-decisions.json';
+import { indexDecisions, resolveTopic } from './topic-decisions';
+import { topicDecisionFile } from './data/portals';
+import { activePortal } from './portal';
 
-const TOPIC_DECISIONS = indexDecisions(decisionFile as TopicDecisionFile);
+const decisionIndexes = new Map<string, ReturnType<typeof indexDecisions>>();
+/** Stored decisions for the active portal, indexed once per portal. */
+function topicDecisions() {
+  const id = activePortal().id;
+  if (!decisionIndexes.has(id)) decisionIndexes.set(id, indexDecisions(topicDecisionFile(id)));
+  return decisionIndexes.get(id)!;
+}
 
 export type AtlasLens = 'topic' | 'space' | 'time' | 'readiness';
 
@@ -98,7 +105,7 @@ export function categoryIcon(node: AtlasHierarchyDatum): IconName | undefined {
 
 /** Resolved through topic-decisions.ts: human > validated model decision > scored rules. */
 function topicPath(dataset: DatasetRecord): AtlasPath {
-  const { category, subcategory } = resolveTopic(dataset, TOPIC_DECISIONS);
+  const { category, subcategory } = resolveTopic(dataset, topicDecisions());
   const detail = topicDetail(subcategory, labelText(dataset));
   return { category, subcategory, detail: detail?.endsWith('(other)') ? topicDetail(subcategory, datasetText(dataset)) : detail };
 }

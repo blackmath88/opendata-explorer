@@ -1,5 +1,6 @@
 import { beforeAll, describe, expect, it } from 'vitest';
-import { BaselOpendatasoftAdapter } from '../data/basel';
+import { OpendatasoftAdapter } from '../data/ods-adapter';
+import { BASEL_STADT } from '../portal';
 import { assessCompatibility } from '../compatibility';
 import { GeoJsonExecutionEngine } from './engine';
 import { OdsGeoJsonSource } from './source';
@@ -17,7 +18,7 @@ import type { ExecutionResult, SpatialOperation } from './types';
  * The console output is the raw material for docs/BASEL_EXECUTION_FINDINGS.md.
  */
 
-const adapter = new BaselOpendatasoftAdapter();
+const adapter = new OpendatasoftAdapter(BASEL_STADT);
 let datasets: DatasetRecord[] = [];
 let engine: GeoJsonExecutionEngine;
 const structures = new Map<string, DatasetStructure>();

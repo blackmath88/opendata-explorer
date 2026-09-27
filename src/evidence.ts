@@ -1,3 +1,4 @@
+import { activePortal, portalById, type Portal } from './portal';
 import type {
   DatasetRecord,
   EvidenceClass,
@@ -38,8 +39,28 @@ interface RoleTemplate {
    * not air temperature, however similar the words are.
    */
   excludeTerms?: string[];
-  /** Why this analytical role remains a gap. Source selection belongs to the trusted registry. */
+  /**
+   * Why this analytical role remains a gap. Source selection belongs to the trusted registry.
+   * `{catalogue}` names the catalogue the gap was checked in.
+   */
   knownGap?: string;
+  /**
+   * Portals where the gap was actually checked. Without it the gap is general (true of any
+   * catalogue); with it, other portals get the claim as unchecked, not as a fact.
+   */
+  gapCheckedIn?: string[];
+}
+
+/** The gap as it applies to the active portal, and whether it was verified there. */
+export function gapFor(template: Pick<RoleTemplate, 'knownGap' | 'gapCheckedIn'>, portal: Portal = activePortal()): { text: string; verified: boolean } | undefined {
+  if (!template.knownGap) return undefined;
+  const checked = !template.gapCheckedIn || template.gapCheckedIn.includes(portal.id);
+  if (checked) return { text: template.knownGap.replace('{catalogue}', `${portal.place} catalogue`), verified: true };
+  const where = portalById(template.gapCheckedIn![0]);
+  return {
+    text: `Not yet checked for the ${portal.place} catalogue. ${template.knownGap.replace('{catalogue}', `${where?.place ?? template.gapCheckedIn![0]} catalogue`)}`,
+    verified: false,
+  };
 }
 
 const ROUTE_BACKBONE: RoleTemplate = {
@@ -51,7 +72,8 @@ const ROUTE_BACKBONE: RoleTemplate = {
     'Every other measure is attached to a line network. A candidate must have sufficient coverage and topology for the intended route method.',
   concepts: ['network', 'cycling', 'walking'],
   geometry: 'line',
-  knownGap: 'The Basel catalogue does not provide a demonstrated general-purpose routable path network.',
+  knownGap: 'The {catalogue} does not provide a demonstrated general-purpose routable path network.',
+  gapCheckedIn: ['bs'],
 };
 
 const TEMPLATES: Record<string, RoleTemplate[]> = {
@@ -113,7 +135,8 @@ const TEMPLATES: Record<string, RoleTemplate[]> = {
       required: false,
       reason: 'Climb is a first-order determinant of effort on a running or cycling route.',
       concepts: ['elevation'],
-      knownGap: 'The Basel catalogue does not provide a terrain surface suitable for route elevation profiling.',
+      knownGap: 'The {catalogue} does not provide a terrain surface suitable for route elevation profiling.',
+      gapCheckedIn: ['bs'],
     },
     {
       id: 'allergen_exposure',
@@ -123,7 +146,8 @@ const TEMPLATES: Record<string, RoleTemplate[]> = {
       reason:
         'Proposed by the system, not requested: pollen is a standard comfort factor for outdoor exercise and is absent from this catalogue.',
       concepts: ['pollen'],
-      knownGap: 'The Basel catalogue does not provide pollen measurements or an allergen-exposure surface.',
+      knownGap: 'The {catalogue} does not provide pollen measurements or an allergen-exposure surface.',
+      gapCheckedIn: ['bs'],
     },
   ],
 
@@ -514,15 +538,17 @@ function resolveRole(
     origin: 'system_inference',
   };
 
+  const gap = gapFor(template);
   if (!best) {
     role.gap = {
-      kind: template.knownGap || !scored.length ? 'not_in_catalogue' : 'no_candidate_selected',
-      suggestion: template.knownGap,
+      // An unchecked gap is not evidence of absence: only a verified one says "not in catalogue".
+      kind: gap?.verified || !scored.length ? 'not_in_catalogue' : 'no_candidate_selected',
+      suggestion: gap?.text,
     };
-  } else if (template.knownGap) {
+  } else if (gap) {
     // A weak local candidate can coexist with a known analytical gap. The
     // trusted resolver, not this plan, decides whether a curated source helps.
-    role.gap = { kind: 'no_candidate_selected', suggestion: template.knownGap };
+    role.gap = { kind: 'no_candidate_selected', suggestion: gap.text };
   }
 
   return role;

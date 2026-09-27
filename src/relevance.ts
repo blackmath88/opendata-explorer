@@ -1,3 +1,4 @@
+import { activePortal } from './portal';
 import type { DatasetMatch, DatasetRecord, EvidencePlan, UseCaseIntent } from './types';
 import { classifyEvidence } from './evidence';
 import { conceptById, matchesCatalogueTerm, normalizeText } from './vocabulary';
@@ -14,10 +15,13 @@ import { conceptById, matchesCatalogueTerm, normalizeText } from './vocabulary';
 /** Words that carry no discriminating signal in this catalogue. */
 const STOP = new Set([
   'the', 'and', 'for', 'with', 'that', 'this', 'from', 'into', 'where', 'what', 'want', 'build',
-  'could', 'would', 'help', 'find', 'show', 'shows', 'datasets', 'dataset', 'data', 'basel',
+  'could', 'would', 'help', 'find', 'show', 'shows', 'datasets', 'dataset', 'data',
   'about', 'which', 'their', 'there', 'have', 'need', 'like', 'make', 'using', 'understand',
   'ich', 'und', 'mit', 'die', 'der', 'das', 'ein', 'eine', 'für', 'von', 'den', 'dem',
 ]);
+
+/** The portal's own place name matches everything in its catalogue, so it discriminates nothing. */
+const placeWords = (): Set<string> => new Set(activePortal().place.toLowerCase().split(/[^\p{L}]+/u).filter(Boolean));
 
 const CONCEPT_TITLE_HIT = 16;
 const CONCEPT_TEXT_HIT = 5;
@@ -97,7 +101,7 @@ function literalTerms(statement: string): string[] {
     ...new Set(
       normalizeText(statement)
         .split(' ')
-        .filter(term => term.length > 3 && !STOP.has(term)),
+        .filter(term => term.length > 3 && !STOP.has(term) && !placeWords().has(term)),
     ),
   ];
 }

@@ -6,7 +6,8 @@ import type {
   KeyOverlapEvidence,
   KeyRef,
 } from '../types';
-import { asObject, asString, asNumber, Json, ODS_MAX_LIMIT, odsFetch } from './ods';
+import { activePortal, type Portal } from '../portal';
+import { asObject, asString, asNumber, Json, ODS_MAX_LIMIT, odsFetch, type OdsFetchOptions } from './ods';
 import { normalizeOdsDataset } from './normalize';
 import { applyRecordSample, structureFromCatalogEntry } from './ods-structure';
 
@@ -36,16 +37,25 @@ export interface CatalogLoadResult {
 }
 
 /**
- * Basel-Stadt Open Government Data, served through the Opendatasoft Explore
- * API v2.1.
+ * Any Opendatasoft portal, through the Explore API v2.1. Built and measured against
+ * Basel-Stadt; other cantons on Opendatasoft use the same API.
  *
  * The adapter caches raw catalogue entries because that response already
  * carries the full field schema — dataset structure inspection therefore needs
  * no extra network round-trip unless record sampling is explicitly requested.
  */
-export class BaselOpendatasoftAdapter implements CatalogueAdapter {
-  readonly id = 'basel-ods';
-  readonly label = 'Basel-Stadt Open Government Data';
+export class OpendatasoftAdapter implements CatalogueAdapter {
+  readonly id: string;
+  readonly label: string;
+
+  constructor(readonly portal: Portal = activePortal()) {
+    this.id = `${portal.id}-ods`;
+    this.label = portal.label;
+  }
+
+  private fetch<T>(path: string, params: Record<string, string | number> = {}, options: OdsFetchOptions = {}): Promise<T> {
+    return odsFetch<T>(path, params, { ...options, portal: this.portal });
+  }
 
   private rawById = new Map<string, unknown>();
   private structureCache = new Map<string, DatasetStructure>();
@@ -70,7 +80,7 @@ export class BaselOpendatasoftAdapter implements CatalogueAdapter {
     let skipped = 0;
 
     for (let page = 0; page < MAX_PAGES; page += 1) {
-      const body = await odsFetch<OdsCatalogResponse>('/catalog/datasets', {
+      const body = await this.fetch<OdsCatalogResponse>('/catalog/datasets', {
         limit: ODS_MAX_LIMIT,
         offset,
         order_by: 'dataset_id',
@@ -80,7 +90,7 @@ export class BaselOpendatasoftAdapter implements CatalogueAdapter {
       if (typeof body.total_count === 'number') reportedTotal = body.total_count;
 
       for (const entry of results) {
-        const record = normalizeOdsDataset(entry);
+        const record = normalizeOdsDataset(entry, this.portal);
         if (!record) {
           skipped += 1;
           continue;
@@ -96,7 +106,7 @@ export class BaselOpendatasoftAdapter implements CatalogueAdapter {
       if (reportedTotal !== undefined && offset >= reportedTotal) break;
     }
 
-    if (!datasets.length) throw new Error('Basel OGD catalogue returned no usable datasets');
+    if (!datasets.length) throw new Error(`${this.portal.shortLabel} catalogue returned no usable datasets`);
     if (skipped) notes.push(`${skipped} catalogue entries had no dataset id and were skipped.`);
     if (reportedTotal !== undefined && datasets.length !== reportedTotal) {
       notes.push(
@@ -108,7 +118,7 @@ export class BaselOpendatasoftAdapter implements CatalogueAdapter {
 
   async getDataset(id: string): Promise<DatasetRecord> {
     const entry = await this.rawEntry(id);
-    const record = normalizeOdsDataset(entry);
+    const record = normalizeOdsDataset(entry, this.portal);
     if (!record) throw new Error(`Dataset ${id} could not be normalized`);
     return record;
   }
@@ -139,7 +149,7 @@ export class BaselOpendatasoftAdapter implements CatalogueAdapter {
   private async sampleStructure(id: string, structure: DatasetStructure): Promise<DatasetStructure> {
     const path = `/catalog/datasets/${encodeURIComponent(id)}/records`;
     try {
-      const page = await odsFetch<OdsRecordsResponse>(path, { limit: SAMPLE_ROWS });
+      const page = await this.fetch<OdsRecordsResponse>(path, { limit: SAMPLE_ROWS });
       const records = Array.isArray(page.results) ? page.results.map(asObject) : [];
 
       let aggregate: { start?: string; end?: string; count?: number; field?: string } | undefined = {
@@ -149,7 +159,7 @@ export class BaselOpendatasoftAdapter implements CatalogueAdapter {
       const timeField = structure.temporal?.fields[0];
       if (timeField) {
         try {
-          const agg = await odsFetch<OdsRecordsResponse>(path, {
+          const agg = await this.fetch<OdsRecordsResponse>(path, {
             select: `min(${timeField}) as coverage_start, max(${timeField}) as coverage_end`,
             limit: 1,
           });
@@ -210,7 +220,7 @@ export class BaselOpendatasoftAdapter implements CatalogueAdapter {
   }
 
   private async distinctValues(id: string, field: string, where?: string): Promise<string[]> {
-    const body = await odsFetch<OdsRecordsResponse>(`/catalog/datasets/${encodeURIComponent(id)}/records`, {
+    const body = await this.fetch<OdsRecordsResponse>(`/catalog/datasets/${encodeURIComponent(id)}/records`, {
       select: field,
       group_by: field,
       limit: KEY_SAMPLE_LIMIT,
@@ -228,7 +238,7 @@ export class BaselOpendatasoftAdapter implements CatalogueAdapter {
   private async rawEntry(id: string): Promise<unknown> {
     const cached = this.rawById.get(id);
     if (cached) return cached;
-    const entry = await odsFetch<unknown>(`/catalog/datasets/${encodeURIComponent(id)}`);
+    const entry = await this.fetch<unknown>(`/catalog/datasets/${encodeURIComponent(id)}`);
     this.rawById.set(id, entry);
     return entry;
   }
