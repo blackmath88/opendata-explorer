@@ -7,9 +7,13 @@
  * Without WebGL, or with reduced motion, the same shelf is drawn in 2D / without animation.
  */
 import * as THREE from 'three';
+import type { CoverSample } from '../cover';
+import { portalById, setActivePortal } from '../portal';
 import { icon } from '../ui/icons';
 import { layoutShelf, type ShelfLayout } from './layout';
-import type { LibraryBook, LibraryData } from './types';
+import { questionShelf, type QuestionShelf } from './question';
+import { categoriesNeeded, questionLibrary } from './question-books';
+import { categorySlug, type CatalogueData, type LibraryBook, type LibraryData } from './types';
 
 const H = 168;          // book height (cover SVG units)
 const D = 120;          // book depth = cover width
@@ -21,7 +25,8 @@ const PAPER = 0xf4f0e6;
 
 const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const params = new URLSearchParams(location.search);
-const dataUrl = `/library/${params.get('portal') ?? 'bs'}-${params.get('shelf') ?? 'mobility-transport'}.json`;
+const portalId = params.get('portal') ?? 'bs';
+const question = (params.get('q') ?? '').trim().slice(0, 300);
 
 const $ = <T extends HTMLElement>(selector: string): T => document.querySelector<T>(selector)!;
 const esc = (text: string): string => text.replace(/[&<>"]/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[char]!));
@@ -31,18 +36,49 @@ const fmt = (value: number | null): string => (value === null ? 'unknown' : new 
 // Data
 // ---------------------------------------------------------------------------
 
-const data: LibraryData = await fetch(dataUrl).then(response => {
-  if (!response.ok) throw new Error(`${dataUrl}: HTTP ${response.status}`);
-  return response.json();
-});
+async function json<T>(url: string): Promise<T> {
+  const response = await fetch(url);
+  if (!response.ok) throw new Error(`${url}: HTTP ${response.status}`);
+  return response.json() as Promise<T>;
+}
+
+/** A question shelf is built in the browser from the static catalogue; a category shelf is a file. */
+async function load(): Promise<{ data: LibraryData; asked?: QuestionShelf; catalogueSize?: number }> {
+  if (!question) return { data: await json<LibraryData>(`/library/${portalId}-${params.get('shelf') ?? 'mobility-transport'}.json`) };
+  const portal = portalById(portalId);
+  if (portal) setActivePortal(portal);
+  const catalogue = await json<CatalogueData>(`/library/${portalId}-catalogue.json`);
+  const asked = questionShelf(question, catalogue.datasets);
+  const parts = await Promise.all(categoriesNeeded(asked, catalogue).map(category =>
+    json<Record<string, CoverSample>>(`/library/samples/${portalId}-${categorySlug(category)}.json`).catch(() => ({}))));
+  const samples = Object.assign({}, ...parts) as Record<string, CoverSample>;
+  return { data: questionLibrary({ shelf: asked, catalogue, samples, now: new Date(catalogue.asOf) }), asked, catalogueSize: catalogue.datasets.length };
+}
+
+const { data, asked, catalogueSize } = await load();
 const books: LibraryBook[] = data.groups.flatMap(group => group.books);
 const groupOf = new Map(data.groups.flatMap(group => group.books.map(book => [book.id, group.name] as const)));
 const layout: ShelfLayout = layoutShelf(data.groups.map(group => ({ name: group.name, items: group.books.map(book => ({ id: book.id, width: book.spineWidth })) })), BOARD_W);
 const placed = new Map(layout.books.map(book => [book.id, book]));
 
-$('#shelfTitle').textContent = data.category;
-$('#shelfMeta').textContent = `${books.length} datasets · ${data.portal.label} · snapshot ${data.asOf}`;
+const datasetBooks = books.filter(book => !book.placeholder);
 $('#legendUsage').textContent = data.usage;
+$<HTMLInputElement>('#ask input').value = question;
+if (asked) {
+  document.body.classList.add('mode-question');
+  $('#shelfTitle').textContent = `“${asked.statement}”`;
+  $('#shelfMeta').textContent = `${asked.total} of ${catalogueSize} datasets fit, ${datasetBooks.length} on the shelf · ${data.portal.label} · snapshot ${data.asOf}`;
+  const chips = (label: string, items: string[], kind: string) => items.length ? `<p class="${kind}"><b>${label}</b> ${items.map(item => `<span class="chip">${esc(item)}</span>`).join(' ')}</p>` : '';
+  $('#understood').innerHTML = chips('Understood:', asked.recognised.map(concept => concept.label), 'ok')
+    + chips('Matched as words in titles:', asked.words, 'words')
+    + chips('Not recognised:', asked.unmatched, 'miss')
+    + (asked.recognised.length ? '' : '<p class="miss">The vocabulary recognised no concept in this question, so only literal title matches can appear.</p>')
+    + '<p class="how">Rule-based, no AI: a fixed vocabulary turns words into concepts, the evidence plan picks one dataset per role, and each concept collects the datasets whose title or keywords use its terms. Unknown words are listed, never guessed.</p>';
+  $('#understood').hidden = false;
+} else {
+  $('#shelfTitle').textContent = data.category;
+  $('#shelfMeta').textContent = `${books.length} datasets · ${data.portal.label} · snapshot ${data.asOf}`;
+}
 
 // ---------------------------------------------------------------------------
 // Shared HTML: list, panel, search, announcements
@@ -55,17 +91,43 @@ function bookSummary(book: LibraryBook): string {
   return `${book.title}. ${book.form}, ${fmt(book.records)} records.${book.reuses ? ` ${book.reuses} documented reuse${book.reuses === 1 ? '' : 's'}.` : ''}${book.overdueNote ? ` ${book.overdueNote}` : ''}${book.doorway ? ' Ready, rarely used.' : ''}`;
 }
 
-$('#list').innerHTML = data.groups.map(group => `<section><h3>${group.glyph}${esc(group.name)} <small>${group.books.length}</small></h3><ul>${group.books.map(book => `<li><button data-id="${esc(book.id)}">${esc(book.title)} <small>${esc(book.id)} · ${esc(book.form)}</small>${book.doorway ? ' <span class="tag">ready, rarely used</span>' : ''}</button></li>`).join('')}</ul></section>`).join('');
-$('#listCount').textContent = String(books.length);
+const bookButton = (book: LibraryBook) => `<li><button data-id="${esc(book.id)}">${esc(book.title)} <small>${esc(book.id)} · ${esc(book.form)}</small>${book.doorway ? ' <span class="tag">ready, rarely used</span>' : ''}</button></li>`;
+$('#list').innerHTML = data.groups.map((group, g) => {
+  const onShelf = new Set(group.books.map(book => book.id));
+  // Question shelves: the list names every dataset of a group, also those folded away on the shelf.
+  const items = group.all
+    ? [...group.books.filter(book => book.placeholder === 'gap').map(book => `<li class="gap">${esc(book.title)} <small>${esc(book.description)}</small></li>`),
+       ...group.all.map(item => onShelf.has(item.id) ? bookButton(group.books.find(book => book.id === item.id)!) : `<li class="folded"><a href="/catalogue/?portal=${encodeURIComponent(data.portal.id)}#dataset=${encodeURIComponent(item.id)}">${esc(item.title)} <small>${esc(item.id)} · ${esc(item.form)} · not on the shelf</small></a></li>`)]
+    : group.books.map(bookButton);
+  const count = group.all ? group.all.length : group.books.length;
+  return `<section id="list-${g}"><h3>${group.glyph}${esc(group.name)} <small>${count}</small></h3><ul>${items.join('')}</ul></section>`;
+}).join('');
+$('#listCount').textContent = String(asked ? asked.total : books.length);
 
 const panel = $('#panel');
+function showPlaceholder(book: LibraryBook): void {
+  const group = data.groups.findIndex(g => g.books.includes(book));
+  panel.innerHTML = `<button class="close" aria-label="Put it back">${icon('close', { size: 18 })}</button>
+    <div class="page left">${book.cover}</div>
+    <div class="page right">
+      <p class="eyebrow">${esc(groupOf.get(book.id) ?? '')}</p>
+      <h2 id="panelTitle">${esc(book.title)}</h2>
+      <p>${esc(book.description)}</p>
+      ${book.why ? `<p class="why"><b>Why this slot is here.</b> ${esc(book.why)}</p>` : ''}
+      ${book.placeholder === 'fold' ? `<p class="links"><a href="#list-${group}" data-to-list>Show them in the list</a></p>` : ''}
+    </div>`;
+  panel.querySelector('[data-to-list]')?.addEventListener('click', () => { shelf.close(); ($('.list') as HTMLDetailsElement).open = true; });
+}
+
 function showPanel(book: LibraryBook): void {
+  if (book.placeholder) { showPlaceholder(book); finishPanel(); return; }
   const catalogue = `/catalogue/?portal=${encodeURIComponent(data.portal.id)}#dataset=${encodeURIComponent(book.id)}`;
   panel.innerHTML = `<button class="close" aria-label="Put the book back">${icon('close', { size: 18 })}</button>
     <div class="page left">${book.cover}<p class="gen">Cover generated from metadata and a small real sample.</p></div>
     <div class="page right">
       <p class="eyebrow">${esc(groupOf.get(book.id) ?? '')} · ${esc(book.id)}</p>
       <h2 id="panelTitle">${esc(book.title)}</h2>
+      ${book.why ? `<p class="why"><b>Why it is on this shelf.</b> ${esc(book.why)}</p>` : ''}
       ${book.doorway ? `<p class="door"><b>Ready, rarely used.</b> ${esc(book.doorwayReason ?? '')}</p>` : ''}
       <p>${esc(book.description || 'No description published.')}</p>
       <dl>
@@ -77,6 +139,10 @@ function showPanel(book: LibraryBook): void {
       </dl>
       <p class="links"><a href="${esc(catalogue)}">Open in the catalogue</a><a href="${esc(book.sourceUrl)}" target="_blank" rel="noreferrer">Source on ${esc(data.portal.site.replace(/^https?:\/\//, '') || 'the portal')} ${icon('external', { size: 14 })}</a></p>
     </div>`;
+  finishPanel();
+}
+
+function finishPanel(): void {
   panel.hidden = false;
   panel.setAttribute('aria-labelledby', 'panelTitle');
   panel.querySelector<HTMLButtonElement>('.close')!.addEventListener('click', () => shelf.close());
@@ -101,7 +167,11 @@ function webglAvailable(): boolean {
   try { const canvas = document.createElement('canvas'); return !!(canvas.getContext('webgl2') || canvas.getContext('webgl')); } catch { return false; }
 }
 
-const shelf: Shelf = webglAvailable() && params.get('mode') !== '2d' ? await createShelf3d() : createShelf2d();
+const noShelf: Shelf = { open() {}, close() {}, focus() {}, highlight() { return 0; } };
+if (!books.length) {
+  $('#stage').innerHTML = `<div class="empty"><p><b>Nothing on this shelf.</b> No concept was recognised and no dataset title contains these words.</p><p>Try naming the thing itself, e.g. trees, noise, parking, schools, air quality, or open the full catalogue.</p></div>`;
+}
+const shelf: Shelf = !books.length ? noShelf : webglAvailable() && params.get('mode') !== '2d' ? await createShelf3d() : createShelf2d();
 
 $('#list').addEventListener('click', event => {
   const button = (event.target as HTMLElement).closest<HTMLButtonElement>('button[data-id]');
@@ -223,7 +293,7 @@ async function createShelf3d(): Promise<Shelf> {
     const spot = placed.get(book.id)!;
     const spineMat = new THREE.MeshStandardMaterial({ map: await svgTexture(book.spine, book.spineWidth, H, { top: TAB }), roughness: 0.85 });
     const coverMat = new THREE.MeshStandardMaterial({ map: await svgTexture(book.cover, D, H, { top: TAB }), roughness: 0.8 });
-    const cloth = new THREE.MeshStandardMaterial({ color: new THREE.Color(0x2b5c73), roughness: 0.85 });
+    const cloth = new THREE.MeshStandardMaterial({ color: new THREE.Color(book.placeholder ? PAPER : book.cloth ?? 0x2b5c73), roughness: 0.85 });
     // Box faces: +x, -x, +y, -y, +z (spine, towards the viewer), -z.
     const mesh = new THREE.Mesh(new THREE.BoxGeometry(book.spineWidth, H, D), [coverMat, cloth, paperEdge, paperEdge, spineMat, paperEdge]);
     const home = new THREE.Vector3(bookX(spot.x, spot.width), boardY(spot.board) + H / 2, book.doorway ? PULL : 0);
@@ -243,7 +313,7 @@ async function createShelf3d(): Promise<Shelf> {
   const labels = $('#labels');
   labels.innerHTML = layout.starts.map(start => {
     const group = data.groups.find(g => g.name === start.group)!;
-    return `<div class="glabel" data-group="${esc(start.group)}">${group.glyph}<span>${esc(start.group)}</span><b>${group.books.length}</b></div>`;
+    return `<div class="glabel" data-group="${esc(start.group)}">${group.glyph}<span>${esc(start.group)}</span><b>${group.all?.length ?? group.books.length}</b></div>`;
   }).join('');
 
   // Camera fit, parallax, resize.

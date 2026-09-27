@@ -28,6 +28,8 @@ const samples: Record<string, CoverSample> = existsSync(samplesFile) ? JSON.pars
 const usageFile = `docs/audit-data/${portal.id}-usage-100057.json`;
 const usage = existsSync(usageFile) ? parseUsageRows(JSON.parse(readFileSync(usageFile, 'utf8')).rows) : null;
 const spec = ATLAS_SPECS[category];
+const outlineFile = `src/data/portals/${portal.id}/outline.json`;
+const frame = existsSync(outlineFile) ? JSON.parse(readFileSync(outlineFile, 'utf8')).outline : undefined;
 
 const inCategory = datasets.filter(dataset => atlasPath(dataset, 'topic').category === category);
 const bySub = new Map<string, typeof inCategory>();
@@ -52,7 +54,7 @@ const data: LibraryData = {
       books: sorted.map(dataset => {
         const late = overdue(dataset, now);
         const reuses = usage?.get(dataset.id)?.reuses ?? 0;
-        const input = { dataset, category, subcategory: name, sample: samples[dataset.id], signals: { reuses, overdue: late.level, overdueNote: late.note, doorway: dataset.id === door?.dataset.id } };
+        const input = { dataset, category, subcategory: name, sample: samples[dataset.id], frame, signals: { reuses, overdue: late.level, overdueNote: late.note, doorway: dataset.id === door?.dataset.id } };
         const band = recordBand(dataset.recordsCount);
         return {
           id: dataset.id,
