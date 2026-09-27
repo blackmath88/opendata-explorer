@@ -1,5 +1,5 @@
 /**
- * Writes the "Unentdeckt" block into index.html: npx tsx scripts/proposal-hero.ts [--portal bs] [--category "Mobility & Transport"] [--count 3]
+ * Writes the "Unentdeckt" block into v2/index.html (version 2 of the proposal page): npx tsx scripts/proposal-hero.ts [--portal bs] [--category "Mobility & Transport"] [--count 3]
  * The doorways of the largest groups, with their generated covers. No live requests: snapshot,
  * cover samples and usage figures only. Re-running replaces the block between its markers.
  */
@@ -59,5 +59,6 @@ for (const [name, list] of groups) {
 }
 
 const block = heroHtml(picks, { category, categorySize: inCategory.length, groupCount: groups.length, asOf, libraryUrl: `/library/?portal=${encodeURIComponent(portal.id)}` });
-writeFileSync('index.html', spliceHero(readFileSync('index.html', 'utf8'), block));
-console.log(`${picks.map(pick => `${pick.group}: ${pick.doorway.dataset.id}`).join(', ')} -> index.html`);
+const page = flag('page') ?? 'v2/index.html';
+writeFileSync(page, spliceHero(readFileSync(page, 'utf8'), block));
+console.log(`${picks.map(pick => `${pick.group}: ${pick.doorway.dataset.id}`).join(', ')} -> ${page}`);

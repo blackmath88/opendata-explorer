@@ -46,9 +46,9 @@ Samples are static (`src/data/portals/bs/cover-samples.json`, ~330 KB for 58 dat
 ## Where the covers are used
 
 - `/library/`: the 3D shelf (docs/LIBRARY.md).
-- The proposal page, section "Unentdeckt": the doorway volumes of the three largest Mobility
+- Version 2 of the proposal page (`/v2/`), section "Unentdeckt": the doorway volumes of the three largest Mobility
   groups.
-  - `npx tsx scripts/proposal-hero.ts` rewrites that block in `index.html`, between its markers.
+  - `npx tsx scripts/proposal-hero.ts` rewrites that block in `v2/index.html` (version 2 of the proposal page), between its markers.
     It is static HTML, needs no script, and makes no request.
   - The German reason text is built from the doorway's figures (`downloadsPerMonth`, `reuses`).
     It is not a translation of the English sentence.
