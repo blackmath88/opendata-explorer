@@ -71,7 +71,7 @@ if (command === 'requests') {
   const ids = Object.keys(gold).filter(id => datasets.some(item => item.id === id));
   for (const [name, method] of Object.entries(methods)) {
     const wrong = ids.filter(id => !gold[id].includes(method(id)));
-    console.log(`${name.padEnd(20)} ${ids.length - wrong.length}/${ids.length} correct${wrong.length ? `   wrong: ${wrong.map(id => `${id}→${method(id)}`).join(', ')}` : ''}`);
+    console.log(`${name.padEnd(20)} ${ids.length - wrong.length}/${ids.length} correct${wrong.length ? `   wrong: ${wrong.map(id => `${id} -> ${method(id)}`).join(', ')}` : ''}`);
   }
   const scored = methods['rules, scored'], final = methods['scored + decisions'];
   const regressions = ids.filter(id => gold[id].includes(scored(id)) && !gold[id].includes(final(id)));
