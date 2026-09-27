@@ -51,4 +51,6 @@ These drive the card profile (`src/catalogue-profile.ts`). Each dataset falls in
   - Wording: these are *portal activity* counters. They miss use through opendata.swiss, bulk exports and mirrors, and they include automated traffic. Low activity is a weak signal, never "unused".
 - **Rerun this audit on the live catalogue.** Geometry, cadence and record-count coverage at 361, plus the topic distribution after the rule fix.
 
+The tables above can now be regenerated with `npx tsx scripts/portals.ts audit --portal bs` (and for any other portal; see MULTI_CANTON.md).
+
 To unblock: allow `data.bs.ch` in the environment's network settings, or commit exports of `catalog/datasets` (all pages, `order_by=dataset_id`) and of dataset 100057 under `docs/audit-data/`.

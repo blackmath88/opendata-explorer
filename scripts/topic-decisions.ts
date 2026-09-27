@@ -12,8 +12,9 @@
  * answers.json: [{ "datasetId", "subcategory", "confidence", "evidence": [{ "field", "quote" }], "rationale" }]
  * The same file shape is what a model returns for TOPIC_INSTRUCTIONS + a request.
  */
-import { readFileSync, writeFileSync } from 'node:fs';
-import { fallbackDatasets } from '../src/data/fallback';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { dirname } from 'node:path';
+import { snapshotDatasets } from '../src/data/snapshot';
 import { portalById, setActivePortal } from '../src/portal';
 import { TOPIC_RULES } from '../src/topic-rules';
 import { assessTopic } from '../src/topic-scoring';
@@ -27,12 +28,12 @@ const [command, ...rest] = process.argv.slice(2);
 const flag = (name: string) => { const i = rest.indexOf(`--${name}`); return i >= 0 ? rest[i + 1] : undefined; };
 const portal = portalById(flag('portal') ?? 'bs');
 if (!portal) throw new Error(`unknown portal "${flag('portal')}"`);
-if (!portal.snapshot) throw new Error(`${portal.label} has no snapshot yet; export its catalogue first`);
 setActivePortal(portal);
 const DECISIONS = `src/data/portals/${portal.id}/topic-decisions.json`;
 const GOLD = `src/data/portals/${portal.id}/topic-gold.json`;
-const load = (): TopicDecisionFile => JSON.parse(readFileSync(DECISIONS, 'utf8'));
-const datasets = fallbackDatasets; // the only snapshot is Basel-Stadt's; the live catalogue slots in here once reachable
+const load = (): TopicDecisionFile => existsSync(DECISIONS) ? JSON.parse(readFileSync(DECISIONS, 'utf8')) : { version: 1, decisions: [] };
+const { datasets, source } = snapshotDatasets(portal);
+console.error(`${portal.shortLabel}: ${datasets.length} datasets from ${source}`);
 
 if (command === 'requests') {
   const index = indexDecisions(load());
@@ -57,9 +58,14 @@ if (command === 'requests') {
     accepted++;
   }
   file.decisions.sort((a, b) => a.datasetId.localeCompare(b.datasetId));
+  mkdirSync(dirname(DECISIONS), { recursive: true });
   writeFileSync(DECISIONS, JSON.stringify(file, null, 2) + '\n');
   console.log(`accepted ${accepted} of ${answers.length}`);
 } else if (command === 'eval') {
+  if (!existsSync(GOLD)) {
+    console.log(`no gold labels for ${portal.shortLabel} (${GOLD}): label a sample of ~40 datasets first; accuracy cannot be claimed without them`);
+    process.exit(1);
+  }
   const gold: Record<string, string[]> = JSON.parse(readFileSync(GOLD, 'utf8')).labels;
   const index = indexDecisions(load());
   // The pre-scoring behaviour (#15): first hit, specific before catch-all, label text before description.

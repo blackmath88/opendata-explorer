@@ -13,6 +13,7 @@ import { BASEL_STADT, activePortal, portalFromSearch, setActivePortal, type Port
  */
 const BASEL_CONTENT = new Set([
   'portal.ts', // the Basel-Stadt portal entry itself
+  'cantons.ts', // the names of all 26 cantons, Basel's among them
   'data/fallback.ts', // the offline snapshot of Basel-Stadt's catalogue
   'evidence-sources/registry.ts', // national sources curated for the Basel use cases (station ids)
   'benchmarks/useCases.ts', // benchmark questions asked about Basel

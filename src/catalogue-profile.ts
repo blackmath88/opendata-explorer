@@ -38,10 +38,11 @@ export function shapeOf(dataset: DatasetRecord): Shape {
 export function cadenceOf(dataset: DatasetRecord): Cadence {
   const f = dataset.characteristics.updateFrequency?.toLocaleLowerCase().trim() ?? '';
   if (!f || f === 'unknown') return 'unknown';
-  if (/^(cont|continuous|hourly|minute|daily|realtime)/.test(f)) return 'frequent';
+  // EU frequency vocabulary (DCAT-AP, opendata.swiss) plus Basel's own codes.
+  if (/^(cont|continuous|update cont|hourly|minute|daily|realtime|\d+ ?(min|hour))/.test(f)) return 'frequent';
   if (/never|no updates/.test(f)) return 'none';
   if (/irreg|as needed|update/.test(f)) return 'irregular';
-  if (/week|month|quarter|annual|year|biennial|triennial|period/.test(f)) return 'periodic';
+  if (/week|month|quarter|annual|year|biennial|triennial|period|decennial|quinquennial/.test(f)) return 'periodic';
   return 'unknown';
 }
 

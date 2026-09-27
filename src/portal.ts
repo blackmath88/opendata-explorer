@@ -10,8 +10,11 @@ export type PortalLanguage = 'de' | 'fr' | 'it' | 'en';
 export type PortalApi =
   /** Opendatasoft Explore API v2.1: records, schemas and exports per dataset. */
   | { kind: 'ods'; base: string; site: string }
-  /** CKAN with DCAT-AP CH metadata (opendata.swiss): catalogue metadata only, no record API. */
-  | { kind: 'ckan'; base: string; site: string; organization: string };
+  /**
+   * CKAN with DCAT-AP CH metadata (opendata.swiss): catalogue metadata only, no record API.
+   * A canton usually publishes through several organizations (statistics office, geo office, ...).
+   */
+  | { kind: 'ckan'; base: string; site: string; organizations: string[] };
 
 export interface Portal {
   /** Short, stable, used in URLs and file paths: `?portal=bs`, `src/data/portals/bs/`. */

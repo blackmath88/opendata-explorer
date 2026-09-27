@@ -53,6 +53,11 @@ export class OpendatasoftAdapter implements CatalogueAdapter {
     this.label = portal.label;
   }
 
+  /** Raw catalogue entries as the API returned them, for snapshots. */
+  rawEntries(): unknown[] {
+    return [...this.rawById.values()];
+  }
+
   private fetch<T>(path: string, params: Record<string, string | number> = {}, options: OdsFetchOptions = {}): Promise<T> {
     return odsFetch<T>(path, params, { ...options, portal: this.portal });
   }

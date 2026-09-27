@@ -1,5 +1,6 @@
 import type { CatalogState, CatalogueAdapter } from '../types';
 import { activePortal, type Portal } from '../portal';
+import { CkanDcatAdapter } from './ckan';
 import { OpendatasoftAdapter } from './ods-adapter';
 import { FallbackCatalogueAdapter } from './fallback';
 
@@ -16,7 +17,7 @@ export interface CatalogueSession {
  * badge, and fallback data is never described as live anywhere in the UI.
  */
 export async function openCatalogue(portal: Portal = activePortal()): Promise<CatalogueSession> {
-  const live = new OpendatasoftAdapter(portal);
+  const live = portal.api.kind === 'ods' ? new OpendatasoftAdapter(portal) : new CkanDcatAdapter(portal);
   const loadedAt = () => new Date().toISOString();
 
   try {
