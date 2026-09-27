@@ -1,5 +1,10 @@
 import type { DatasetMatch, DatasetRecord, EvidenceClass } from './types';
 import type { IconName } from './ui/icons';
+import { OTHER_TOPIC, TOPIC_RULES, datasetText, labelText, type Rule } from './topic-rules';
+import { indexDecisions, resolveTopic, type TopicDecisionFile } from './topic-decisions';
+import decisionFile from './data/topic-decisions.json';
+
+const TOPIC_DECISIONS = indexDecisions(decisionFile as TopicDecisionFile);
 
 export type AtlasLens = 'topic' | 'space' | 'time' | 'readiness';
 
@@ -51,59 +56,10 @@ export const ATLAS_LENS_LABEL: Record<AtlasLens, string> = {
   readiness: 'Readiness',
 };
 
-type Rule = readonly [string, RegExp];
 
-const TOPIC_RULES: ReadonlyArray<readonly [string, ReadonlyArray<Rule>]> = [
-  ['Environment & Climate', [
-    ['Urban nature', /baum|tree|grün|gruen|green|\bnatur|biodiv|wald|forest|\bparks?\b|parkanlage|vegetation|flora|fauna/],
-    ['Air & emissions', /luft|air quality|emission|co2|stickstoff|feinstaub|ozon/],
-    ['Climate / heat', /klima|climate|temperatur|temperature|hitze|heat|wetter|weather/],
-    ['Water', /wasser|water|rhein|rhine|brunnen|fountain|gewässer|gewaesser|grundwasser/],
-    ['Noise', /lärm|laerm|noise|schall/],
-    ['Energy', /energie|energy|solar|strom|photovoltaik|wärme|waerme/],
-    ['Environment (other)', /umwelt|environment|nachhalt|sustainab/],
-  ]],
-  ['Mobility & Transport', [
-    ['Cycling', /velo|bike|bicycle|radweg|cycling/],
-    ['Public transport', /tram|bus|haltestelle|öV|oev|public transport|bvb/],
-    ['Walking', /fuss|fuß|pedestrian|walking|trottoir/],
-    ['Road traffic', /verkehr|traffic|strasse|straße|street|fahrzeug|vehicle/],
-    ['Parking', /parking|parkplatz|parkhaus/],
-    ['Mobility (other)', /mobilit|transport/],
-  ]],
-  ['People & Society', [
-    ['Population', /bevölkerung|bevoelkerung|population|demograph|einwohner|wohnbevölkerung/],
-    ['Social services', /sozial|social|familie|family|jugend|youth|alter|senior|integration/],
-    ['Housing', /wohnung|wohnen|housing|haushalt/],
-  ]],
-  ['Built City & Infrastructure', [
-    ['Buildings', /gebäude|gebaeude|building|bauinventar|adresse|address/],
-    ['Construction', /baustelle|construction|bauprojekt|bewilligung/],
-    ['Utilities & networks', /infrastruktur|infrastructure|leitung|kanal|beleuchtung|lighting|netz/],
-    ['Planning & parcels', /planung|planning|parzell|kataster|zoning|nutzungsplan/],
-  ]],
-  ['Public Space & Leisure', [
-    ['Sports', /sport|schwimm|swim|running|fitness|spielplatz/],
-    ['Parks & public space', /freizeit|leisure|public space|allmend|\bplatz|\bparks?\b/],
-    ['Tourism', /touris|hotel|visitor/],
-  ]],
-  ['Health', [['Health services', /gesundheit|health|spital|hospital|arzt|doctor|pflege/], ['Public health', /corona|covid|krank|disease|epidem/]]],
-  ['Education', [['Schools', /schule|school|kindergarten/], ['Higher education', /universit|hochschule|college/], ['Education (other)', /bildung|education|lern/]]],
-  ['Culture', [['Museums & heritage', /museum|denkmal|heritage|archä|archae/], ['Events & venues', /kultur|culture|theater|musik|bibliothek|library|veranstaltung|event/]]],
-  ['Government & Economy', [
-    ['Administration', /verwaltung|government|behörde|behoerde|abstimmung|wahl|election|politik/],
-    ['Economy & labour', /wirtschaft|economy|arbeit|beschäftig|beschaeftig|betrieb|handel|business/],
-    ['Finance & statistics', /steuer|tax|finanz|budget|statistik|statistic/],
-    ['Safety & justice', /polizei|kriminal|straftat|unfall|accident|feuerwehr|sicherheit|safety/],
-  ]],
-];
-
-function text(dataset: DatasetRecord): string {
-  return `${dataset.title} ${dataset.description} ${dataset.themes.join(' ')} ${dataset.keywords.join(' ')} ${dataset.semantic.topics.join(' ')}`.toLocaleLowerCase();
-}
 
 /** Top-level Topic categories, in rule order, plus the fallback bucket. */
-export const TOPIC_CATEGORIES: readonly string[] = [...TOPIC_RULES.map(([category]) => category), 'Other / review needed'];
+export const TOPIC_CATEGORIES: readonly string[] = [...TOPIC_RULES.map(([category]) => category), OTHER_TOPIC];
 
 /**
  * Icons for top-level Atlas categories. Topic icons were added with pikto (sources and reasoning in
@@ -139,28 +95,12 @@ export function categoryIcon(node: AtlasHierarchyDatum): IconName | undefined {
   return lens ? CATEGORY_ICON[lens]?.[node.label] : undefined;
 }
 
-/** What the publisher says the dataset *is*, as opposed to prose that merely mentions things. */
-function labelText(dataset: DatasetRecord): string {
-  return `${dataset.title} ${dataset.themes.join(' ')} ${dataset.keywords.join(' ')} ${dataset.semantic.topics.join(' ')}`.toLocaleLowerCase();
-}
 
+/** Resolved through topic-decisions.ts: human > validated model decision > scored rules. */
 function topicPath(dataset: DatasetRecord): AtlasPath {
-  // Descriptions mention neighbouring topics ("near the park", "air quality
-  // along the tram"), so they only decide when title and keywords are silent.
-  // Within each text, specific subcategories win over the "(other)" catch-alls: otherwise the
-  // first category's catch-all (Environment's /umwelt|environment/) swallows datasets that a
-  // later category names precisely ("Verkehr" -> Road traffic).
-  for (const haystack of [labelText(dataset), text(dataset)]) {
-    for (const catchAll of [false, true]) {
-      for (const [category, subcategories] of TOPIC_RULES) {
-        for (const [subcategory, pattern] of subcategories) {
-          if (subcategory.endsWith('(other)') !== catchAll) continue;
-          if (pattern.test(haystack)) return { category, subcategory, detail: topicDetail(subcategory, haystack) };
-        }
-      }
-    }
-  }
-  return { category: 'Other / review needed', subcategory: 'Unclassified' };
+  const { category, subcategory } = resolveTopic(dataset, TOPIC_DECISIONS);
+  const detail = topicDetail(subcategory, labelText(dataset));
+  return { category, subcategory, detail: detail?.endsWith('(other)') ? topicDetail(subcategory, datasetText(dataset)) : detail };
 }
 
 function topicDetail(subcategory: string, haystack: string): string | undefined {
@@ -218,7 +158,7 @@ function timePath(dataset: DatasetRecord): AtlasPath {
   if (dataset.characteristics.realtime || /cont|hour|minute|daily/.test(raw)) return { category: 'Near-live / frequent', subcategory: frequency || 'Frequent feed' };
   if (dataset.characteristics.timeSeries) return { category: 'Time series', subcategory: frequency || 'Cadence not declared' };
   if (/week|month|quarter|annual|year|period/.test(raw)) return { category: 'Periodic snapshot', subcategory: frequency };
-  if (/histor|archive/.test(text(dataset))) return { category: 'Historical', subcategory: frequency || 'Historical collection' };
+  if (/histor|archive/.test(datasetText(dataset))) return { category: 'Historical', subcategory: frequency || 'Historical collection' };
   if (dataset.characteristics.temporalCoverage.length) return { category: 'Current/reference', subcategory: 'Declared temporal coverage' };
   if (frequency) return { category: 'Current/reference', subcategory: frequency };
   return { category: 'Unknown', subcategory: 'Temporal status not declared' };
