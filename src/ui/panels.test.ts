@@ -23,6 +23,22 @@ describe('product surface rendering', () => {
     expect(html).toContain('evidence roles');
   });
 
+  it('reads each role as need -> dataset -> readiness -> limitation, with cross-entrance links', () => {
+    const intent = parseUseCaseIntent('Build a comfortable running route in Basel with shade, clean air, fountains, low traffic and sensible effort, and warn about construction.');
+    const plan = buildEvidencePlan(intent, fallbackDatasets, { selectedIds: [] });
+    const html = renderEvidenceSummary(plan, fallbackDatasets);
+    const filled = plan.roles.filter(role => role.datasetId);
+    for (const role of filled) {
+      expect(html).toContain(`data-open="${role.datasetId}"`);
+      expect(html).toContain(`data-locate="${role.datasetId}"`);
+    }
+    expect(html.match(/class="role-ready"/g)?.length).toBe(filled.length);
+    // A filled role can still carry a limitation (the backbone is bike routes, not a routable path network).
+    const weak = plan.roles.find(role => role.datasetId && role.gap?.suggestion);
+    if (weak) expect(html).toContain(weak.gap!.suggestion!);
+    expect(html.match(/Missing \/ external\./g)?.length).toBe(plan.roles.filter(role => !role.datasetId).length);
+  });
+
   it('keeps a proposal visible before execution', () => {
     const [left, right] = fallbackDatasets;
     const analysis = { entries: [], notes: [], pairs: [{ left, right, assessment: {

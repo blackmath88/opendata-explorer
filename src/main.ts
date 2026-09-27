@@ -11,7 +11,7 @@ import type { ExecutionResult } from './execution/types';
 import { BENCHMARK_USE_CASES } from './benchmarks/useCases';
 import { canCompose, catalogueStatus, filterCatalogue, type CatalogueView } from './catalogue-ui';
 import { renderGraph, resetAtlasZoom, stopGraph, zoomAtlasOut, zoomAtlasTo, type AtlasGraphActions } from './ui/graph';
-import { ATLAS_LENS_LABEL, buildAtlasHierarchy, type AtlasHierarchyDatum, type AtlasLens, type AtlasState } from './atlas';
+import { ATLAS_LENS_LABEL, atlasSegments, buildAtlasHierarchy, type AtlasHierarchyDatum, type AtlasLens, type AtlasState } from './atlas';
 import { recommendRepresentations, type RepresentationSpec, type RepresentationType } from './representation';
 import { resolveTrustedEvidence } from './evidence-sources/resolver';
 import { providerById, resourceById } from './evidence-sources/registry';
@@ -207,6 +207,31 @@ const atlasActions: AtlasGraphActions = {
   onWorkspace: toggleWorkspace,
 };
 
+/**
+ * Cross-entrance link: open the Landscape where this dataset lives in the current lens, with it
+ * selected. Works from the question roles, the inspector and Build; same dataset ID everywhere.
+ */
+function showInLandscape(id: string): void {
+  const dataset = catalog.datasets.find(item => item.id === id);
+  if (!dataset) return;
+  const root = buildAtlasHierarchy(catalog.datasets, matches, atlas.lens, searchDatasetIds());
+  const segments = atlasSegments(dataset, atlas.lens);
+  let path: string[] = [];
+  let node: AtlasHierarchyDatum | null = root;
+  for (let depth = segments.length; depth > 0; depth--) {
+    const found = findAtlasNode(root, segments.slice(0, depth));
+    if (found) { path = segments.slice(0, depth); node = found; break; }
+  }
+  atlas = { lens: atlas.lens, path };
+  atlasFocusId = node?.id ?? root.id;
+  catalogueView = 'landscape';
+  document.querySelectorAll<HTMLButtonElement>('[data-view]').forEach(button => button.classList.toggle('active', button.dataset.view === 'landscape'));
+  selectedId = id;
+  if (stage !== 'discover') stage = 'discover';
+  render();
+  void loadStructure(id);
+}
+
 function renderAtlas(): void {
   const searchMatches = searchDatasetIds();
   atlasRoot = buildAtlasHierarchy(catalog.datasets, matches, atlas.lens, searchMatches);
@@ -291,6 +316,7 @@ function renderInspector(): void {
     item.querySelector('.remove')?.addEventListener('click', () => toggleWorkspace(id));
   });
   inspectorBody.querySelector<HTMLButtonElement>('.compose-now')?.addEventListener('click', () => setStage('compose'));
+  inspectorBody.querySelectorAll<HTMLButtonElement>('[data-locate]').forEach(button => button.addEventListener('click', () => showInLandscape(button.dataset.locate!)));
 }
 
 function renderWorkbench(): void {
@@ -480,6 +506,8 @@ function render(): void {
     ? 'Search the catalogue within the Atlas'
     : 'Search title, keyword, dataset id or publisher';
   evidenceSummary.innerHTML = renderEvidenceSummary(plan, catalog.datasets);
+  evidenceSummary.querySelectorAll<HTMLButtonElement>('[data-open]').forEach(button => button.addEventListener('click', () => selectDataset(button.dataset.open!)));
+  evidenceSummary.querySelectorAll<HTMLButtonElement>('[data-locate]').forEach(button => button.addEventListener('click', () => showInLandscape(button.dataset.locate!)));
   renderInspector();
   if (listView) {
     stopGraph();

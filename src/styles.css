@@ -173,3 +173,26 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10px;back
 .ap-v .icon{color:var(--primary2)}.ap-v b{font-weight:700;color:var(--muted);width:13px;text-align:center}
 .ap-sep{color:#c0c8c2}
 button.atlas-sub-more{cursor:pointer;font:inherit}button.atlas-sub-more:hover{border-color:var(--primary2);color:var(--primary2)}
+
+/* Question canvas: evidence roles as need -> dataset -> readiness -> limitation */
+.role-canvas{list-style:none;padding:0;margin:8px 0 0;display:grid;gap:0}
+.role-row{display:grid;grid-template-columns:minmax(180px,.9fr) minmax(0,1.4fr);gap:6px 18px;padding:10px 0;border-top:1px solid var(--divider)}
+.role-need{display:grid;gap:3px;align-content:start}.role-need b{font-size:12px}.role-need small{font-size:10px;color:var(--muted);line-height:1.4}
+.role-fit{display:inline-flex;align-items:center;gap:4px;font-size:10px;text-transform:capitalize;color:var(--muted)}
+.role-fit.fit-direct{color:var(--primary2);font-weight:650}.role-fit .icon{color:#7fa694}.role-fit.fit-direct .icon{color:var(--primary2)}.role-fit.fit-external .icon{color:var(--warn)}
+.role-fill{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:3px 8px;align-content:start;min-width:0}
+.role-dataset{border:0;background:transparent;padding:0;text-align:left;font:inherit;font-size:12px;font-weight:650;color:var(--primary);cursor:pointer}.role-dataset:hover{text-decoration:underline}
+.role-locate{border:1px solid var(--border);background:var(--panel);border-radius:6px;padding:3px 5px;color:var(--primary2);cursor:pointer;line-height:0}.role-locate:hover{border-color:var(--primary2)}
+.role-fill>small{grid-column:1/-1;font-size:10px;color:var(--muted)}
+.role-ready{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:4px}
+.ready-chip{display:inline-flex;align-items:center;gap:4px;padding:2px 6px;border:1px solid var(--border);border-radius:999px;background:var(--surface);font-size:10px;color:#414944}.ready-chip .icon{color:var(--primary2)}
+.role-limit{grid-column:1/-1;display:flex;gap:5px;align-items:flex-start;margin:2px 0 0;font-size:10px;line-height:1.4;color:var(--warn)}.role-limit .icon{flex:none;margin-top:1px}
+.role-limit.missing{color:var(--danger)}
+@media(max-width:640px){.role-row{grid-template-columns:1fr}}
+.detail-actions{margin:6px 0 8px}.detail-actions .small-btn{display:inline-flex;align-items:center;gap:6px}.dataset-detail .role-ready{margin:0 0 10px}
+/* the canvas replaces the old two-column role summary: override its list rules */
+.summary-roles ul.role-canvas{display:grid;grid-template-columns:1fr;gap:0;padding:8px 0 0}
+.summary-roles li.role-row{display:grid;grid-template-columns:minmax(200px,.8fr) minmax(0,1.6fr);justify-content:stretch;gap:6px 22px;padding:10px 0}
+.summary-roles li.role-row b{text-align:left;font-size:12px;color:#1c1c18}
+.summary-roles .role-limit b{font-size:10px;color:inherit}
+.summary-roles li.role-row .role-limit b{font-size:10px;color:inherit}

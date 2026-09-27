@@ -26,6 +26,30 @@ import {
   truncate,
 } from './dom';
 import { icon } from './icons';
+import { CADENCE_LABEL, SHAPE_LABEL, cadenceOf, shapeOf, type Shape } from '../catalogue-profile';
+
+const SHAPE_GLYPH: Partial<Record<Shape, 'geo-point' | 'geo-line' | 'geo-polygon' | 'geo-mixed' | 'geo-raster' | 'geo-none'>> = {
+  point: 'geo-point', line: 'geo-line', area: 'geo-polygon', mixed: 'geo-mixed', raster: 'geo-raster', table: 'geo-none',
+};
+
+/** Declared shape, cadence and size of one dataset: what a candidate is before anyone opens it. */
+export function readinessChips(dataset: DatasetRecord): string {
+  const shape = shapeOf(dataset), glyph = SHAPE_GLYPH[shape];
+  return `<span class="ready-chip" title="Declared geometry">${glyph ? icon(glyph, { size: 12 }) : ''}${SHAPE_LABEL[shape]}</span>`
+    + `<span class="ready-chip" title="Declared update frequency">${icon('time', { size: 12 })}${CADENCE_LABEL[cadenceOf(dataset)]}</span>`
+    + `<span class="ready-chip" title="Declared record count">${dataset.recordsCount === undefined ? 'records not published' : `${formatCount(dataset.recordsCount)} records`}</span>`;
+}
+
+type RoleFit = 'direct' | 'supporting' | 'context' | 'external';
+function roleFit(role: EvidencePlan['roles'][number]): RoleFit {
+  if (role.roleType === 'external_dependency') return 'external';
+  if (role.required && role.roleType === 'primary_measure') return 'direct';
+  if (role.roleType === 'context' || role.roleType === 'constraint') return 'context';
+  return 'supporting';
+}
+const FIT_ICON: Record<RoleFit, 'evidence-direct' | 'evidence-supporting' | 'evidence-contextual' | 'evidence-missing'> = {
+  direct: 'evidence-direct', supporting: 'evidence-supporting', context: 'evidence-contextual', external: 'evidence-missing',
+};
 
 const EVIDENCE_CLASS_LABEL: Record<string, string> = {
   direct: 'direct evidence',
@@ -86,13 +110,27 @@ export function renderEvidenceSummary(plan: EvidencePlan, datasets: DatasetRecor
     else counts.supporting += 1;
   }
   const context = [plan.intent.spatialNeed ? 'Spatial' : '', plan.intent.temporalNeed ? `${plan.intent.temporalNeed} conditions` : '', plan.intent.geographicScope ?? 'Basel'].filter(Boolean).join(' · ');
-  const roles = plan.roles.map(role => `<li><span>${escapeHtml(role.label)}</span><b class="${role.datasetId ? '' : 'missing-role'}">${escapeHtml(role.datasetId ? byId.get(role.datasetId)?.title ?? role.datasetId : 'Missing / external')}</b></li>`).join('');
+  // Each role reads as: need -> the dataset that fills it -> why it matched -> what it is -> its limitation.
+  const roles = plan.roles.map(role => {
+    const fit = roleFit(role);
+    const dataset = role.datasetId ? byId.get(role.datasetId) : undefined;
+    const need = `<div class="role-need"><b>${escapeHtml(role.label)}</b><span class="role-fit fit-${fit}">${icon(FIT_ICON[fit], { size: 12 })}${fit}${role.required ? ' · required' : ''}</span><small>${escapeHtml(role.reason)}</small></div>`;
+    const alternatives = role.candidates.length > 1 ? ` · ${role.candidates.length - 1} alternative${role.candidates.length > 2 ? 's' : ''}` : '';
+    const filled = dataset
+      ? `<div class="role-fill"><button class="role-dataset" data-open="${escapeHtml(dataset.id)}" title="Open in the inspector">${escapeHtml(dataset.title)}</button>
+          <button class="role-locate" data-locate="${escapeHtml(dataset.id)}" title="Show in Landscape" aria-label="Show ${escapeHtml(dataset.title)} in Landscape">${icon('landscape', { size: 14 })}</button>
+          <small>${escapeHtml(role.candidates[0]?.note ?? '')}${alternatives}</small>
+          <div class="role-ready">${readinessChips(dataset)}</div>
+          ${role.gap?.suggestion ? `<p class="role-limit">${icon('weak', { size: 12 })}${escapeHtml(role.gap.suggestion)}</p>` : ''}</div>`
+      : `<div class="role-fill role-gap-fill"><p class="role-limit missing">${icon('evidence-missing', { size: 12 })}<span><b>Missing / external.</b> ${escapeHtml(role.gap?.suggestion ?? 'No catalogue dataset fills this role.')}</span></p></div>`;
+    return `<li class="role-row">${need}${filled}</li>`;
+  }).join('');
   return `<section class="evidence-summary">
     <div class="question-summary"><span class="eyebrow">Proposed evidence plan · system inferred</span><b>${escapeHtml(plan.intent.statement)}</b><span>${escapeHtml(context)}</span></div>
     <div class="plan-summary"><span class="eyebrow">Evidence plan</span>
       <div><b>${counts.direct}</b><span>Direct</span></div><div><b>${counts.supporting}</b><span>Supporting</span></div>
       <div><b>${counts.contextual}</b><span>Context</span></div><div class="summary-gap"><b>${plan.roles.filter(r => !r.datasetId).length}</b><span>Missing roles</span></div>
-    </div><details class="summary-roles"><summary>Show ${plan.roles.length} evidence roles</summary><ul>${roles}</ul></details>
+    </div><details class="summary-roles"><summary>Show ${plan.roles.length} evidence roles</summary><ul class="role-canvas">${roles}</ul></details>
   </section>`;
 }
 
@@ -188,6 +226,8 @@ export function renderDatasetDetail(dataset: DatasetRecord, structure?: DatasetS
   return section(
     'Dataset detail',
     `<div class="dataset-detail"><div class="detail-group"><span class="eyebrow">Overview</span><h3>${escapeHtml(dataset.title)}</h3>
+       <div class="detail-actions"><button class="small-btn" data-locate="${escapeHtml(dataset.id)}">${icon('landscape', { size: 14 })}Show in Landscape</button></div>
+       <div class="role-ready">${readinessChips(dataset)}</div>
        <p>${escapeHtml(dataset.description || 'No catalogue description published.')}</p>
        <a href="${escapeHtml(dataset.sourceUrl)}" target="_blank" rel="noreferrer">Open source dataset ${icon('external', { size: 12 })}</a></div>
        <div class="detail-group"><span class="eyebrow">Catalogue</span>
