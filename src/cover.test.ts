@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { coverSvg, overdue, recordBand, spineSvg, SPINE_WIDTH, wrapTitle, type CoverInput } from './cover';
+import { coverSvg, overdue, printSeed, recordBand, spineSvg, SPINE_WIDTH, wrapTitle, type CoverInput } from './cover';
 import { fallbackDatasets } from './data/fallback';
 import type { DatasetRecord } from './types';
 
@@ -64,5 +64,18 @@ describe('covers: facts to channels', () => {
     expect(wrapTitle('eins zwei drei vier fünf sechs sieben acht neun zehn', 12, 2).length).toBe(2);
     expect(wrapTitle('eins zwei drei vier fünf sechs sieben acht neun zehn', 12, 2)[1]).toMatch(/…$/);
     expect(spineSvg(input(make()))).toContain('<svg class="spine"');
+  });
+
+  it('prints with a per-dataset seed, and never filters text', () => {
+    const a = make({ id: '100418' }, { geospatial: false, geometryTypes: [], timeSeries: true });
+    const b = make({ id: '100033' });
+    expect(printSeed('100418')).toBe(printSeed('100418'));
+    expect(printSeed('100418')).not.toBe(printSeed('100033'));
+    const series = coverSvg(input(a, { sample: { periods: [{ period: '2025-01', n: 3 }, { period: '2026-02', n: 5 }] } }));
+    expect(series).toContain(`seed="${printSeed('100418')}"`);
+    expect(coverSvg(input(b))).not.toContain(`id="ink-100418"`);
+    // No <text> element may sit inside a group that carries the ink filter.
+    for (const group of series.match(/<g[^>]*filter="url\(#ink-[^"]*\)"[^>]*>[\s\S]*?<\/g>/g) ?? []) expect(group).not.toContain('<text');
+    expect(series).toContain('>2025</text>');
   });
 });

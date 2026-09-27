@@ -70,3 +70,21 @@ axis, and a weave of column types. Each art form now has a frame:
   tick = date, ring = geometry.
 - **Titles:** lines longer than 15 characters use a slightly smaller font.
 - **Categories without a checked glyph family** carry their topic icon as the motif.
+
+## Print texture (no AI)
+
+A test with AI-generated covers (docs/BOOKPLATES.md) showed that their appeal came from the
+texture, not from the drawing. The covers now get that texture from two SVG filters in
+`printDefs`:
+- **`ink`** gives the art and the marks slightly carved edges. The displacement is at most about
+  one unit, so no point, bar or line moves in a way anyone could misread.
+- **`grain`** and **`wear`** let the paper show through the cloth in specks and faint streaks.
+
+What the texture never does:
+- **Touch text.** Text is never filtered. Years and column names are lifted out of the art
+  before the ink filter applies (`inkedArt`).
+- **Change between renders.** The noise is seeded from the dataset ID (`printSeed`), so a cover
+  is the same every time and differs from its neighbours.
+- **Carry a fact.** The texture is decoration.
+
+It also works in the 3D shelf, because the SVG filters survive the canvas texture.

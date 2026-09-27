@@ -62,6 +62,7 @@ const legend = `<table class="legend"><tr><th>Channel</th><th>Encodes</th></tr>
   <tr><td>Bookmark with notches</td><td>documented reuses (portal figures)</td></tr>
   <tr><td>Patina</td><td>overdue against its own declared rhythm (static or irregular datasets never age)</td></tr>
   <tr><td>Paper tab</td><td>doorway: ready, rarely used (one per group, rule in src/doorway.ts)</td></tr>
+  <tr><td>Print texture</td><td>none: carved edges and paper grain are decoration, seeded per dataset, and never move a shape or touch text</td></tr>
   <tr><td>Dashed, empty</td><td>form unknown; no sample: the form mark alone, never an invented pattern</td></tr></table>`;
 
 const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
