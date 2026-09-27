@@ -11,6 +11,7 @@ import type { ExecutionResult } from './execution/types';
 import { BENCHMARK_USE_CASES } from './benchmarks/useCases';
 import { canCompose, catalogueStatus, filterCatalogue, type CatalogueView } from './catalogue-ui';
 import { renderGraph, resetAtlasZoom, stopGraph, zoomAtlasOut, zoomAtlasTo, type AtlasGraphActions } from './ui/graph';
+import { formatDeepLink, missingLinkNotice, parseDeepLink } from './deep-link';
 import { ATLAS_LENS_LABEL, atlasSegments, buildAtlasHierarchy, type AtlasHierarchyDatum, type AtlasLens, type AtlasState } from './atlas';
 import { recommendRepresentations, type RepresentationSpec, type RepresentationType } from './representation';
 import { resolveTrustedEvidence } from './evidence-sources/resolver';
@@ -211,6 +212,22 @@ const atlasActions: AtlasGraphActions = {
  * Cross-entrance link: open the Landscape where this dataset lives in the current lens, with it
  * selected. Works from the question roles, the inspector and Build; same dataset ID everywhere.
  */
+let linkNotice = '';
+
+/** Open whatever `#dataset=…&lens=…` names; a missing id gets an honest notice, not silence. */
+function applyDeepLink(hash: string): void {
+  const link = parseDeepLink(hash);
+  if (link.lens) {
+    atlas = { lens: link.lens, path: [] };
+    document.querySelectorAll<HTMLButtonElement>('#atlasLenses button').forEach(button => button.classList.toggle('active', button.dataset.lens === link.lens));
+  }
+  if (!link.dataset) return;
+  if (catalog.datasets.some(dataset => dataset.id === link.dataset)) { linkNotice = ''; showInLandscape(link.dataset); return; }
+  linkNotice = missingLinkNotice(link.dataset, catalog.source, catalog.datasets.length);
+  inspectorOpen = true;
+  render();
+}
+
 function showInLandscape(id: string): void {
   const dataset = catalog.datasets.find(item => item.id === id);
   if (!dataset) return;
@@ -228,6 +245,7 @@ function showInLandscape(id: string): void {
   document.querySelectorAll<HTMLButtonElement>('[data-view]').forEach(button => button.classList.toggle('active', button.dataset.view === 'landscape'));
   selectedId = id;
   if (stage !== 'discover') stage = 'discover';
+  history.replaceState(null, '', formatDeepLink({ dataset: id, lens: atlas.lens }) || location.pathname);
   render();
   void loadStructure(id);
 }
@@ -286,6 +304,7 @@ function renderInspector(): void {
     .filter(Boolean);
 
   inspectorBody.innerHTML = `
+    ${linkNotice ? `<div class="warning link-notice">${escapeHtml(linkNotice)}</div>` : ''}
     ${renderSourceNotice(catalog)}
     ${renderSourceDiagnostics(catalog)}
     ${section(
@@ -542,6 +561,8 @@ function applyQuery(next: string): void {
 
 function selectDataset(id: string): void {
   selectedId = id;
+  linkNotice = '';
+  history.replaceState(null, '', formatDeepLink({ dataset: id, lens: atlas.lens }) || location.pathname);
   inspectorOpen = true;
   syncInspector();
   render();
@@ -700,3 +721,5 @@ if (catalog.source === 'live') {
 }
 renderExamples();
 render();
+applyDeepLink(location.hash);
+window.addEventListener('hashchange', () => applyDeepLink(location.hash));

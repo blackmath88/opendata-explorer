@@ -196,3 +196,7 @@ button.atlas-sub-more{cursor:pointer;font:inherit}button.atlas-sub-more:hover{bo
 .summary-roles li.role-row b{text-align:left;font-size:12px;color:#1c1c18}
 .summary-roles .role-limit b{font-size:10px;color:inherit}
 .summary-roles li.role-row .role-limit b{font-size:10px;color:inherit}
+.link-notice{margin-bottom:12px}
+/* breadcrumb: wraps onto a second line when deep instead of truncating every level */
+.atlas-breadcrumb{flex-wrap:wrap;row-gap:0}
+.atlas-breadcrumb button,.atlas-breadcrumb>span{flex:none;overflow:visible;text-overflow:clip;white-space:nowrap}

@@ -106,3 +106,13 @@ The demo requires no LLM and no internet. It runs two flows:
 - live mode depends on availability of `data.bs.ch`;
 - in-memory state disappears when the host stops the process;
 - no routing engine, LLM, arbitrary web search, federation, auth, or persistence.
+
+## Linking back into the app
+
+Tool results carry canonical dataset IDs. A host that renders a Chat answer can link each ID into the browser app with `#dataset=<id>`, optionally with `&lens=space|time|readiness` (see `src/deep-link.ts`). The link opens the Landscape at the dataset's category in that lens, with the dataset selected in the inspector.
+
+An ID that isn't in the loaded catalogue produces a notice rather than an empty view, and the notice says which catalogue was checked:
+- the offline snapshot: "the live catalogue may contain it"
+- the live catalogue, with its loaded count
+
+A snapshot gap is never reported as a global absence.
