@@ -164,3 +164,12 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10px;back
 
 /* Icons (src/ui/icons.ts): colour always from the surrounding text */
 .icon{flex:none}.atlas-tile-head>.icon{align-self:flex-start;margin:1px -3px 0 0;color:var(--primary2)}.atlas-tile-head>.atlas-tile-title{flex:1;min-width:0}.ev-badge .icon{color:#7fa694}.ev-badge.ev-direct .icon{color:var(--primary2)}.atlas-lenses button{display:inline-flex;align-items:center;gap:5px}.rail-icon .icon{display:block}
+
+/* Catalogue profile rows on Atlas cards (src/catalogue-profile.ts) */
+.atlas-profile{display:grid;gap:3px;margin:2px 0 4px;font-size:10px;color:var(--muted);min-width:0}
+.ap-row{display:flex;align-items:center;flex-wrap:wrap;gap:2px 8px;min-width:0}
+.ap-k{flex:none;width:56px;font-size:9px;letter-spacing:.06em;text-transform:uppercase;font-weight:600;color:#717974}
+.ap-v{display:inline-flex;align-items:center;gap:3px;white-space:nowrap;color:#414944;font-variant-numeric:tabular-nums}
+.ap-v .icon{color:var(--primary2)}.ap-v b{font-weight:700;color:var(--muted);width:13px;text-align:center}
+.ap-sep{color:#c0c8c2}
+button.atlas-sub-more{cursor:pointer;font:inherit}button.atlas-sub-more:hover{border-color:var(--primary2);color:var(--primary2)}

@@ -1,5 +1,6 @@
 import * as d3 from 'd3';
 import { categoryIcon, type AtlasHierarchyDatum } from '../atlas';
+import { CADENCES, CADENCE_LABEL, SHAPES, SHAPE_LABEL, profile, type Shape } from '../catalogue-profile';
 import type { DatasetMatch, EvidenceClass } from '../types';
 import { escapeHtml, formatCount } from './dom';
 import { icon } from './icons';
@@ -124,6 +125,7 @@ function drawTiles(current: State, children: AtlasHierarchyDatum[]): void {
         <span class="atlas-tile-count">${data.searchActive ? `<em>${node.matching}</em> / ` : ''}${node.total}</span>
       </button>
       ${size === 'xs' ? '' : `<div class="atlas-tile-evidence">${evidenceBadges(node)}</div>`}
+      ${node.kind === 'category' && (size === 'lg' || tile.height >= 96) ? profileRows(node, size === 'lg' ? 'full' : 'shape') : ''}
       ${size === 'lg' ? '<div class="atlas-tile-body"></div>' : ''}`;
     if (node.kind === 'dataset') element.querySelector('button')!.addEventListener('click', () => current.actions.onSelect(node.dataset!.id));
     else element.addEventListener('click', () => focusOn(node.id));
@@ -160,8 +162,11 @@ function drawPreview(current: State, body: HTMLElement, children: AtlasHierarchy
   for (const tile of layoutTiles(overflow ? [...shown, overflow] : shown, width, height, 3)) {
     const node = tile.node;
     if (node === overflow) {
-      const more = document.createElement('div');
+      const more = document.createElement('button');
       more.className = 'atlas-sub atlas-sub-more';
+      const parent = current.parents.get(children[0].id);
+      more.title = `Open all ${node.total} datasets in ${parent?.label ?? 'this category'}`;
+      if (parent) more.addEventListener('click', event => { event.stopPropagation(); focusOn(parent.id); });
       Object.assign(more.style, { left: `${tile.x}px`, top: `${tile.y}px`, width: `${tile.width}px`, height: `${tile.height}px` });
       more.innerHTML = `<span>${escapeHtml(node.label)}</span><small>${node.total}</small>`;
       body.append(more);
@@ -226,6 +231,40 @@ function iconFits(label: string, width: number, size: 'xs' | 'sm' | 'lg'): boole
   const longest = Math.max(...label.split(/\s+/).map(word => word.length));
   const room = width - 24 /* padding */ - 34 /* count */ - 24 /* icon + gap */;
   return room >= longest * (size === 'lg' ? 8.6 : 7.6);
+}
+
+// ---------------------------------------------------------------------------
+// Catalogue profile: what a card's datasets look like before opening one
+// ---------------------------------------------------------------------------
+
+const SHAPE_ICON: Partial<Record<Shape, 'geo-point' | 'geo-line' | 'geo-polygon' | 'geo-mixed' | 'geo-raster' | 'geo-none'>> = {
+  point: 'geo-point', line: 'geo-line', area: 'geo-polygon', mixed: 'geo-mixed', raster: 'geo-raster', table: 'geo-none',
+};
+
+function datasetsUnder(node: AtlasHierarchyDatum): NonNullable<AtlasHierarchyDatum['dataset']>[] {
+  return node.kind === 'dataset' ? [node.dataset!] : (node.children ?? []).flatMap(datasetsUnder);
+}
+
+/**
+ * Metadata rows for a category card. Every row sums to the card's count; zero buckets are
+ * omitted, unknown is always shown when present. Describes declared metadata, not coverage.
+ */
+function profileRows(node: AtlasHierarchyDatum, detail: 'full' | 'shape'): string {
+  const fp = profile(datasetsUnder(node));
+  if (!fp.total) return '';
+  const shapes = SHAPES.filter(key => fp.shape[key] > 0).map(key => {
+    const glyph = SHAPE_ICON[key];
+    const label = `${fp.shape[key]} ${SHAPE_LABEL[key]}`;
+    return `<span class="ap-v" title="${label}" aria-label="${label}">${glyph ? icon(glyph, { size: 13 }) : '<b>?</b>'}${fp.shape[key]}</span>`;
+  }).join('');
+  const rows = [`<div class="ap-row"><span class="ap-k">Shape</span>${shapes}</div>`];
+  if (detail === 'full') {
+    const cadence = CADENCES.filter(key => fp.cadence[key] > 0).map(key => `<span class="ap-v">${CADENCE_LABEL[key]} ${fp.cadence[key]}</span>`).join('<span class="ap-sep">·</span>');
+    rows.push(`<div class="ap-row"><span class="ap-k">Updates</span>${cadence}</div>`);
+    const records = fp.recordsMedian === null ? 'no counts published' : `median ${formatCount(fp.recordsMedian)} records`;
+    rows.push(`<div class="ap-row"><span class="ap-k">Size</span><span class="ap-v">${records}${fp.recordsUnknown && fp.recordsMedian !== null ? ` · ${fp.recordsUnknown} without count` : ''}</span></div>`);
+  }
+  return `<div class="atlas-profile" aria-label="Catalogue profile">${rows.join('')}</div>`;
 }
 
 function evidenceClassName(node: AtlasHierarchyDatum): string {
