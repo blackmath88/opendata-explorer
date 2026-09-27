@@ -26,6 +26,16 @@ DataFit's goal is to surface free datasets that exist but aren't used. Basel was
 | `scripts/portals.ts` | `discover`: publishers per canton, as draft portal entries. `snapshot --portal`: freezes a catalogue. `audit --portal`: coverage table. It reproduces the Basel audit exactly. |
 | Per-portal data | `src/data/portals/<id>/`: snapshot, topic decisions, gold labels. Dataset ids are unique only within a portal. |
 
+## Built offline since (feat/canton-readiness)
+
+| Piece | What it does |
+|---|---|
+| French and Italian topic terms (`ROMANCE_TERMS` in `src/topic-rules.ts`) | Used only where the German/English rule misses a field, and matched at word starts (accents included). Basel's eval is unchanged: 38/44 scored, 42/44 with decisions, same statuses. French/Italian accuracy is **unmeasured**: the tests use hand-written records. |
+| `src/data/duplicates.ts` | Links opendata.swiss copies to a canton's own portal by DCAT identifier (`<local id>@<publisher>`), and only under the canton's own publishers. Every dataset is counted once. National records that name the canton but match no local id are reported, not guessed. |
+| `src/topic-provenance.ts` | What the topic lens rests on, shown in the source panel and on the Topic lens button. Basel today: "Keyword rules + 22 validated decisions · 42/44 agree with draft gold labels, not yet confirmed by a person". A new canton: "Keyword rules only · not evaluated". |
+| `src/coverage.ts` | The canton × subcategory grid as tested logic, and `rolloutLevel()`. An empty cell is `not_found` only at L3+, and `unchecked` below that. Each column sums to its portal's count. |
+| `portals.ts audit` | Now prints the rollout level. **Basel is at L2**: confirming its gold labels (a person, ~44 quick checks) moves it to L3. |
+
 ## The rollout pipeline per canton
 
 Each step is deterministic and has a gate. A canton is only as far along as the last gate it passed.

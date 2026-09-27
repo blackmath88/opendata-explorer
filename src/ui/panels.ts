@@ -1,4 +1,5 @@
 import { activePortal } from '../portal';
+import { topicProvenance } from '../topic-provenance';
 import type {
   CatalogState,
   CompatibilityAssessment,
@@ -97,6 +98,7 @@ export function renderSourceDiagnostics(catalog: CatalogState): string {
     <div><dt>Source</dt><dd>${escapeHtml(activePortal().shortLabel)}</dd></div>
     <div><dt>Datasets loaded</dt><dd>${formatCount(catalog.datasets.length)}${catalog.reportedTotal !== undefined ? ` / ${formatCount(catalog.reportedTotal)} reported` : ''}</dd></div>
     <div><dt>Completeness</dt><dd>${complete ? 'Complete' : 'Partial'}</dd></div>
+    <div><dt>Topics</dt><dd>${escapeHtml(topicProvenance(catalog.datasets).label)}</dd></div>
     <div><dt>Last loaded</dt><dd>${escapeHtml(new Date(catalog.loadedAt).toLocaleString('de-CH'))}</dd></div>
   </dl>`);
 }

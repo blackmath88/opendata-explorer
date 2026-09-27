@@ -151,6 +151,7 @@ export function normalizeCkanPackage(value: unknown, portal: Portal = activePort
     // "Has records" here means a downloadable data file exists, not a queryable API.
     hasRecords: readable.length > 0,
     fieldCount: undefined,
+    identifier: asString(raw.identifier) || undefined,
   };
 }
 

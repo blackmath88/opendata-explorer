@@ -19,7 +19,9 @@ import { topicDecisionFile } from '../src/data/portals';
 import { snapshotDatasets, snapshotPath, writeSnapshot } from '../src/data/snapshot';
 import { CADENCES, CADENCE_LABEL, SHAPES, SHAPE_LABEL, profile } from '../src/catalogue-profile';
 import { BASEL_STADT, portalById, setActivePortal, type Portal } from '../src/portal';
-import { indexDecisions, needsDecision } from '../src/topic-decisions';
+import { rolloutLevel } from '../src/coverage';
+import { topicGold } from '../src/data/portals';
+import { indexDecisions, needsDecision, resolveTopic } from '../src/topic-decisions';
 import { assessTopic, type TopicStatus } from '../src/topic-scoring';
 
 /** The national catalogue's CKAN API. Checked against the documentation, not yet against this code. */
@@ -100,6 +102,17 @@ if (command === 'discover') {
   const status: Record<TopicStatus, number> = { clear: 0, conflict: 0, weak: 0, catch_all_only: 0, none: 0 };
   for (const dataset of datasets) status[assessTopic(dataset).status]++;
   const open = datasets.filter(dataset => needsDecision(dataset, decisions)).length;
+  const gold = topicGold(portal.id);
+  const labelled = gold ? datasets.filter(dataset => gold.labels[dataset.id]) : [];
+  const regressions = labelled.filter(dataset => gold!.labels[dataset.id].includes(assessTopic(dataset).pick.subcategory) && !gold!.labels[dataset.id].includes(resolveTopic(dataset, decisions).subcategory));
+  const level = rolloutLevel({
+    snapshot: true,
+    decisionsOpen: open,
+    goldConfirmed: !!gold && labelled.length > 0 && !/^draft/i.test(gold.status),
+    evalPassed: labelled.length > 0 && regressions.length === 0,
+    liveVerified: portal.verified && source.startsWith('src/data/portals'),
+    usageMeasured: false,
+  });
   const lines = [
     `# Catalogue audit: ${portal.label}`,
     '',
@@ -117,6 +130,9 @@ if (command === 'discover') {
     ...(Object.keys(status) as TopicStatus[]).map(key => `| ${key} | ${status[key]} (${pct(status[key], datasets.length)}) |`),
     '',
     `Topic decisions still open: ${open} of ${datasets.length}.`,
+    `Gold labels: ${labelled.length ? `${labelled.length}${/^draft/i.test(gold!.status) ? ' (draft, not confirmed by a person)' : ''}, ${regressions.length} regressions from decisions` : 'none'}.`,
+    '',
+    `**Rollout level: L${level}** (L0 listed, L1 audited, L2 topics decided, L3 evaluated, L4 live, L5 activity; docs/MULTI_CANTON.md).`,
   ];
   console.log(lines.join('\n'));
 } else {

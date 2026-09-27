@@ -4,7 +4,7 @@
  * ("Raum und Umwelt") only counts a little. The status says whether the rules are enough
  * or whether the dataset needs a typed decision (topic-decisions.ts).
  */
-import { OTHER_TOPIC, TOPIC_RULES, UNCLASSIFIED } from './topic-rules';
+import { OTHER_TOPIC, ROMANCE_TERMS, TOPIC_RULES, UNCLASSIFIED } from './topic-rules';
 import type { DatasetRecord } from './types';
 
 export type TopicField = 'title' | 'keywords' | 'topics' | 'themes' | 'description';
@@ -46,7 +46,9 @@ export function assessTopic(dataset: DatasetRecord): TopicAssessment {
       rank.set(subcategory, order++);
       const hits: TopicHit[] = [];
       for (const field of Object.keys(FIELD_WEIGHT) as TopicField[]) {
-        const match = lower[field].match(pattern);
+        // One hit per field: the German/English rule first, French/Italian terms otherwise.
+        const romance = ROMANCE_TERMS[subcategory];
+        const match = lower[field].match(pattern) ?? (romance ? lower[field].match(romance) : null);
         if (match) hits.push({ category, subcategory, field, term: match[0], weight: FIELD_WEIGHT[field] });
       }
       if (hits.length) scores.push({ category, subcategory, catchAll: subcategory.endsWith('(other)'), score: hits.reduce((sum, hit) => sum + hit.weight, 0), hits });

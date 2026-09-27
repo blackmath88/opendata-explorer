@@ -1,4 +1,5 @@
 import { activePortal, portalFromSearch, setActivePortal } from './portal';
+import { topicProvenance } from './topic-provenance';
 import './styles.css';
 import { openCatalogue } from './data/catalogue';
 import { parseUseCaseIntent } from './intent';
@@ -711,6 +712,7 @@ const session = await openCatalogue();
 adapter = session.adapter;
 catalog = session.state;
 plan = buildEvidencePlan(intent, catalog.datasets, { selectedIds: [] });
+el<HTMLButtonElement>('#atlasLenses button[data-lens="topic"]').title = `Topic lens: ${topicProvenance(catalog.datasets).label}`;
 sourcePill.textContent = catalogueStatus(catalog).label;
 sourcePill.classList.toggle('live', catalog.source === 'live');
 sourcePill.title =
