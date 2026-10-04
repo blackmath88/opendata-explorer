@@ -25,11 +25,13 @@
     "@turf/point-to-line-distance": "^7.4.0",
     "d3": "^7.9.0",
     "maplibre-gl": "^6.7.0",
+    "three": "^0.170.0",
     "zod": "^4.5.4"
   },
   "devDependencies": {
     "@types/d3": "^7.4.3",
     "@types/node": "^26.4.1",
+    "@types/three": "^0.170.0",
     "tsx": "^4.23.13",
     "typescript": "^5.9.2",
     "vite": "^7.1.3",

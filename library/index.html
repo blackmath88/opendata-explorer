@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DataFit Library: a shelf of generated datasets (prototype)</title>
+  <meta name="description" content="One category of Basel's open-data catalogue as a shelf of books generated from each dataset's metadata and a small real sample. Unofficial prototype." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%231e4557'/%3E%3Ctext x='16' y='22' font-family='Inter,system-ui,sans-serif' font-size='15' font-weight='700' fill='%23ffffff' text-anchor='middle'%3EDF%3C/text%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/src/library/library.css" />
+</head>
+<body>
+  <header class="top">
+    <a class="brand" href="/v2/"><span class="mark">DF</span>DataFit</a>
+    <span class="crumb">Library</span>
+    <span class="tag" title="Independent prototype on the portal's public data. Not operated or endorsed by the portal owner.">Unofficial prototype</span>
+    <a class="to-atlas" href="/catalogue/?portal=bs">Back to the catalogue</a>
+  </header>
+  <main>
+    <form id="ask" class="ask" action="/library/" method="get" role="search">
+      <label for="askInput">Ask a use case and the shelf fills with the datasets that fit</label>
+      <div class="ask-row">
+        <input id="askInput" name="q" type="search" placeholder="e.g. Eine Laufroute mit Schatten und guter Luft" autocomplete="off" maxlength="300" />
+        <input type="hidden" name="portal" value="bs" />
+        <button type="submit">Fill the shelf</button>
+      </div>
+      <p class="examples">Try: <a href="/library/?q=Eine+Laufroute+mit+Schatten+und+guter+Luft">Laufroute mit Schatten und guter Luft</a> · <a href="/library/?q=Ist+der+Schulweg+sicher+f%C3%BCr+Kinder%3F">Ist der Schulweg sicher?</a> · <a href="/library/?q=Wo+gibt+es+Brunnen+und+Sitzb%C3%A4nke+im+Park%3F">Brunnen und Sitzbänke</a> · <a href="/library/">Mobility shelf</a></p>
+    </form>
+    <div class="intro">
+      <div>
+        <h1 id="shelfTitle">Library</h1>
+        <p id="shelfMeta" class="meta"></p>
+        <div id="understood" class="understood" hidden></div>
+      </div>
+      <label class="search"><span>Light up</span><input id="search" type="search" placeholder="e.g. velo, parking, time series" autocomplete="off" /><small id="searchCount" aria-live="polite"></small></label>
+    </div>
+    <div class="stage-wrap">
+      <div id="stage" class="stage"></div>
+      <div id="labels" class="labels" aria-hidden="true"></div>
+      <div id="tip" class="tip" hidden></div>
+      <section id="panel" class="panel" role="dialog" aria-modal="false" hidden></section>
+    </div>
+    <details class="legend">
+      <summary>How to read the books</summary>
+      <ul>
+        <li><b>Colour</b>: category. <b>Motif</b> on spine and cover: subcategory.</li>
+        <li><b>Spine width</b>: number of records, five bands (under 30 · 30–1k · 1k–30k · 30k–1M · 1M or more).</li>
+        <li><b>Cover art</b>: the dataset's own sample. Maps: real positions on the canton outline, every map at the same scale. Time series: records per month, with years. Tables: their own column names and types. A sample is not coverage.</li>
+        <li><b>Bookmark</b>: documented reuses. <b>Patina</b>: overdue against its own declared rhythm; static datasets never age.</li>
+        <li><b>Standing out, with a paper tab</b>: ready but rarely used, one per group. Usage figures: <span id="legendUsage"></span>.</li>
+        <li><b>Order</b>: alphabetical within each group. Position never means rank. On a question shelf, "The plan" follows the order of the plan's roles.</li>
+        <li><b>Question shelves</b>: a dashed, empty slot is a role no dataset fills; a plain paper slot stands for more matches than fit, which the list names.</li>
+      </ul>
+    </details>
+    <details class="list" open>
+      <summary>All <span id="listCount"></span> datasets as a list</summary>
+      <div id="list"></div>
+    </details>
+    <div id="live" class="sr-only" aria-live="polite"></div>
+  </main>
+  <script type="module" src="/src/library/main.ts"></script>
+</body>
+</html>

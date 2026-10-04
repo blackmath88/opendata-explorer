@@ -1,5 +1,6 @@
 import type { DatasetMatch, DatasetRecord, EvidenceClass } from './types';
 import type { IconName } from './ui/icons';
+import { TOPIC_ICON } from './topic-icons';
 import { OTHER_TOPIC, TOPIC_RULES, datasetText, labelText, type Rule } from './topic-rules';
 import { indexDecisions, resolveTopic } from './topic-decisions';
 import { topicDecisionFile } from './data/portals';
@@ -74,18 +75,7 @@ export const TOPIC_CATEGORIES: readonly string[] = [...TOPIC_RULES.map(([categor
  * subcategories stay text: there an icon would be decoration, not recognition.
  */
 export const CATEGORY_ICON: Readonly<Partial<Record<AtlasLens, Readonly<Record<string, IconName>>>>> = {
-  topic: {
-    'Environment & Climate': 'topic-environment',
-    'Mobility & Transport': 'topic-mobility',
-    'People & Society': 'topic-people',
-    'Built City & Infrastructure': 'topic-built',
-    'Public Space & Leisure': 'topic-public-space',
-    Health: 'topic-health',
-    Education: 'topic-education',
-    Culture: 'topic-culture',
-    'Government & Economy': 'topic-government',
-    'Other / review needed': 'topic-other',
-  },
+  topic: TOPIC_ICON,
   space: {
     Point: 'geo-point',
     Line: 'geo-line',
