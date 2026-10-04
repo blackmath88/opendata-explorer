@@ -211,3 +211,18 @@ Do not start the executable spatial-workbench milestone until the next build can
 - what evidence level supports each assessment?
 
 The composition graph should only visualize relationships that have this structured compatibility record behind them.
+
+
+## GitHub Pages
+
+The `Deploy DataFit to GitHub Pages` workflow builds and publishes `main`.
+In **Settings → Pages → Build and deployment**, select **GitHub Actions** as the
+source. Pushes to `main` then deploy automatically; the workflow can also be run
+manually from Actions.
+
+- Proposal: https://blackmath88.github.io/opendata-explorer/
+- Interactive catalogue and mobility atlas: https://blackmath88.github.io/opendata-explorer/catalogue/?portal=bs
+
+The workflow builds with `BASE_PATH=/opendata-explorer/`, so navigation and assets
+work under GitHub's repository subpath. Local and Cloudflare builds retain `/`.
+To check the Pages build locally: `BASE_PATH=/opendata-explorer/ npm run build`.

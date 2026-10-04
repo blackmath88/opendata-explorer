@@ -3,6 +3,8 @@ import { defineConfig } from 'vite';
 
 // Two pages: the proposal (/) and the prototype catalogue (/catalogue/).
 export default defineConfig({
+  // GitHub project Pages uses a repository subpath; Cloudflare keeps the root.
+  base: process.env.BASE_PATH || '/',
   build: {
     rollupOptions: {
       input: {
