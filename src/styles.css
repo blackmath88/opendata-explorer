@@ -246,3 +246,5 @@ button.atlas-sub-more{cursor:pointer;font:inherit}button.atlas-sub-more:hover{bo
 .portrait-series svg rect{fill:var(--primary2)}.portrait-series svg text{font-size:9px;fill:var(--muted)}
 .pt-scroll{overflow-x:auto}.portrait-table table{border-collapse:collapse;font-size:10px;width:100%}.portrait-table th{text-align:left;color:var(--muted);font-weight:600;border-bottom:1px solid var(--divider);padding:3px 5px;white-space:nowrap}.portrait-table td{padding:3px 5px;border-bottom:1px solid var(--divider);white-space:nowrap}
 .portrait-none p,.portrait-loading{font-size:11px;color:var(--muted);margin:0}
+/* Optional, separately loaded catalogue-network experiment. */
+.network-entry { display: inline-flex; align-items: center; padding: 5px 10px; font-size: 11px; color: var(--ink, #334155); text-decoration: none; border-left: 1px solid #d9d5cc; }
