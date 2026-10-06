@@ -7,6 +7,12 @@ result: point/relationship maps, ranked bars, time series, comparison cards, or
 an evidence brief. Every result retains source and validation provenance, and
 unsupported views are reported explicitly rather than simulated.
 
+## Network navigation prototype
+
+`/explore/` adds a stable 3D catalogue with topic drill-down, global search,
+publisher/shape/time lenses and dataset source details. The complete list also
+works without WebGL. See [navigation and coverage notes](docs/NETWORK_NAVIGATION.md).
+
 ## MCP
 
 Run the local stdio server with `npm run mcp`, or run the fully offline,

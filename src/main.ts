@@ -121,7 +121,7 @@ app.innerHTML = `
     <main class="main">
       <div class="canvas-toolbar">
         <div><strong id="stageTitle">Catalogue</strong> · <span id="datasetCount">0 datasets</span></div>
-        <div class="view-toggle" id="viewToggle"><button data-view="list">List</button><button data-view="landscape" class="active">Landscape</button></div>
+        <div class="view-toggle" id="viewToggle"><button data-view="list">List</button><button data-view="landscape" class="active">Landscape</button><a class="network-entry" href="${import.meta.env.BASE_URL}explore/?portal=${encodeURIComponent(portal.id)}">Explore network ↗</a></div>
       </div>
       <div class="evidence-summary-wrap" id="evidenceSummary"></div>
       <div class="catalogue-controls" id="catalogueControls">
